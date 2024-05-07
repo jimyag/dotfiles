@@ -1,0 +1,14 @@
+export ZSH="$HOME/.oh-my-zsh"
+
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+ZSH_THEME="alanpeabody"
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting)
+source $ZSH/oh-my-zsh.sh
+
+# golang
+export GOPATH="/home/jimyag/.go/gopath"
+export GOROOT_BOOTSTRAP="/home/jimyag/.go/gobootstrap"
+export GOROOT="/home/jimyag/.go/goroot"
+export PATH="/home/jimyag/.go/gopath/bin:/home/jimyag/.go/goroot/bin:$PATH" 
+
+source <(chezmoi completion zsh)
