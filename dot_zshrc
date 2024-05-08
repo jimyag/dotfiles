@@ -6,9 +6,32 @@ plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlightin
 source $ZSH/oh-my-zsh.sh
 
 # golang
-export GOPATH="/home/jimyag/.go/gopath"
-export GOROOT_BOOTSTRAP="/home/jimyag/.go/gobootstrap"
-export GOROOT="/home/jimyag/.go/goroot"
-export PATH="/home/jimyag/.go/gopath/bin:/home/jimyag/.go/goroot/bin:$PATH" 
+export GOPATH="$HOME/.go/gopath"
+export GOROOT_BOOTSTRAP="$HOME/.go/gobootstrap"
+export GOROOT="$HOME/.go/goroot"
+export PATH="$HOME/.go/gopath/bin:$HOME/.go/goroot/bin:$PATH" 
 
 source <(chezmoi completion zsh)
+
+alias vim='nvim'
+alias vi='nvim'
+alias gopprof='go tool pprof -http : '
+
+# HSTR configuration - add this to ~/.zshrc
+alias hh=hstr                    # hh to be alias for hstr
+setopt histignorespace           # skip cmds w/ leading space from history
+export HSTR_CONFIG=hicolor       # get more colors
+bindkey -s "\C-r" "\C-a hstr -- \C-j"     # bind hstr to Ctrl-r (for Vi mode check doc)
+export HSTR_TIOCSTI=y
+# HSTR end
+
+# autojump 
+. /usr/share/autojump/autojump.sh
+
+ulimit -n 10240
+
+export PATH="$HOME/.bin:$PATH"
+
+alias qn='ssh qn'
+function q(){ ssh -t qn "qssh $1"; }
+function qr(){ ssh -t qn "qssh root@$1"; }
