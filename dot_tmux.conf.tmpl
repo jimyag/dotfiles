@@ -1,0 +1,30 @@
+# 分屏保留当前pane pwd
+bind '"' split-window -c "#{pane_current_path}"
+bind % split-window -h -c "#{pane_current_path}"
+bind c new-window -c "#{pane_current_path}"
+# -- general
+
+setw -g xterm-keys on
+set -s escape-time 0
+set -sg repeat-time 300
+set -s focus-events on
+set -g mouse on
+set -sg exit-empty on
+
+set -q -g status-utf8 on
+setw -q -g utf8 on
+
+set -g visual-activity off
+setw -g monitor-activity off
+setw -g monitor-bell off
+
+set -g history-limit 10000
+
+
+# window的编号从1开始
+set -g base-index 1      #window number starts counting from 1
+
+
+bind r source-file ~/.tmux.conf \; display '~/.tmux.conf sourced'
+
+
