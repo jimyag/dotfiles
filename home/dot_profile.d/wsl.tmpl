@@ -1,0 +1,9 @@
+{{ if eq .chezmoi.os "linux" }}{{ if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+keep_current_path() {
+  printf "\e]9;9;%s\e\\" "$(wslpath -w "$PWD")"
+}
+if [ "$TERM" != "xterm" ]; then
+  precmd_functions+=(keep_current_path)
+fi
+alias tailscale='"/mnt/c/Program Files/Tailscale/tailscale.exe"'
+{{ end }}{{ end }}

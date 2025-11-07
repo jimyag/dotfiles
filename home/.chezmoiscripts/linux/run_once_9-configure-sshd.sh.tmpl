@@ -1,0 +1,50 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -euo pipefail
+
+CONFIG_PATH="/etc/ssh/sshd_config.d/99-security.conf"
+
+tmp_config="$(mktemp)"
+trap 'rm -f "$tmp_config"' EXIT
+cat <<'EOF' > "$tmp_config"
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+KbdInteractiveAuthentication no
+UsePAM no
+EOF
+
+if ! command -v sudo >/dev/null 2>&1; then
+  if [ "${EUID:-$(id -u)}" -eq 0 ]; then
+    sudo() {
+      "$@"
+    }
+  else
+    echo "sudo not available; run this script as root to configure sshd." >&2
+    exit 1
+  fi
+fi
+
+config_dir="$(dirname "$CONFIG_PATH")"
+if [ ! -d "$config_dir" ]; then
+  sudo install -d -m 0755 "$config_dir"
+fi
+
+changed=0
+if [ -f "$CONFIG_PATH" ]; then
+  if ! sudo cmp -s "$tmp_config" "$CONFIG_PATH"; then
+    sudo install -m 0644 "$tmp_config" "$CONFIG_PATH"
+    changed=1
+  fi
+else
+  sudo install -m 0644 "$tmp_config" "$CONFIG_PATH"
+  changed=1
+fi
+
+if [ "$changed" -eq 1 ] && command -v systemctl >/dev/null 2>&1; then
+  if sudo systemctl status sshd >/dev/null 2>&1; then
+    sudo systemctl reload sshd >/dev/null 2>&1 || sudo systemctl restart sshd >/dev/null 2>&1 || true
+  elif sudo systemctl status ssh >/dev/null 2>&1; then
+    sudo systemctl reload ssh >/dev/null 2>&1 || sudo systemctl restart ssh >/dev/null 2>&1 || true
+  fi
+fi
+{{- end -}}

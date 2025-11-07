@@ -1,0 +1,40 @@
+[user]
+	name = jimyag
+	email = git@jimyag.com
+
+[init]
+	defaultBranch = main
+
+[core]
+	fsmonitor = true
+	untrackedcache = true
+	quotepath = false
+	excludesFile = $HOME/.gitignore
+
+[pull]
+	rebase = true
+
+[push]
+	autoSetupRemote = true
+
+[diff "pandoc"]
+	textconv=pandoc --to=markdown
+	prompt = false
+
+[alias]
+	wdiff = diff --word-diff=color --unified=1
+
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+
+[rebase]
+	autoStash = true
+
+[log]
+	date = iso
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

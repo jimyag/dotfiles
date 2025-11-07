@@ -1,0 +1,19 @@
+packages:
+  linux:
+    apt:
+      - ripgrep
+      - vim
+      - git
+      - curl
+      - zsh
+      - jq
+      - hstr
+      - htop
+      - dnsutils
+      - bash-completion
+      - net-tools
+      - tmux
+      - neovim
+      - iperf3
+      - build-essential
+      - autojump

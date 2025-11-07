@@ -1,0 +1,50 @@
+# hstr start
+if command -v hstr > /dev/null; then
+    alias hh=hstr                    # hh to be alias for hstr
+    setopt histignorespace           # skip cmds w/ leading space from history
+    export HSTR_CONFIG=hicolor       # get more colors
+    bindkey -s "\C-r" "\C-a hstr -- \C-j"     # bind hstr to Ctrl-r (for Vi mode check doc)
+else
+    echo "hstr not found"
+fi
+# hstr end
+
+# 额外的BIN
+export PATH="$HOME/.bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+
+# 关闭Node.js 中的 DeprecationWarning 提示
+export NODE_NO_WARNINGS=1
+
+# waketime 项目检测
+export ZSH_WAKATIME_PROJECT_DETECTION=true
+ulimit -n 10240
+
+## nvm start
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+## nvm end
+
+source "$HOME/.cargo/env"
+
+
+# golang start
+export PATH="$HOME/.go/gopath/bin:$PATH"
+export GOPATH="$HOME/.go/gopath/"
+export GOROOT="$HOME/.go/goroot/"
+export PATH="$HOME/.go/goroot/bin:$PATH"
+export GOROOT_BOOTSTRAP="$HOME/.go/gobootstrap"
+# golang end
+
+
+# completion source begin
+[[ $commands[qshell] ]] && source <(qshell completion zsh)
+[[ $commands[kubectl] ]] && source <(kubectl completion zsh)
+[[ $commands[helm] ]] && source <(helm completion zsh)
+[[ $commands[pulsarctl] ]] && source <(pulsarctl completion zsh)
+[[ $commands[task] ]] && source <(task --completion zsh)
+[[ $commands[chezmoi] ]] && source <(chezmoi completion zsh)
+[[ $commands[kubebuilder] ]] && source <(kubebuilder completion zsh)
+# completion source end

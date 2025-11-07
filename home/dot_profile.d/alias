@@ -1,0 +1,10 @@
+alias v="nvim"
+alias vi="nvim"
+alias vim="nvim"
+alias gopprof='go tool pprof -http : '
+alias .='cd ..'
+alias ..='cd ../..'
+alias ...='cd ../../..'
+alias ....='cd ../../../..'
+alias .....='cd ../../../../..'
+alias untar='tar -zxvf'

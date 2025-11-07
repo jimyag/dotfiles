@@ -1,0 +1,138 @@
+
+function diff_last_commit(){
+  git log | head -n 1 | awk '{print $2}' | xargs git diff $1
+}
+alias dlc="diff_last_commit $1"
+
+function git_checkout_pr(){
+  # 检查远程仓库是否是 GitHub
+  local remote_url=$(git remote get-url upstream 2>/dev/null || git remote get-url origin 2>/dev/null)
+
+  # 如果是 GitHub 并且有 gh 命令,使用 gh pr checkout
+  if [[ $remote_url == *"github.com"* ]] && command -v gh &> /dev/null; then
+    gh pr checkout $1 -b pr-$1
+    return
+  fi
+
+  # 默认使用原来的方式
+  git fetch upstream pull/$1/head:pr-$1 && git checkout pr-$1 && git branch --set-upstream-to=upstream/pull/$1/head pr-$1
+}
+alias gitpr="git_checkout_pr $1"
+
+function git_clean_branch(){
+  git remote prune origin && git branch -vv | grep -E '丢失|gone|pr' | awk '{print $1}' | xargs git branch -D
+}
+
+function tmux_attach_or_new(){
+  if [[ -z $1 ]]; then
+    echo "Usage: tmux_attach_or_new <session_name>"
+    return
+  fi
+  tmux has-session -t $1 2>/dev/null
+  if [ $? != 0 ]; then
+    j "$1"
+    tmux new -s $1
+  else
+    tmux attach -t $1
+  fi
+}
+
+alias t="tmux_attach_or_new $1"
+
+function source_all_zsh_files(){
+  if [[ -d ~/.zshrc.d ]]; then
+    for file in ~/.zshrc.d/*.zsh; do
+      source $file
+    done
+  fi
+  if [[ -f ~/.zshrc ]]; then
+    source ~/.zshrc
+  fi
+}
+
+function bak(){
+  if [[ -z $1 ]]; then
+    echo "Usage: bak <file_name>"
+    return
+  fi
+  local file=$1
+  local bak_file="${file}.$(date +%Y%m%d%H%M%S)"
+  cp $file $bak_file
+  echo "Backup $file to $bak_file"
+}
+
+function gitfetch(){
+  if [ -z "$1" ]; then
+    # 检查是否存在 upstream 远程仓库
+    git remote -v | grep -q "upstream"
+    if [ $? -ne 0 ]; then
+      echo "upstream 远程仓库不存在"
+      return
+    fi
+    # 检查 upstream 是否存在 master main develop 分支
+    branches=(master main develop)
+    for branch in "${branches[@]}"; do
+      if git branch -r | grep -q "upstream/$branch"; then
+        echo "Fetching and rebasing $branch"
+        git fetch upstream $branch
+        git rebase upstream/$branch
+        return
+      fi
+    done
+    echo "No master, main, or develop branch found in upstream"
+  else
+    # 如果指定了参数，执行 fetch 指定分支
+    git fetch upstream "$1"
+    git rebase upstream/$1
+  fi
+}
+
+function gitmerge(){
+  git remote -v | grep -q "upstream"
+  if [ $? -ne 0 ]; then
+    echo "upstream 远程仓库不存在"
+    return
+  fi
+  branches=(master main develop)
+  for branch in "${branches[@]}"; do
+    if git branch -r | grep -q "upstream/$branch"; then
+      echo "Merging $branch"
+      git fetch upstream $branch
+      git merge upstream/$branch
+      return
+    fi
+  done
+  echo "No master, main, or develop branch found in upstream"
+}
+
+function git_push_tag(){
+  if [ -z "$1" ]; then
+    echo "Usage: $0 <tag_name>"
+    return
+  fi
+  remote='origin'
+  if [ -n "$2" ]; then
+    remote=$2
+  fi
+  git push $remote $1
+}
+
+function ssh_remove_host(){
+  ssh-keygen -f "$HOME/.ssh/known_hosts" -R "$1"
+}
+
+function ssh_tmux() {
+    if [ -z "$1" ]; then
+        echo "Usage: ssh_tmux <host>"
+        return 1
+    fi
+    local tmux_session_name="ssh-tmux"
+    ssh -t "$1" "tmux has-session -t $tmux_session_name 2>/dev/null && tmux attach -t $tmux_session_name || tmux new -s $tmux_session_name"
+}
+
+
+ca() {
+  chezmoi apply "$@"
+  # shellcheck disable=SC1090
+  source "$HOME/.zshrc"
+}
