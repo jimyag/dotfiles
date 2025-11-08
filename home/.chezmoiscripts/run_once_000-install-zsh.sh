@@ -27,9 +27,26 @@ fi
 
 # Switch default shell to zsh if zsh is installed and not already the default
 if command -v zsh >/dev/null 2>&1; then
-  current_shell="$(getent passwd "$(id -u)" | cut -d: -f7)"
+  # Get current shell in a cross-platform way
+  current_shell=""
+  if command -v getent >/dev/null 2>&1; then
+    # Linux: use getent
+    current_shell="$(getent passwd "$(id -u)" | cut -d: -f7)"
+  elif command -v dscl >/dev/null 2>&1; then
+    # macOS: use dscl
+    current_shell="$(dscl . -read "/Users/$(id -un)" UserShell 2>/dev/null | cut -d' ' -f2 || echo "")"
+  elif [ -f "/etc/passwd" ]; then
+    # Fallback: parse /etc/passwd directly
+    current_shell="$(grep "^$(id -un):" /etc/passwd 2>/dev/null | cut -d: -f7 || echo "")"
+  fi
+  
+  # If we couldn't determine current shell, try using $SHELL environment variable
+  if [ -z "$current_shell" ]; then
+    current_shell="${SHELL:-}"
+  fi
+  
   zsh_path="$(command -v zsh)"
-  if [ "$current_shell" != "$zsh_path" ]; then
+  if [ -n "$current_shell" ] && [ "$current_shell" != "$zsh_path" ]; then
     if command -v chsh >/dev/null 2>&1; then
       echo "Switching default shell to zsh..." >&2
       if command -v sudo >/dev/null 2>&1 || [ "${EUID:-$(id -u)}" -eq 0 ]; then
@@ -40,8 +57,10 @@ if command -v zsh >/dev/null 2>&1; then
     else
       echo "chsh not available; cannot change default shell automatically" >&2
     fi
-  else
+  elif [ "$current_shell" = "$zsh_path" ]; then
     echo "zsh is already the default shell" >&2
+  else
+    echo "Could not determine current shell; skipping automatic shell change" >&2
   fi
 fi
 
