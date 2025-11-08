@@ -24,9 +24,6 @@
 [alias]
 	wdiff = diff --word-diff=color --unified=1
 
-[url "git@github.com:"]
-	insteadOf = https://github.com/
-
 [rebase]
 	autoStash = true
 
@@ -41,5 +38,9 @@
 
 # Allow to clone with https and then push over ssh
 # https://github.com/twpayne/chezmoi/discussions/3658
-[url "git@github.com:jimyag/"]
-	insteadOf = https://github.com/jimyag/
+[url "git@github.com:jimyag/dotfiles"]
+	insteadOf = https://github.com/jimyag/dotfiles
+
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+
