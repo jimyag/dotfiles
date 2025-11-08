@@ -35,12 +35,3 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
-
-# Allow to clone with https and then push over ssh
-# https://github.com/twpayne/chezmoi/discussions/3658
-[url "git@github.com:jimyag/dotfiles"]
-	insteadOf = https://github.com/jimyag/dotfiles
-
-[url "git@github.com:"]
-	insteadOf = https://github.com/
-
