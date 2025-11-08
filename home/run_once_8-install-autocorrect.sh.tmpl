@@ -1,6 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
+if [ -n "${VPS:-}" ]; then
+  echo "skip AutoCorrect installation on VPS host" >&2
+  exit 0
+fi
+
 repo='huacnlee/autocorrect'
 bin_name='autocorrect'
 

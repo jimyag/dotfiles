@@ -1,6 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
+if [ -n "${VPS:-}" ]; then
+  echo "skip cargo binary installation on VPS host" >&2
+  exit 0
+fi
+
+
 # shellcheck disable=SC1090
 if [ -f "$HOME/.cargo/env" ]; then
   . "$HOME/.cargo/env"

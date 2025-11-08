@@ -1,4 +1,3 @@
-{{- if eq .chezmoi.os "linux" -}}
 #!/bin/bash
 set -euo pipefail
 
@@ -10,7 +9,8 @@ cat <<'EOF' > "$tmp_config"
 PasswordAuthentication no
 ChallengeResponseAuthentication no
 KbdInteractiveAuthentication no
-UsePAM no
+PubkeyAuthentication yes
+UsePAM yes
 EOF
 
 if ! command -v sudo >/dev/null 2>&1; then
@@ -47,4 +47,3 @@ if [ "$changed" -eq 1 ] && command -v systemctl >/dev/null 2>&1; then
     sudo systemctl reload ssh >/dev/null 2>&1 || sudo systemctl restart ssh >/dev/null 2>&1 || true
   fi
 fi
-{{- end -}}

@@ -1,0 +1,40 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -euo pipefail
+
+
+run_with_privileges() {
+  if [ "${EUID:-$(id -u)}" -eq 0 ]; then
+    "$@"
+  elif command -v sudo >/dev/null 2>&1; then
+    sudo "$@"
+  else
+    echo "Command '$*' requires elevated privileges. Install the packages manually and rerun." >&2
+    exit 1
+  fi
+}
+
+if ! command -v apt-get >/dev/null 2>&1; then
+  echo "apt-get not available on this system; skipping apt package installation." >&2
+  exit 0
+fi
+
+run_with_privileges apt-get update
+run_with_privileges apt-get install -y \
+  ripgrep \
+  vim \
+  git \
+  curl \
+  zsh \
+  jq \
+  hstr \
+  htop \
+  dnsutils \
+  bash-completion \
+  net-tools \
+  tmux \
+  neovim \
+  iperf3 \
+  build-essential \
+  autojump
+{{- end -}}

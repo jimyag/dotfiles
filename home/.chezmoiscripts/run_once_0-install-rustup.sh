@@ -1,5 +1,10 @@
 #!/bin/bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+set -euo pipefail
+
+if [ -n "${VPS:-}" ]; then
+  echo "skip rustup/oh-my-zsh installation on VPS host" >&2
+  exit 0
+fi
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 

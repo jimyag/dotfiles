@@ -1,6 +1,15 @@
 #!/bin/bash
 set -euo pipefail
 
+export GIT_CONFIG_GLOBAL=/dev/null
+export GIT_CONFIG_SYSTEM=/dev/null
+export GIT_CONFIG_NOSYSTEM=1
+
+if [ -n "${VPS:-}" ]; then
+  echo "skip nvm/node installation on VPS host" >&2
+  exit 0
+fi
+
 NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 export NVM_DIR
 

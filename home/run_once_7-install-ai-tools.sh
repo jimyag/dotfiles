@@ -1,6 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
+if [ -n "${VPS:-}" ]; then
+  echo "skip AI tooling installation on VPS host" >&2
+  exit 0
+fi
+
 NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 
 # shellcheck disable=SC1090

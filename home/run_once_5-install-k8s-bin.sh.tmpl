@@ -3,6 +3,7 @@ set -euo pipefail
 
 BIN_DIR="$HOME/.local/bin"
 mkdir -p "$BIN_DIR"
+export PATH="$BIN_DIR:$PATH"
 
 # Install kubectl locally to avoid requiring sudo.
 curl -fsSLo "$BIN_DIR/kubectl" "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/{{ .chezmoi.os }}/{{ .chezmoi.arch }}/kubectl"
@@ -12,7 +13,7 @@ chmod +x "$BIN_DIR/kubectl"
 helm_installer="$(mktemp)"
 trap 'rm -f "$helm_installer"' EXIT
 curl -fsSLo "$helm_installer" https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-USE_SUDO=false HELM_INSTALL_DIR="$BIN_DIR" bash "$helm_installer"
+USE_SUDO=false HELM_INSTALL_DIR="$BIN_DIR" PATH="$BIN_DIR:$PATH" bash "$helm_installer"
 
 # Install kubebuilder binary locally.
 curl -fsSLo "$BIN_DIR/kubebuilder" "https://go.kubebuilder.io/dl/latest/{{ .chezmoi.os }}/{{ .chezmoi.arch }}"
