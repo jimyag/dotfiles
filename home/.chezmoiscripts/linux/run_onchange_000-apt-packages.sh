@@ -1,7 +1,5 @@
-{{- if eq .chezmoi.os "linux" -}}
 #!/bin/bash
 set -euo pipefail
-
 
 run_with_privileges() {
   if [ "${EUID:-$(id -u)}" -eq 0 ]; then
@@ -37,4 +35,3 @@ run_with_privileges apt-get install -y \
   iperf3 \
   build-essential \
   autojump
-{{- end -}}
