@@ -123,3 +123,12 @@ function ca() {
   # shellcheck disable=SC1091
   source "$HOME/.zshrc"
 }
+
+function chezmoiu() {
+  # chezmoi update with HTTPS support
+  # Disable git config to use HTTPS instead of SSH
+  GIT_CONFIG_GLOBAL=/dev/null \
+  GIT_CONFIG_SYSTEM=/dev/null \
+  GIT_CONFIG_NOSYSTEM=1 \
+  chezmoi update "$@"
+}

@@ -54,7 +54,15 @@ VPS=1 chezmoi apply -v
 
 ### 解决 chezmoi update 的 SSH 权限问题
 
-如果在执行 `chezmoi update` 时遇到 `Permission denied (publickey)` 错误，这是因为 git 配置将 HTTPS URL 转换为 SSH。可以通过设置以下环境变量来使用 HTTPS：
+如果在执行 `chezmoi update` 时遇到 `Permission denied (publickey)` 错误，这是因为 git 配置将 HTTPS URL 转换为 SSH。
+
+**推荐方式**：使用 `chezmoiu` 函数（chezmoi update 的快捷方式，已自动配置 HTTPS）：
+
+```bash
+chezmoiu
+```
+
+或者手动设置环境变量：
 
 ```bash
 export GIT_CONFIG_GLOBAL=/dev/null
@@ -71,7 +79,10 @@ chezmoi update
 GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_CONFIG_NOSYSTEM=1 chezmoi update
 ```
 
-**注意**：`install.sh` 脚本已经自动设置了这些环境变量，所以使用一键安装时不会遇到这个问题。
+**注意**：
+
+- `install.sh` 脚本已经自动设置了这些环境变量，所以使用一键安装时不会遇到这个问题
+- `chezmoiu` 函数在配置加载后可用，会自动处理这些环境变量
 
 ## 常用命令
 
