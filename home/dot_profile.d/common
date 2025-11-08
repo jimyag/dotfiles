@@ -27,7 +27,9 @@ export NVM_DIR="$HOME/.nvm"
 
 ## nvm end
 
-source "$HOME/.cargo/env"
+## cargo/rust start
+[ -s "$HOME/.cargo/env" ] && \. "$HOME/.cargo/env"
+## cargo/rust end
 
 
 # golang start

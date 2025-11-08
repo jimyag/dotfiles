@@ -1,12 +1,16 @@
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="alanpeabody"
-plugins=(git 
-  zsh-autosuggestions
-  extract
-  zsh-wakatime
-  fast-syntax-highlighting
-)
-source $ZSH/oh-my-zsh.sh
+if [ -f "$ZSH/oh-my-zsh.sh" ]; then
+  ZSH_THEME="alanpeabody"
+  plugins=(git 
+    zsh-autosuggestions
+    extract
+    zsh-wakatime
+    fast-syntax-highlighting
+  )
+  source "$ZSH/oh-my-zsh.sh"
+else
+  echo "Warning: oh-my-zsh not found at $ZSH. Please run the installation script." >&2
+fi
 
 autoload -U compinit
 compinit -i
@@ -14,7 +18,10 @@ compinit -i
 # 如果 .profile.d 目录存在，则 source 所有
 if [[ -d ~/.profile.d ]]; then
   for file in "$HOME/.profile.d"/*; do
-    source "$file"
+    # 检查文件是否存在且是普通文件（不是目录）
+    if [[ -f "$file" ]]; then
+      source "$file"
+    fi
   done
 fi
 
