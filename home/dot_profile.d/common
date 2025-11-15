@@ -50,3 +50,6 @@ export GOROOT_BOOTSTRAP="$HOME/.go/gobootstrap"
 [[ $commands[chezmoi] ]] && source <(chezmoi completion zsh)
 [[ $commands[kubebuilder] ]] && source <(kubebuilder completion zsh)
 # completion source end
+
+# opencode
+export PATH=$HOME/.opencode/bin:$PATH
