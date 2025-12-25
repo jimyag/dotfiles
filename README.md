@@ -62,6 +62,10 @@ chezmoi diff
 chezmoi apply -v
 ```
 
+## 进阶用法
+
+- [使用私有和公开仓库管理配置](docs/private-public-repo-management.md)
+
 ## 其他
 
 ```bash
