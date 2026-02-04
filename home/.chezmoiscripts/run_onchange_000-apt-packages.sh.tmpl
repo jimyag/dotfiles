@@ -19,7 +19,8 @@ if ! command -v apt-get >/dev/null 2>&1; then
 fi
 
 run_with_privileges apt-get update
-run_with_privileges apt-get install -y \
+# 非交互安装，跳过 iperf3 等包关于启动 daemon 的询问
+run_with_privileges env DEBIAN_FRONTEND=noninteractive apt-get install -y \
   ripgrep \
   vim \
   git \

@@ -1,0 +1,15 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -euo pipefail
+
+# 启用 IPv4/IPv6 转发（如做网关或 VPN 时需要）
+grep -q '^net.ipv4.ip_forward = 1' /etc/sysctl.conf 2>/dev/null || echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.conf
+grep -q '^net.ipv6.conf.all.forwarding = 1' /etc/sysctl.conf 2>/dev/null || echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p /etc/sysctl.conf
+
+# Tailscale
+curl -fsSL https://tailscale.com/install.sh | sh
+
+# ZeroTier
+curl -s https://install.zerotier.com | sudo bash
+{{- end -}}

@@ -9,11 +9,13 @@ export PATH="$BIN_DIR:$PATH"
 curl -fsSLo "$BIN_DIR/kubectl" "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/{{ .chezmoi.os }}/{{ .chezmoi.arch }}/kubectl"
 chmod +x "$BIN_DIR/kubectl"
 
-# Install Helm into the same bin dir without sudo.
-helm_installer="$(mktemp)"
-trap 'rm -f "$helm_installer"' EXIT
-curl -fsSLo "$helm_installer" https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-USE_SUDO=false HELM_INSTALL_DIR="$BIN_DIR" PATH="$BIN_DIR:$PATH" bash "$helm_installer"
+# VPS 上不安装 Helm
+if [ -z "${VPS:-}" ]; then
+  helm_installer="$(mktemp)"
+  trap 'rm -f "$helm_installer"' EXIT
+  curl -fsSLo "$helm_installer" https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+  USE_SUDO=false HELM_INSTALL_DIR="$BIN_DIR" PATH="$BIN_DIR:$PATH" bash "$helm_installer"
+fi
 
 # Install kubebuilder binary locally.
 curl -fsSLo "$BIN_DIR/kubebuilder" "https://go.kubebuilder.io/dl/latest/{{ .chezmoi.os }}/{{ .chezmoi.arch }}"

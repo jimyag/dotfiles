@@ -1,0 +1,77 @@
+#!/bin/bash
+set -euo pipefail
+
+if [ -n "${VPS:-}" ]; then
+  echo "skip binary installation on VPS host" >&2
+  exit 0
+fi
+
+BIN_DIR="$HOME/.local/bin"
+mkdir -p "$BIN_DIR"
+
+# AutoCorrect
+repo='huacnlee/autocorrect'
+bin_name='autocorrect'
+
+get_latest_release() {
+  curl --silent "https://api.github.com/repos/$repo/releases/latest" |
+    grep '"tag_name":' |
+    sed -E 's/.*"([^"]+)".*/\1/'
+}
+
+case "{{ .chezmoi.os }}" in
+  darwin) platform="darwin" ;;
+  linux) platform="linux" ;;
+  *)
+    echo "autocorrect installation skipped: unsupported OS {{ .chezmoi.os }}" >&2
+    ;;
+esac
+
+if [ -n "${platform:-}" ]; then
+  case "{{ .chezmoi.arch }}" in
+    arm64) arch="arm64" ;;
+    amd64|x86_64) arch="amd64" ;;
+    *)
+      echo "autocorrect installation skipped: unsupported arch {{ .chezmoi.arch }}" >&2
+      arch=""
+      ;;
+  esac
+
+  if [ -n "${arch:-}" ]; then
+    version="$(get_latest_release)"
+    asset="$bin_name-$platform-$arch.tar.gz"
+    base_url="https://github.com/$repo/releases/download/$version"
+
+    tmpdir="$(mktemp -d)"
+    trap 'rm -rf "$tmpdir"' EXIT
+
+    curl -fsSLo "$tmpdir/$asset" "$base_url/$asset"
+    if curl -fsSLo "$tmpdir/$asset.sha256" "$base_url/$asset.sha256"; then
+      checksum="$(tr -d ' \n\r' < "$tmpdir/$asset.sha256")"
+      if [ -n "$checksum" ]; then
+        if command -v sha256sum >/dev/null 2>&1; then
+          (cd "$tmpdir" && printf "%s  %s\n" "$checksum" "$asset" | sha256sum -c -)
+        elif command -v shasum >/dev/null 2>&1; then
+          (cd "$tmpdir" && printf "%s  %s\n" "$checksum" "$asset" | shasum -a 256 -c -)
+        else
+          echo "warning: no sha256 checksum tool found; skipping verification" >&2
+        fi
+      fi
+    else
+      echo "warning: checksum download failed; skipping verification" >&2
+    fi
+
+    tar -xzf "$tmpdir/$asset" -C "$tmpdir"
+    install -m 0755 "$tmpdir/$bin_name" "$BIN_DIR/$bin_name"
+    echo "AutoCorrect $version installed to $BIN_DIR/$bin_name"
+  fi
+fi
+
+# tlrc (cargo) — 与原 run_onchange_020-install-rust-bin 一致：无 cargo 则 exit 1
+if ! command -v cargo >/dev/null 2>&1; then
+  echo "cargo not found; run rustup install first" >&2
+  exit 1
+fi
+# shellcheck disable=SC1090
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+cargo install tlrc --locked
