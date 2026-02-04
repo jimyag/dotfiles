@@ -40,6 +40,79 @@ wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | VP
 VPS=1 ./install.sh
 ```
 
+### Linux 上创建用户并配置 SSH
+
+脚本需由具备 sudo 权限的用户执行。在 Linux VPS 上可通过环境变量创建带 sudo 的用户，并将指定 GitHub 用户的公钥写入其 `~/.ssh/authorized_keys`（仅 Linux，macOS 不创建用户）：
+
+| 变量 | 说明 |
+|------|------|
+| `CREATE_USER` | 要创建的用户名，默认为 `jimyag`；设为非空时在 Linux 上执行创建用户和/或更新 SSH 授权 |
+| `GITHUB_USER` | 指定时将该 GitHub 用户的公钥写入对应用户的 `~/.ssh/authorized_keys`，不设则不拉取 |
+
+**仅要求 sudo，不创建用户（默认行为）：**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | sh
+```
+
+或者使用 wget：
+
+```bash
+wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | sh
+```
+
+**创建用户 jimyag 并写入其 GitHub 公钥：**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=jimyag GITHUB_USER=jimyag sh
+```
+
+或者使用 wget：
+
+```bash
+wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=jimyag GITHUB_USER=jimyag sh
+```
+
+**创建自定义用户并写入其 GitHub 公钥（示例：myuser）：**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=myuser GITHUB_USER=myuser sh
+```
+
+或者使用 wget：
+
+```bash
+wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=myuser GITHUB_USER=myuser sh
+```
+
+**只创建用户 jimyag，不拉取 GitHub 公钥：**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=jimyag sh
+```
+
+或者使用 wget：
+
+```bash
+wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=jimyag sh
+```
+
+**从本地仓库安装时：**
+
+```bash
+# 仅要求 sudo，不创建用户
+./install.sh
+
+# 创建用户 jimyag 并写入 GitHub 公钥
+CREATE_USER=jimyag GITHUB_USER=jimyag ./install.sh
+
+# 创建自定义用户 myuser 并写入 GitHub 公钥
+CREATE_USER=myuser GITHUB_USER=myuser ./install.sh
+
+# 只创建用户 jimyag
+CREATE_USER=jimyag ./install.sh
+```
+
 ## 手动安装
 
 ```bash
