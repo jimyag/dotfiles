@@ -7,9 +7,14 @@ grep -q '^net.ipv4.ip_forward = 1' /etc/sysctl.conf 2>/dev/null || echo 'net.ipv
 grep -q '^net.ipv6.conf.all.forwarding = 1' /etc/sysctl.conf 2>/dev/null || echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.conf
 sudo sysctl -p /etc/sysctl.conf
 
-# Tailscale
-curl -fsSL https://tailscale.com/install.sh | sh
+# WSL2 上不安装 Tailscale / ZeroTier
+if grep -qi microsoft /proc/version 2>/dev/null; then
+  echo "WSL2 detected; skipping Tailscale and ZeroTier installation." >&2
+else
+  # Tailscale
+  curl -fsSL https://tailscale.com/install.sh | sh
 
-# ZeroTier
-curl -s https://install.zerotier.com | sudo bash
+  # ZeroTier
+  curl -s https://install.zerotier.com | sudo bash
+fi
 {{- end -}}
