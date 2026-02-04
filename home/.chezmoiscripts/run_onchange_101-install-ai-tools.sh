@@ -6,6 +6,9 @@ if [ -n "${VPS:-}" ]; then
   exit 0
 fi
 
+# claude-code 使用官方安装脚本
+curl -fsSL https://claude.ai/install.sh | bash
+
 NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 
 # shellcheck disable=SC1090
@@ -25,7 +28,7 @@ if ! command -v npm >/dev/null 2>&1; then
   exit 1
 fi
 
-npm install -g @openai/codex @anthropic-ai/claude-code opencommit
+npm install -g @openai/codex opencommit
 
 if ! command -v uv >/dev/null 2>&1; then
   if ! command -v curl >/dev/null 2>&1; then
