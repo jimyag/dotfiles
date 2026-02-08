@@ -6,6 +6,10 @@ if [ -n "${VPS:-}" ]; then
   exit 0
 fi
 
+# 同一次 chezmoi 里若先装了 rustup，需先加载 cargo 环境再检查
+# shellcheck disable=SC1090
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
 BIN_DIR="$HOME/.local/bin"
 mkdir -p "$BIN_DIR"
 
@@ -67,11 +71,9 @@ if [ -n "${platform:-}" ]; then
   fi
 fi
 
-# tlrc (cargo) — 与原 run_onchange_020-install-rust-bin 一致：无 cargo 则 exit 1
+# tlrc (cargo) — 无 cargo 则 exit 1（上方已 source .cargo/env）
 if ! command -v cargo >/dev/null 2>&1; then
   echo "cargo not found; run rustup install first" >&2
   exit 1
 fi
-# shellcheck disable=SC1090
-[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 cargo install tlrc --locked

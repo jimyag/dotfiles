@@ -2,16 +2,18 @@
 
 ## 一键安装
 
+安装脚本需 **bash** 执行（管道安装请使用 `| bash`）。
+
 ### 本地环境安装
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | bash
 ```
 
 或者使用 wget：
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | sh
+wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | bash
 ```
 
 ### VPS 环境安装
@@ -19,13 +21,13 @@ wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | sh
 在 VPS 上安装时，设置 `VPS=1` 环境变量以跳过某些开发工具的安装：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | VPS=1 sh
+curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | VPS=1 bash
 ```
 
 或者：
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | VPS=1 sh
+wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | VPS=1 bash
 ```
 
 ### 从本地仓库安装
@@ -52,49 +54,49 @@ VPS=1 ./install.sh
 **仅要求 sudo，不创建用户（默认行为）：**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | bash
 ```
 
 或者使用 wget：
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | sh
+wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | bash
 ```
 
 **创建用户 jimyag 并写入其 GitHub 公钥：**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=jimyag GITHUB_USER=jimyag sh
+curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=jimyag GITHUB_USER=jimyag bash
 ```
 
 或者使用 wget：
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=jimyag GITHUB_USER=jimyag sh
+wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=jimyag GITHUB_USER=jimyag bash
 ```
 
 **创建自定义用户并写入其 GitHub 公钥（示例：myuser）：**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=myuser GITHUB_USER=myuser sh
+curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=myuser GITHUB_USER=myuser bash
 ```
 
 或者使用 wget：
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=myuser GITHUB_USER=myuser sh
+wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=myuser GITHUB_USER=myuser bash
 ```
 
 **只创建用户 jimyag，不拉取 GitHub 公钥：**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=jimyag sh
+curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=jimyag bash
 ```
 
 或者使用 wget：
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=jimyag sh
+wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | CREATE_USER=jimyag bash
 ```
 
 **从本地仓库安装时：**

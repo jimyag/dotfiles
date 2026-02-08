@@ -1,6 +1,6 @@
-#!/bin/sh
-
-set -e # -e: exit on error
+#!/bin/bash
+# 需 bash（若用 curl 安装请：curl ... | bash）
+set -e
 
 # 必须由具备 sudo 权限的用户执行
 if ! sudo -n true 2>/dev/null; then
@@ -8,96 +8,103 @@ if ! sudo -n true 2>/dev/null; then
   exit 1
 fi
 
-if [ ! "$(command -v chezmoi)" ]; then
-  bin_dir="$HOME/.local/bin"
-  chezmoi="$bin_dir/chezmoi"
-  if [ "$(command -v curl)" ]; then
-    sh -c "$(curl -fsSL https://git.io/chezmoi)" -- -b "$bin_dir"
-  elif [ "$(command -v wget)" ]; then
-    sh -c "$(wget -qO- https://git.io/chezmoi)" -- -b "$bin_dir"
-  else
-    echo "To install chezmoi, you must have curl or wget installed." >&2
-    exit 1
-  fi
-else
-  chezmoi=chezmoi
-fi
-
-# POSIX way to get script's dir: https://stackoverflow.com/a/29834779/12156188
-script_dir="$(cd -P -- "$(dirname -- "$(command -v -- "$0")")" && pwd -P)"
-
-# Support environment variables for configuration
-# CHEZMOI_SOURCE: local source directory (overrides script_dir)
-# CHEZMOI_REPO: GitHub username or repo URL (e.g., "jimyag" or "github.com/jimyag/dotfiles")
-# VPS: set to non-empty value to skip certain installations on VPS hosts
-# CREATE_USER: 在 Linux 上创建带 sudo 的用户，值为用户名，默认为 jimyag（仅 Linux，macOS 不创建用户）
-# GITHUB_USER: 指定时将该 GitHub 用户的公钥写入对应用户的 ~/.ssh/authorized_keys，默认不拉取
-# If both CHEZMOI_SOURCE and CHEZMOI_REPO are set, CHEZMOI_SOURCE takes precedence
-
-# Export VPS variable so it's available to chezmoi scripts
+# 环境变量说明见下方，先统一导出
 export VPS="${VPS:-}"
-
-# 仅 Linux 且 CREATE_USER 非空时：创建用户（useradd）或用户已存在时仅更新 SSH 授权
-add_user="${CREATE_USER:-jimyag}"
-# 用户名禁止含 /、..、空格，避免路径穿越与 useradd 异常
-case "$add_user" in
-  */*|*..*|*' '*|'')
-    [ -n "${CREATE_USER:-}" ] && [ "$(uname)" = "Linux" ] && echo "CREATE_USER 含非法字符或为空，跳过创建用户。" >&2
-    ;;
-  *)
-if [ -n "${CREATE_USER:-}" ] && [ "$(uname)" = "Linux" ]; then
-  if ! id "$add_user" >/dev/null 2>&1; then
-    sudo useradd -m -s /bin/bash "$add_user"
-    echo "$add_user ALL=(ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/$add_user" >/dev/null
-  fi
-  if [ -n "${GITHUB_USER:-}" ]; then
-    keys_url="https://github.com/${GITHUB_USER}.keys"
-    user_home=$(getent passwd "$add_user" 2>/dev/null | cut -d: -f6) || user_home="/home/$add_user"
-    ssh_dir="$user_home/.ssh"
-    auth_keys="$ssh_dir/authorized_keys"
-    if [ -d "$user_home" ]; then
-      sudo mkdir -p "$ssh_dir"
-      sudo chmod 700 "$ssh_dir"
-      if [ "$(command -v curl)" ]; then
-        if curl -fsSL "$keys_url" | sudo tee "$auth_keys" >/dev/null; then
-          sudo chmod 600 "$auth_keys"
-          sudo chown -R "$add_user:$add_user" "$ssh_dir"
-        else
-          echo "拉取 GitHub 公钥失败，跳过 GITHUB_USER。" >&2
-        fi
-      elif [ "$(command -v wget)" ]; then
-        if wget -qO- "$keys_url" | sudo tee "$auth_keys" >/dev/null; then
-          sudo chmod 600 "$auth_keys"
-          sudo chown -R "$add_user:$add_user" "$ssh_dir"
-        else
-          echo "拉取 GitHub 公钥失败，跳过 GITHUB_USER。" >&2
-        fi
-      else
-        echo "需要 curl 或 wget 以拉取 GitHub 公钥，跳过 GITHUB_USER。" >&2
-      fi
-    fi
-  fi
-fi
-;;
-esac
-
-# Disable git config to use HTTPS instead of SSH for chezmoi operations
-# This prevents "Permission denied (publickey)" errors when updating chezmoi
-# on systems without SSH keys configured
 export GIT_CONFIG_GLOBAL=/dev/null
 export GIT_CONFIG_SYSTEM=/dev/null
 export GIT_CONFIG_NOSYSTEM=1
 
-if [ -n "${CHEZMOI_SOURCE:-}" ]; then
-  # Use specified source directory
-  exec "$chezmoi" init --apply "--source=$CHEZMOI_SOURCE"
-elif [ -n "${CHEZMOI_REPO:-}" ]; then
-  # Use specified GitHub repo or username
-  exec "$chezmoi" init --apply "$CHEZMOI_REPO"
-elif [ -d "$script_dir/home" ] || [ -d "$script_dir/.chezmoiscripts" ]; then
-  # Auto-detect: if script is in a chezmoi source directory, use it
-  exec "$chezmoi" init --apply "--source=$script_dir"
-else
-  # Default: use GitHub username
-  exec "$chezmoi" init --apply jimyag
+# CHEZMOI_SOURCE: 本地 dotfiles 目录
+# CHEZMOI_REPO: GitHub 用户名或仓库 URL
+# CREATE_USER: Linux 上要创建的用户名（如 jimyag），非空则先创建用户再切到该用户执行 chezmoi
+# GITHUB_USER: 将该 GitHub 用户的公钥写入对应用户 ~/.ssh/authorized_keys
+
+add_user="${CREATE_USER:-jimyag}"
+
+# 安装 chezmoi 到当前用户的 ~/.local/bin（若尚未安装）
+ensure_chezmoi() {
+  if command -v chezmoi >/dev/null 2>&1; then return; fi
+  local bin_dir="${HOME:?}/.local/bin"
+  mkdir -p "$bin_dir"
+  if command -v curl >/dev/null 2>&1; then
+    sh -c "$(curl -fsSL https://git.io/chezmoi)" -- -b "$bin_dir"
+  elif command -v wget >/dev/null 2>&1; then
+    sh -c "$(wget -qO- https://git.io/chezmoi)" -- -b "$bin_dir"
+  else
+    echo "To install chezmoi, you need curl or wget." >&2
+    exit 1
+  fi
+}
+
+# 执行 chezmoi init --apply（依赖 CHEZMOI_SOURCE / CHEZMOI_REPO / SCRIPT_DIR）
+run_chezmoi_apply() {
+  export PATH="${HOME:?}/.local/bin:$PATH"
+  ensure_chezmoi
+  if [ -n "${CHEZMOI_SOURCE:-}" ]; then
+    exec chezmoi init --apply "--source=$CHEZMOI_SOURCE"
+  fi
+  if [ -n "${CHEZMOI_REPO:-}" ]; then
+    exec chezmoi init --apply "$CHEZMOI_REPO"
+  fi
+  if [ -n "${SCRIPT_DIR:-}" ] && { [ -d "$SCRIPT_DIR/home" ] || [ -d "$SCRIPT_DIR/.chezmoiscripts" ]; }; then
+    exec chezmoi init --apply "--source=$SCRIPT_DIR"
+  fi
+  exec chezmoi init --apply jimyag
+}
+
+# 创建用户并配置 SSH 公钥（仅 Linux，CREATE_USER 非空时）
+create_user_and_ssh() {
+  local u="$1"
+  local keys_url user_home ssh_dir auth_keys
+
+  if ! id "$u" >/dev/null 2>&1; then
+    sudo useradd -m -s /bin/bash "$u"
+    echo "$u ALL=(ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/$u" >/dev/null
+  fi
+
+  if [ -z "${GITHUB_USER:-}" ]; then return; fi
+  keys_url="https://github.com/${GITHUB_USER}.keys"
+  user_home=$(getent passwd "$u" 2>/dev/null | cut -d: -f6) || user_home="/home/$u"
+  ssh_dir="$user_home/.ssh"
+  auth_keys="$ssh_dir/authorized_keys"
+  [ ! -d "$user_home" ] && return
+
+  sudo mkdir -p "$ssh_dir"
+  sudo chmod 700 "$ssh_dir"
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL "$keys_url" | sudo tee "$auth_keys" >/dev/null || { echo "拉取 GitHub 公钥失败。" >&2; return; }
+  elif command -v wget >/dev/null 2>&1; then
+    wget -qO- "$keys_url" | sudo tee "$auth_keys" >/dev/null || { echo "拉取 GitHub 公钥失败。" >&2; return; }
+  else
+    echo "需要 curl 或 wget 以拉取 GitHub 公钥。" >&2
+    return
+  fi
+  sudo chmod 600 "$auth_keys"
+  sudo chown -R "$u:$u" "$ssh_dir"
+}
+
+# 用户名合法：不含 /、..、空格
+is_valid_username() {
+  case "$1" in
+    */*|*..*|*' '*|'') return 1 ;;
+    *) return 0 ;;
+  esac
+}
+
+# --- 主流程 ---
+if [ -n "${CREATE_USER:-}" ] && [ "$(uname)" = "Linux" ] && is_valid_username "$add_user"; then
+  create_user_and_ssh "$add_user"
+  target_home=$(getent passwd "$add_user" 2>/dev/null | cut -d: -f6) || target_home="/home/$add_user"
+  exec sudo -u "$add_user" env \
+    HOME="$target_home" USER="$add_user" LOGNAME="$add_user" \
+    VPS="$VPS" CHEZMOI_SOURCE="${CHEZMOI_SOURCE:-}" CHEZMOI_REPO="${CHEZMOI_REPO:-}" \
+    GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_CONFIG_NOSYSTEM=1 \
+    bash -c 'source /dev/stdin' << DECLARE_AND_RUN
+$(declare -f ensure_chezmoi run_chezmoi_apply)
+run_chezmoi_apply
+DECLARE_AND_RUN
 fi
+
+# 不创建用户：在当前用户下执行
+SCRIPT_DIR="$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")" && pwd -P)"
+run_chezmoi_apply
