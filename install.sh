@@ -91,13 +91,16 @@ is_valid_username() {
   esac
 }
 
+# 当前脚本目录（用于本地仓库自动探测）
+SCRIPT_DIR="$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")" && pwd -P)"
+
 # --- 主流程 ---
 if [ -n "${CREATE_USER:-}" ] && [ "$(uname)" = "Linux" ] && is_valid_username "$add_user"; then
   create_user_and_ssh "$add_user"
   target_home=$(getent passwd "$add_user" 2>/dev/null | cut -d: -f6) || target_home="/home/$add_user"
   exec sudo -u "$add_user" env \
     HOME="$target_home" USER="$add_user" LOGNAME="$add_user" \
-    VPS="$VPS" CHEZMOI_SOURCE="${CHEZMOI_SOURCE:-}" CHEZMOI_REPO="${CHEZMOI_REPO:-}" \
+    VPS="$VPS" CHEZMOI_SOURCE="${CHEZMOI_SOURCE:-}" CHEZMOI_REPO="${CHEZMOI_REPO:-}" SCRIPT_DIR="$SCRIPT_DIR" \
     GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_CONFIG_NOSYSTEM=1 \
     bash -c 'source /dev/stdin' << DECLARE_AND_RUN
 $(declare -f ensure_chezmoi run_chezmoi_apply)
@@ -105,6 +108,9 @@ run_chezmoi_apply
 DECLARE_AND_RUN
 fi
 
+if [ -n "${CREATE_USER:-}" ] && [ "$(uname)" = "Linux" ] && ! is_valid_username "$add_user"; then
+  echo "CREATE_USER 含非法字符或为空，跳过创建用户。" >&2
+fi
+
 # 不创建用户：在当前用户下执行
-SCRIPT_DIR="$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")" && pwd -P)"
 run_chezmoi_apply
