@@ -102,7 +102,7 @@ if [ -n "${CREATE_USER:-}" ] && [ "$(uname)" = "Linux" ] && is_valid_username "$
     HOME="$target_home" USER="$add_user" LOGNAME="$add_user" \
     VPS="$VPS" CHEZMOI_SOURCE="${CHEZMOI_SOURCE:-}" CHEZMOI_REPO="${CHEZMOI_REPO:-}" SCRIPT_DIR="$SCRIPT_DIR" \
     GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_CONFIG_NOSYSTEM=1 \
-    bash -c 'source /dev/stdin' << DECLARE_AND_RUN
+    bash -s << DECLARE_AND_RUN
 $(declare -f ensure_chezmoi run_chezmoi_apply)
 run_chezmoi_apply
 DECLARE_AND_RUN

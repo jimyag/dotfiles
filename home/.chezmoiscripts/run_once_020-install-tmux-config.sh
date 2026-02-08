@@ -9,5 +9,7 @@ fi
 
 # Install .tmux configuration (will overwrite existing configuration)
 echo "Installing .tmux configuration..." >&2
-curl -fsSL "https://github.com/gpakosz/.tmux/raw/refs/heads/master/install.sh#$(date +%s)" | bash
-
+tmp_install_script="$(mktemp)"
+trap 'rm -f "$tmp_install_script"' EXIT
+curl -fsSL "https://raw.githubusercontent.com/gpakosz/.tmux/master/install.sh?ts=$(date +%s)" -o "$tmp_install_script"
+bash "$tmp_install_script" </dev/null
