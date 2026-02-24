@@ -1,0 +1,70 @@
+function gwl() {
+  # Enhanced git worktree list: shows PR and issue titles for each worktree
+  local worktrees nwo repo_url
+  worktrees=$(git worktree list 2>/dev/null)
+  if [[ -z "$worktrees" ]]; then
+    echo "Not in a git repository or no worktrees found."
+    return 1
+  fi
+
+  # Determine owner/repo from remote
+  repo_url=$(git remote get-url upstream 2>/dev/null || git remote get-url origin 2>/dev/null)
+  if [[ -z "$repo_url" ]]; then
+    git worktree list
+    return
+  fi
+  nwo=$(echo "$repo_url" | sed -E 's#^(https?://[^/]+/|git@[^:]+:)##; s#\.git$##')
+
+  # Collect worktree info
+  local -a wt_paths wt_branches
+  local wt_path wt_branch
+  while IFS= read -r line; do
+    wt_path=${line%% *}
+    wt_branch=$(echo "$line" | grep -oP '\[\K[^\]]+')
+    wt_paths+=("$wt_path")
+    wt_branches+=("$wt_branch")
+  done <<< "$worktrees"
+
+  # Batch fetch all open PRs (one API call)
+  local pr_json
+  pr_json=$(gh pr list --repo "$nwo" --state open --json headRefName,title,number --limit 100 2>/dev/null || echo "[]")
+
+  # Declare all loop variables outside the loop to avoid zsh printing assignments
+  local -a rows_path rows_branch rows_issue rows_pr
+  local idx p b short_path issue_title pr_title found found_issue issue_num
+
+  for idx in $(seq 1 ${#wt_paths[@]}); do
+    p="${wt_paths[$idx]}"
+    b="${wt_branches[$idx]}"
+    short_path="${p/#$HOME/~}"
+    issue_title="-"
+    pr_title="-"
+
+    # Look up PR title from batch result
+    if [[ -n "$b" && -n "$pr_json" ]]; then
+      found=$(echo "$pr_json" | jq -r --arg branch "$b" '.[] | select(.headRefName == $branch) | "#\(.number) \(.title)"' 2>/dev/null)
+      [[ -n "$found" ]] && pr_title="$found"
+    fi
+
+    # Look up issue title if branch matches issue-<N>
+    if [[ "$b" =~ ^issue-([0-9]+)$ ]]; then
+      issue_num="${match[1]}"
+      found_issue=$(gh issue view "$issue_num" --repo "$nwo" --json title,number --jq '"#\(.number) \(.title)"' 2>/dev/null || true)
+      [[ -n "$found_issue" ]] && issue_title="$found_issue"
+    fi
+
+    rows_path+=("$short_path")
+    rows_branch+=("$b")
+    rows_issue+=("$issue_title")
+    rows_pr+=("$pr_title")
+  done
+
+  # Print as table piped through column for alignment
+  {
+    echo "PATH|BRANCH|ISSUE|PR"
+    echo "----|------|-----|--"
+    for idx in $(seq 1 ${#rows_path[@]}); do
+      echo "${rows_path[$idx]}|${rows_branch[$idx]}|${rows_issue[$idx]}|${rows_pr[$idx]}"
+    done
+  } | column -t -s '|'
+}
