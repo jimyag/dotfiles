@@ -1,0 +1,42 @@
+tmuxdev() {
+    if ! command -v tmux >/dev/null 2>&1; then
+        echo "tmux is not installed"
+        return 1
+    fi
+
+    local session="${1:-tmuxdev}"
+    local dir="$PWD"
+    local windows=(codex gemini cursor)
+    local w
+    local cmd
+    local created_session=0
+
+    if ! tmux has-session -t "$session" 2>/dev/null; then
+        tmux new-session -d -s "$session" -n "${windows[1]}" -c "$dir"
+        created_session=1
+    fi
+
+    for w in "${windows[@]}"; do
+        cmd=""
+        case "$w" in
+            codex) cmd="codex" ;;
+            gemini) cmd="gemini" ;;
+            cursor) cmd="agent" ;;
+        esac
+
+        if ! tmux list-windows -t "$session" -F "#{window_name}" | grep -Fxq "$w"; then
+            tmux new-window -t "$session" -n "$w" -c "$dir"
+            if [[ -n "$cmd" ]]; then
+                tmux send-keys -t "$session:$w" "$cmd" C-m
+            fi
+        elif [[ $created_session -eq 1 && "$w" == "codex" && -n "$cmd" ]]; then
+            tmux send-keys -t "$session:$w" "$cmd" C-m
+        fi
+    done
+
+    if [[ -n "${TMUX:-}" ]]; then
+        tmux switch-client -t "$session"
+    else
+        tmux attach-session -t "$session"
+    fi
+}
