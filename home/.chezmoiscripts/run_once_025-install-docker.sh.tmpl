@@ -1,0 +1,43 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -euo pipefail
+
+run_with_privileges() {
+  if [ "${EUID:-$(id -u)}" -eq 0 ]; then
+    "$@"
+  elif command -v sudo >/dev/null 2>&1; then
+    sudo "$@"
+  else
+    echo "Command '$*' requires elevated privileges." >&2
+    exit 1
+  fi
+}
+
+if command -v docker >/dev/null 2>&1; then
+  echo "docker already installed, skipping" >&2
+  exit 0
+fi
+
+tmp_script="$(mktemp)"
+trap 'rm -f "$tmp_script"' EXIT
+
+if command -v curl >/dev/null 2>&1; then
+  curl -fsSL https://get.docker.com -o "$tmp_script"
+elif command -v wget >/dev/null 2>&1; then
+  wget -qO "$tmp_script" https://get.docker.com
+else
+  echo "curl or wget is required to download docker installer." >&2
+  exit 1
+fi
+
+run_with_privileges sh "$tmp_script"
+
+# If script is not executed by root, add current user to docker group.
+if [ "${EUID:-$(id -u)}" -ne 0 ] && command -v getent >/dev/null 2>&1 && getent group docker >/dev/null 2>&1; then
+  current_user="$(id -un)"
+  if ! id -nG "$current_user" | tr ' ' '\n' | grep -qx docker; then
+    sudo usermod -aG docker "$current_user"
+    echo "Added $current_user to docker group. Re-login is required." >&2
+  fi
+fi
+{{- end -}}

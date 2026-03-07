@@ -1,0 +1,30 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -euo pipefail
+
+if ! command -v docker >/dev/null 2>&1; then
+  exit 0
+fi
+
+if ! command -v getent >/dev/null 2>&1 || ! getent group docker >/dev/null 2>&1; then
+  exit 0
+fi
+
+if [ "${EUID:-$(id -u)}" -eq 0 ]; then
+  # Root session has no stable non-root target user here.
+  exit 0
+fi
+
+current_user="$(id -un)"
+if id -nG "$current_user" | tr ' ' '\n' | grep -qx docker; then
+  exit 0
+fi
+
+if ! command -v sudo >/dev/null 2>&1; then
+  echo "sudo not available; cannot add $current_user to docker group automatically." >&2
+  exit 0
+fi
+
+sudo usermod -aG docker "$current_user"
+echo "Added $current_user to docker group. Re-login is required." >&2
+{{- end -}}
