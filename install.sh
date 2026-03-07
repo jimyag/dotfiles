@@ -40,6 +40,8 @@ ensure_chezmoi() {
 run_chezmoi_apply() {
   export PATH="${HOME:?}/.local/bin:$PATH"
   ensure_chezmoi
+  # 避免继承到无权限工作目录（如 /root），导致 chezmoi 启动时 stat . 失败
+  cd "${HOME:?}"
   if [ -n "${CHEZMOI_SOURCE:-}" ]; then
     exec chezmoi init --apply "--source=$CHEZMOI_SOURCE"
   fi
