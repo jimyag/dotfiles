@@ -19,9 +19,20 @@ function gwl() {
   local -a wt_paths wt_branches
   local wt_path wt_branch
   while IFS= read -r line; do
-    wt_path=${line%% *}
-    wt_branch=$(echo "$line" | grep -oP '\[\K[^\]]+')
-    wt_paths+=("$wt_path")
+    [[ -z "$line" ]] && continue
+    # Extract path and branch using Zsh native regex
+    # Format: /path/to/repo hash [branch]
+    if [[ "$line" =~ ^(.*)\ +[0-9a-f]+\ +\[(.+)\]$ ]]; then
+      wt_path="${match[1]}"
+      wt_branch="${match[2]}"
+    elif [[ "$line" =~ ^([^ ]+)\ +[0-9a-f]+ ]]; then
+      wt_path="${match[1]}"
+      wt_branch=""
+    else
+      wt_path=${line%% *}
+      wt_branch=""
+    fi
+    wt_paths+=("${wt_path//[[:space:]]*$//}")
     wt_branches+=("$wt_branch")
   done <<< "$worktrees"
 
