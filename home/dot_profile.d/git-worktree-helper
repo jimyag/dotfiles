@@ -30,9 +30,9 @@ function gwl() {
   # Add the last one
   [[ -n "$current_path" ]] && { wt_paths+=("$current_path"); wt_branches+=("$current_branch"); }
 
-  # Batch fetch all open PRs (one API call)
+  # Batch fetch all PRs (including merged/closed)
   local pr_json
-  pr_json=$(gh pr list --repo "$nwo" --state open --json headRefName,title,number --limit 100 2>/dev/null || echo "[]")
+  pr_json=$(gh pr list --repo "$nwo" --state all --json headRefName,title,number,state --limit 100 2>/dev/null || echo "[]")
 
   # Declare all loop variables outside the loop to avoid zsh printing assignments
   local -a rows_path rows_branch rows_issue rows_pr
@@ -47,7 +47,8 @@ function gwl() {
 
     # Look up PR title from batch result
     if [[ -n "$b" && -n "$pr_json" ]]; then
-      found=$(echo "$pr_json" | jq -r --arg branch "$b" '.[] | select(.headRefName == $branch) | "#\(.number) \(.title)"' 2>/dev/null)
+      # Add [M] for Merged, [C] for Closed, and nothing for Open
+      found=$(echo "$pr_json" | jq -r --arg branch "$b" '.[] | select(.headRefName == $branch) | (if .state == "MERGED" then "[M] " elif .state == "CLOSED" then "[C] " else "" end) + "#\(.number) \(.title)"' 2>/dev/null)
       [[ -n "$found" ]] && pr_title="$found"
     fi
 
