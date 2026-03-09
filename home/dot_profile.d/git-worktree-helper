@@ -17,24 +17,18 @@ function gwl() {
 
   # Collect worktree info
   local -a wt_paths wt_branches
-  local wt_path wt_branch
+  local current_path current_branch
   while IFS= read -r line; do
-    [[ -z "$line" ]] && continue
-    # Extract path and branch using Zsh native regex
-    # Format: /path/to/repo hash [branch]
-    if [[ "$line" =~ ^(.*)\ +[0-9a-f]+\ +\[(.+)\]$ ]]; then
-      wt_path="${match[1]}"
-      wt_branch="${match[2]}"
-    elif [[ "$line" =~ ^([^ ]+)\ +[0-9a-f]+ ]]; then
-      wt_path="${match[1]}"
-      wt_branch=""
-    else
-      wt_path=${line%% *}
-      wt_branch=""
+    if [[ "$line" =~ ^worktree\ (.*)$ ]]; then
+      [[ -n "$current_path" ]] && { wt_paths+=("$current_path"); wt_branches+=("$current_branch"); }
+      current_path="${match[1]}"
+      current_branch="-"
+    elif [[ "$line" =~ ^branch\ refs/heads/(.*)$ ]]; then
+      current_branch="${match[1]}"
     fi
-    wt_paths+=("${wt_path//[[:space:]]*$//}")
-    wt_branches+=("$wt_branch")
-  done <<< "$worktrees"
+  done <<< "$(git worktree list --porcelain)"
+  # Add the last one
+  [[ -n "$current_path" ]] && { wt_paths+=("$current_path"); wt_branches+=("$current_branch"); }
 
   # Batch fetch all open PRs (one API call)
   local pr_json
