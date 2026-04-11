@@ -9,3 +9,42 @@ alias ....='cd ../../../..'
 alias .....='cd ../../../../..'
 alias untar='tar -zxvf'
 alias gotest='GORACE=atexit_sleep_ms=0 go test -v -trimpath -failfast -race'
+
+function golint() {
+	local raw_target="${1:-}"
+	local package_target="./..."
+	local path_target="."
+
+	if [[ -n "$raw_target" ]]; then
+		path_target="$raw_target"
+		if [[ "$path_target" != ./* && "$path_target" != /* && "$path_target" != "~"* ]]; then
+			path_target="./$path_target"
+		fi
+
+		if [[ "$path_target" == "./..." || "$path_target" == "..." ]]; then
+			path_target="."
+			package_target="./..."
+		elif [[ "$path_target" == */... ]]; then
+			package_target="$path_target"
+			path_target="${path_target%/...}"
+		else
+			path_target="${path_target%/}"
+			package_target="$path_target"
+			if [[ -d "$path_target" ]]; then
+				package_target="$path_target/..."
+			fi
+		fi
+	fi
+
+	echo "running staticcheck $package_target"
+	staticcheck "$package_target"
+
+	echo "running gofumpt $path_target"
+	gofumpt -w "$path_target"
+
+	echo "running goimports $path_target"
+	goimports -l -w "$path_target"
+
+	echo "running go vet $package_target"
+	go vet "$package_target"
+}
