@@ -49,6 +49,8 @@ export GOROOT_BOOTSTRAP="$HOME/.go/gobootstrap"
 [[ $commands[task] ]] && source <(task --completion zsh)
 [[ $commands[chezmoi] ]] && source <(chezmoi completion zsh)
 [[ $commands[kubebuilder] ]] && source <(kubebuilder completion zsh)
+[[ $commands[virtctl] ]] && source <(virtctl completion zsh)
+[[ $commands[jd] ]] && source <(jd completion zsh)
 # completion source end
 
 # opencode
@@ -68,3 +70,6 @@ esac
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# CodeFlicker CLI
+export PATH="$PATH:$HOME/.codeflicker/cli/bin"
