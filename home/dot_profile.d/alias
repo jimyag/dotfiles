@@ -39,6 +39,9 @@ function golint() {
 	echo "running staticcheck $package_target"
 	staticcheck "$package_target"
 
+	echo "running gofmt $path_target"
+	gofmt -s -w "$path_target"
+
 	echo "running gofumpt $path_target"
 	gofumpt -w "$path_target"
 
