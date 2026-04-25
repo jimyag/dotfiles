@@ -26,11 +26,12 @@ function git_clean_branch(){
 }
 
 function tmux_attach_or_new(){
-  if [[ -z $1 ]]; then
-    echo "Usage: tmux_attach_or_new <session_name>"
-    return
+  # 无参数时用当前目录名作会话名；$PWD 为 / 时 ${PWD##*/} 为空，需兜底
+  local name="${1:-${PWD##*/}}"
+  if [[ -z $name ]]; then
+    name="root"
   fi
-  tmux new -A -s "$1"
+  tmux new -A -s "$name"
 }
 
 function t(){
