@@ -13,6 +13,26 @@ fi
 NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 export NVM_DIR
 
+sanitize_npmrc_for_nvm() {
+  local npmrc backup
+  npmrc="${HOME:?}/.npmrc"
+  backup="${npmrc}.pre-nvm-backup"
+
+  [ -f "$npmrc" ] || return 0
+
+  if ! grep -Eq '^[[:space:]]*(prefix|globalconfig)[[:space:]]*=' "$npmrc"; then
+    return 0
+  fi
+
+  cp "$npmrc" "$backup"
+  grep -Ev '^[[:space:]]*(prefix|globalconfig)[[:space:]]*=' "$backup" >"$npmrc"
+  echo "removed incompatible prefix/globalconfig from $npmrc for nvm; backup at $backup" >&2
+}
+
+if [ "${CHEZMOI_TEST_MODE:-}" = "1" ]; then
+  return 0
+fi
+
 if [ ! -d "$NVM_DIR/.git" ]; then
   if [ -e "$NVM_DIR" ]; then
     echo "nvm directory exists but is not a git repo: $NVM_DIR" >&2
@@ -39,5 +59,6 @@ else
   exit 1
 fi
 
+sanitize_npmrc_for_nvm
 nvm install node
 nvm alias default node
