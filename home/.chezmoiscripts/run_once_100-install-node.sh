@@ -13,6 +13,21 @@ fi
 NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 export NVM_DIR
 
+sanitize_npmrc_for_nvm() {
+  local npmrc tmp
+  npmrc="${HOME:?}/.npmrc"
+
+  [ -f "$npmrc" ] || return 0
+  if ! grep -Eq '^[[:space:]]*(prefix|globalconfig)[[:space:]]*=' "$npmrc"; then
+    return 0
+  fi
+
+  tmp="$(mktemp)"
+  grep -Ev '^[[:space:]]*(prefix|globalconfig)[[:space:]]*=' "$npmrc" >"$tmp"
+  cat "$tmp" >"$npmrc"
+  rm -f "$tmp"
+}
+
 unset_nvm_incompatible_npm_env() {
   local name
   unset PREFIX
@@ -47,6 +62,8 @@ else
   exit 1
 fi
 
+cd "${HOME:?}"
+sanitize_npmrc_for_nvm
 unset_nvm_incompatible_npm_env
 nvm install --delete-prefix node
 nvm alias default node
