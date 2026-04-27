@@ -23,9 +23,8 @@ sanitize_npmrc_for_nvm() {
   fi
 
   tmp="$(mktemp)"
-  grep -Ev '^[[:space:]]*(prefix|globalconfig)[[:space:]]*=' "$npmrc" >"$tmp"
-  cat "$tmp" >"$npmrc"
-  rm -f "$tmp"
+  command awk '!/^[[:space:]]*(prefix|globalconfig)[[:space:]]*=/' "$npmrc" >"$tmp"
+  mv "$tmp" "$npmrc"
 }
 
 unset_nvm_incompatible_npm_env() {
