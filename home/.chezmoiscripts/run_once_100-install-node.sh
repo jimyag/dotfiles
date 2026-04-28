@@ -13,28 +13,6 @@ fi
 NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 export NVM_DIR
 
-sanitize_npmrc_for_nvm() {
-  local npmrc tmp
-  npmrc="${HOME:?}/.npmrc"
-
-  [ -f "$npmrc" ] || return 0
-  if ! grep -Eq '^[[:space:]]*(prefix|globalconfig)[[:space:]]*=' "$npmrc"; then
-    return 0
-  fi
-
-  tmp="$(mktemp)"
-  command awk '!/^[[:space:]]*(prefix|globalconfig)[[:space:]]*=/' "$npmrc" >"$tmp"
-  mv "$tmp" "$npmrc"
-}
-
-unset_nvm_incompatible_npm_env() {
-  local name
-  unset PREFIX
-  while IFS= read -r name; do
-    unset "$name"
-  done < <(command awk 'BEGIN { for (name in ENVIRON) if (toupper(name) == "NPM_CONFIG_PREFIX") print name }')
-}
-
 if [ ! -d "$NVM_DIR/.git" ]; then
   if [ -e "$NVM_DIR" ]; then
     echo "nvm directory exists but is not a git repo: $NVM_DIR" >&2
@@ -61,8 +39,5 @@ else
   exit 1
 fi
 
-cd "${HOME:?}"
-sanitize_npmrc_for_nvm
-unset_nvm_incompatible_npm_env
-nvm install --delete-prefix node
+nvm install node
 nvm alias default node
