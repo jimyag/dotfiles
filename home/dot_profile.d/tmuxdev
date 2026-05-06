@@ -4,33 +4,52 @@ tmuxdev() {
         return 1
     fi
 
-    local session="${1:-tmuxdev}"
+    local session="${1:-${PWD##*/}}"
+    if [[ -z $session ]]; then
+        session="root"
+    fi
+
     local dir="$PWD"
-    local windows=(codex gemini cursor)
-    local w
+    local specs=(
+        "claude:claude"
+        "codex:codex"
+        "gemini:gemini"
+        "cursor-agent:agent"
+        "copilot:copilot"
+    )
+    local available_specs=()
+    local spec
+    local window
     local cmd
     local created_session=0
 
+    for spec in "${specs[@]}"; do
+        window="${spec%%:*}"
+        cmd="${spec#*:}"
+        if command -v "$cmd" >/dev/null 2>&1; then
+            available_specs+=("$spec")
+        fi
+    done
+
+    local first_window="$session"
+    if [[ ${#available_specs[@]} -gt 0 ]]; then
+        first_window="${available_specs[1]%%:*}"
+    fi
+
     if ! tmux has-session -t "$session" 2>/dev/null; then
-        tmux new-session -d -s "$session" -n "${windows[1]}" -c "$dir"
+        tmux new-session -d -s "$session" -n "$first_window" -c "$dir"
         created_session=1
     fi
 
-    for w in "${windows[@]}"; do
-        cmd=""
-        case "$w" in
-            codex) cmd="codex" ;;
-            gemini) cmd="gemini" ;;
-            cursor) cmd="agent" ;;
-        esac
+    for spec in "${available_specs[@]}"; do
+        window="${spec%%:*}"
+        cmd="${spec#*:}"
 
-        if ! tmux list-windows -t "$session" -F "#{window_name}" | grep -Fxq "$w"; then
-            tmux new-window -t "$session" -n "$w" -c "$dir"
-            if [[ -n "$cmd" ]]; then
-                tmux send-keys -t "$session:$w" "$cmd" C-m
-            fi
-        elif [[ $created_session -eq 1 && "$w" == "codex" && -n "$cmd" ]]; then
-            tmux send-keys -t "$session:$w" "$cmd" C-m
+        if ! tmux list-windows -t "$session" -F "#{window_name}" | grep -Fxq "$window"; then
+            tmux new-window -t "$session" -n "$window" -c "$dir"
+            tmux send-keys -t "$session:$window" "$cmd" C-m
+        elif [[ $created_session -eq 1 && "$window" == "$first_window" ]]; then
+            tmux send-keys -t "$session:$window" "$cmd" C-m
         fi
     done
 
