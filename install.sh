@@ -2,6 +2,41 @@
 # 需 bash（若用 curl 安装请：curl ... | bash）
 set -e
 
+print_usage() {
+  cat <<'EOF'
+dotfiles install script
+
+Usage:
+  ./install.sh
+  curl -fsSL https://dotfiles.jimyag.com | CREATE_USER=jimyag GITHUB_USER=jimyag VPS=1 SET_HOSTNAME=hostname bash
+
+Common commands:
+  # Create user, add GitHub SSH keys, enable VPS mode, set hostname, then install dotfiles
+  curl -fsSL https://dotfiles.jimyag.com | CREATE_USER=jimyag GITHUB_USER=jimyag VPS=1 SET_HOSTNAME=hostname bash
+
+  # Show this help when using curl
+  curl -fsSL https://dotfiles.jimyag.com | bash -s -- --help
+
+Environment variables:
+  VPS             Enable VPS-specific dotfiles behavior when set.
+  CREATE_USER     Linux user to create and install as.
+  GITHUB_USER     GitHub username whose public keys are added to authorized_keys.
+  SET_HOSTNAME    Linux hostname to set with hostnamectl.
+  CHEZMOI_REPO    chezmoi repo name or URL. Defaults to jimyag.
+  CHEZMOI_SOURCE  Local chezmoi source directory.
+
+Notes:
+  This script requires bash and a user with sudo permission.
+EOF
+}
+
+case "${1:-}" in
+  -h|--help|help)
+    print_usage
+    exit 0
+    ;;
+esac
+
 # 必须由具备 sudo 权限的用户执行
 if ! sudo -n true 2>/dev/null; then
   echo "此脚本需要由具备 sudo 权限的用户执行，请先执行 sudo -v 或使用 sudo 运行。" >&2
