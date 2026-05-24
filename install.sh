@@ -10,6 +10,7 @@ fi
 
 # 环境变量说明见下方，先统一导出
 export VPS="${VPS:-}"
+export SET_HOSTNAME="${SET_HOSTNAME:-}"
 export GIT_CONFIG_GLOBAL=/dev/null
 export GIT_CONFIG_SYSTEM=/dev/null
 export GIT_CONFIG_NOSYSTEM=1
@@ -18,6 +19,7 @@ export GIT_CONFIG_NOSYSTEM=1
 # CHEZMOI_REPO: GitHub 用户名或仓库 URL
 # CREATE_USER: Linux 上要创建的用户名（如 jimyag），非空则先创建用户再切到该用户执行 chezmoi
 # GITHUB_USER: 将该 GitHub 用户的公钥写入对应用户 ~/.ssh/authorized_keys
+# SET_HOSTNAME: Linux 上要设置的主机名（非空则执行 hostnamectl）
 
 add_user="${CREATE_USER:-jimyag}"
 
@@ -93,16 +95,25 @@ is_valid_username() {
   esac
 }
 
+set_system_hostname() {
+  if [ -z "${SET_HOSTNAME:-}" ] || [ "$(uname)" != "Linux" ]; then return; fi
+  if ! command -v hostnamectl >/dev/null 2>&1; then return; fi
+
+  sudo hostnamectl hostname "$SET_HOSTNAME"
+}
+
 # 当前脚本目录（用于本地仓库自动探测）
 SCRIPT_DIR="$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")" && pwd -P)"
 
 # --- 主流程 ---
+set_system_hostname
+
 if [ -n "${CREATE_USER:-}" ] && [ "$(uname)" = "Linux" ] && is_valid_username "$add_user"; then
   create_user_and_ssh "$add_user"
   target_home=$(getent passwd "$add_user" 2>/dev/null | cut -d: -f6) || target_home="/home/$add_user"
   exec sudo -u "$add_user" env \
     HOME="$target_home" USER="$add_user" LOGNAME="$add_user" \
-    VPS="$VPS" CHEZMOI_SOURCE="${CHEZMOI_SOURCE:-}" CHEZMOI_REPO="${CHEZMOI_REPO:-}" SCRIPT_DIR="$SCRIPT_DIR" \
+    VPS="$VPS" SET_HOSTNAME="$SET_HOSTNAME" CHEZMOI_SOURCE="${CHEZMOI_SOURCE:-}" CHEZMOI_REPO="${CHEZMOI_REPO:-}" SCRIPT_DIR="$SCRIPT_DIR" \
     GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_CONFIG_NOSYSTEM=1 \
     bash -s << DECLARE_AND_RUN
 $(declare -f ensure_chezmoi run_chezmoi_apply)
