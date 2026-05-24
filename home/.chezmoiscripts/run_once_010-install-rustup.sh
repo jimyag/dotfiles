@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-if [ -n "${VPS:-}" ]; then
+if [ "${VPS:-}" = "1" ]; then
   echo "skip rustup installation on VPS host" >&2
   exit 0
 fi
@@ -20,4 +20,3 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 if [ -f "$HOME/.cargo/env" ]; then
   . "$HOME/.cargo/env"
 fi
-

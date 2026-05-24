@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-if [ -n "${VPS:-}" ]; then
+if [ "${VPS:-}" = "1" ]; then
   echo "skip AI tooling installation on VPS host" >&2
   exit 0
 fi

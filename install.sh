@@ -4,29 +4,20 @@ set -e
 
 print_usage() {
   cat <<'EOF'
-dotfiles install script
+dotfiles installer
 
 Usage:
-  ./install.sh
-  curl -fsSL https://dotfiles.jimyag.com | CREATE_USER=jimyag GITHUB_USER=jimyag VPS=1 SET_HOSTNAME=hostname bash
+  curl -fsSL https://dotfiles.jimyag.com | bash
 
-Common commands:
-  # Create user, add GitHub SSH keys, enable VPS mode, set hostname, then install dotfiles
-  curl -fsSL https://dotfiles.jimyag.com | CREATE_USER=jimyag GITHUB_USER=jimyag VPS=1 SET_HOSTNAME=hostname bash
+Full install:
+  curl -fsSL https://dotfiles.jimyag.com | VPS=0 bash
 
-  # Show this help when using curl
+Help:
   curl -fsSL https://dotfiles.jimyag.com | bash -s -- --help
 
-Environment variables:
-  VPS             Enable VPS-specific dotfiles behavior when set.
-  CREATE_USER     Linux user to create and install as.
-  GITHUB_USER     GitHub username whose public keys are added to authorized_keys.
-  SET_HOSTNAME    Linux hostname to set with hostnamectl.
-  CHEZMOI_REPO    chezmoi repo name or URL. Defaults to jimyag.
-  CHEZMOI_SOURCE  Local chezmoi source directory.
-
-Notes:
-  This script requires bash and a user with sudo permission.
+Options:
+  VPS=0          Install full local/dev tooling instead of VPS profile.
+  SET_HOSTNAME   Linux hostname.
 EOF
 }
 

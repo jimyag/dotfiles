@@ -10,7 +10,7 @@ curl -fsSLo "$BIN_DIR/kubectl" "https://dl.k8s.io/release/$(curl -fsSL https://d
 chmod +x "$BIN_DIR/kubectl"
 
 # VPS 上不安装 Helm
-if [ -z "${VPS:-}" ]; then
+if [ "${VPS:-}" != "1" ]; then
   helm_installer="$(mktemp)"
   trap 'rm -f "$helm_installer"' EXIT
   curl -fsSLo "$helm_installer" https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
