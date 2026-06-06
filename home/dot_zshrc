@@ -12,9 +12,6 @@ else
   echo "Warning: oh-my-zsh not found at $ZSH. Please run the installation script." >&2
 fi
 
-autoload -U compinit
-compinit -i
-
 # 如果 .profile.d 目录存在，则 source 所有
 if [[ -d ~/.profile.d ]]; then
   for file in "$HOME/.profile.d"/*; do
@@ -37,5 +34,3 @@ fi
 COMP_WORDBREAKS=${COMP_WORDBREAKS/=/}
 COMP_WORDBREAKS=${COMP_WORDBREAKS/@/}
 export COMP_WORDBREAKS
-
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"

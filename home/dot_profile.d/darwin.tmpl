@@ -1,6 +1,8 @@
 {{- if eq .chezmoi.os "darwin" -}}
 # iterm2
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+if [[ "${TERM_PROGRAM:-}" == "iTerm.app" ]]; then
+    test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+fi
 
 
 export PATH="/opt/homebrew/opt/mongodb-community@4.4/bin:$PATH"
@@ -8,9 +10,6 @@ export PATH="/opt/homebrew/opt/gnu-getopt/bin:$PATH"
 export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
 export PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
 export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
-
-## macos autojump
-[ -f /opt/homebrew/etc/profile.d/autojump.sh ] && source /opt/homebrew/etc/profile.d/autojump.sh
 
 alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 
