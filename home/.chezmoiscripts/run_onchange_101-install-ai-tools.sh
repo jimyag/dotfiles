@@ -7,7 +7,11 @@ if [ "${VPS:-}" = "1" ]; then
 fi
 
 # claude-code 使用官方安装脚本
-curl -fsSL https://claude.ai/install.sh | bash
+if command -v claude >/dev/null 2>&1; then
+  echo "skip Claude Code install: command already exists" >&2
+else
+  curl -fsSL https://claude.ai/install.sh | bash
+fi
 
 NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 
@@ -28,7 +32,27 @@ if ! command -v npm >/dev/null 2>&1; then
   exit 1
 fi
 
-npm install -g @openai/codex opencommit
+ensure_npm_global_package() {
+  local package="$1"
+  if npm ls -g "$package" --depth=0 >/dev/null 2>&1; then
+    echo "skip npm global install: $package already installed" >&2
+    return 0
+  fi
+  npm install -g "$package"
+}
+
+for package in \
+  @openai/codex \
+  opencommit \
+  @github/copilot \
+  @google/gemini-cli \
+  @wecom/cli \
+  deepseek-tui \
+  happy-coder \
+  mcporter
+do
+  ensure_npm_global_package "$package"
+done
 
 if ! command -v uv >/dev/null 2>&1; then
   if ! command -v curl >/dev/null 2>&1; then
@@ -36,4 +60,6 @@ if ! command -v uv >/dev/null 2>&1; then
     exit 1
   fi
   curl -LsSf https://astral.sh/uv/install.sh | sh
+else
+  echo "skip uv install: command already exists" >&2
 fi

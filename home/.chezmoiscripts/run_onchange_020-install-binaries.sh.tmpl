@@ -23,6 +23,45 @@ get_latest_release() {
     sed -E 's/.*"([^"]+)".*/\1/'
 }
 
+install_tlrc_from_release() {
+  local version asset target base_url tmpdir
+
+  case "{{ .chezmoi.os }}" in
+    darwin)
+      case "{{ .chezmoi.arch }}" in
+        arm64) target="aarch64-apple-darwin" ;;
+        amd64|x86_64) target="x86_64-apple-darwin" ;;
+        *) return 1 ;;
+      esac
+      ;;
+    linux)
+      case "{{ .chezmoi.arch }}" in
+        arm64) target="aarch64-unknown-linux-gnu" ;;
+        amd64|x86_64) target="x86_64-unknown-linux-gnu" ;;
+        *) return 1 ;;
+      esac
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+
+  version="$(
+    curl -fsSL https://api.github.com/repos/tldr-pages/tlrc/releases/latest |
+      grep '"tag_name":' |
+      sed -E 's/.*"([^"]+)".*/\1/'
+  )"
+  asset="tlrc-${version}-${target}.tar.gz"
+  base_url="https://github.com/tldr-pages/tlrc/releases/download/${version}"
+  tmpdir="$(mktemp -d)"
+  trap 'rm -rf "$tmpdir"' EXIT
+
+  curl -fsSLo "$tmpdir/$asset" "$base_url/$asset"
+  tar -xzf "$tmpdir/$asset" -C "$tmpdir"
+  install -m 0755 "$tmpdir/tldr" "$BIN_DIR/tldr"
+  echo "tlrc ${version} installed to $BIN_DIR/tldr from GitHub release" >&2
+}
+
 case "{{ .chezmoi.os }}" in
   darwin) platform="darwin" ;;
   linux) platform="linux" ;;
@@ -42,38 +81,52 @@ if [ -n "${platform:-}" ]; then
   esac
 
   if [ -n "${arch:-}" ]; then
-    version="$(get_latest_release)"
-    asset="$bin_name-$platform-$arch.tar.gz"
-    base_url="https://github.com/$repo/releases/download/$version"
-
-    tmpdir="$(mktemp -d)"
-    trap 'rm -rf "$tmpdir"' EXIT
-
-    curl -fsSLo "$tmpdir/$asset" "$base_url/$asset"
-    if curl -fsSLo "$tmpdir/$asset.sha256" "$base_url/$asset.sha256"; then
-      checksum="$(tr -d ' \n\r' < "$tmpdir/$asset.sha256")"
-      if [ -n "$checksum" ]; then
-        if command -v sha256sum >/dev/null 2>&1; then
-          (cd "$tmpdir" && printf "%s  %s\n" "$checksum" "$asset" | sha256sum -c -)
-        elif command -v shasum >/dev/null 2>&1; then
-          (cd "$tmpdir" && printf "%s  %s\n" "$checksum" "$asset" | shasum -a 256 -c -)
-        else
-          echo "warning: no sha256 checksum tool found; skipping verification" >&2
-        fi
-      fi
+    if [ -x "$BIN_DIR/$bin_name" ]; then
+      echo "skip autocorrect install: $BIN_DIR/$bin_name already exists" >&2
     else
-      echo "warning: checksum download failed; skipping verification" >&2
-    fi
+      version="$(get_latest_release)"
+      asset="$bin_name-$platform-$arch.tar.gz"
+      base_url="https://github.com/$repo/releases/download/$version"
 
-    tar -xzf "$tmpdir/$asset" -C "$tmpdir"
-    install -m 0755 "$tmpdir/$bin_name" "$BIN_DIR/$bin_name"
-    echo "AutoCorrect $version installed to $BIN_DIR/$bin_name"
+      tmpdir="$(mktemp -d)"
+      trap 'rm -rf "$tmpdir"' EXIT
+
+      curl -fsSLo "$tmpdir/$asset" "$base_url/$asset"
+      if curl -fsSLo "$tmpdir/$asset.sha256" "$base_url/$asset.sha256"; then
+        checksum="$(tr -d ' \n\r' < "$tmpdir/$asset.sha256")"
+        if [ -n "$checksum" ]; then
+          if command -v sha256sum >/dev/null 2>&1; then
+            (cd "$tmpdir" && printf "%s  %s\n" "$checksum" "$asset" | sha256sum -c -)
+          elif command -v shasum >/dev/null 2>&1; then
+            (cd "$tmpdir" && printf "%s  %s\n" "$checksum" "$asset" | shasum -a 256 -c -)
+          else
+            echo "warning: no sha256 checksum tool found; skipping verification" >&2
+          fi
+        fi
+      else
+        echo "warning: checksum download failed; skipping verification" >&2
+      fi
+
+      tar -xzf "$tmpdir/$asset" -C "$tmpdir"
+      install -m 0755 "$tmpdir/$bin_name" "$BIN_DIR/$bin_name"
+      echo "AutoCorrect $version installed to $BIN_DIR/$bin_name"
+    fi
   fi
 fi
 
-# tlrc (cargo) — 无 cargo 则 exit 1（上方已 source .cargo/env）
-if ! command -v cargo >/dev/null 2>&1; then
-  echo "cargo not found; run rustup install first" >&2
-  exit 1
+# tlrc — 优先官方推荐的 Homebrew；其次 GitHub release 二进制；最后才 fallback 到 cargo
+if command -v tldr >/dev/null 2>&1; then
+  echo "skip tlrc install: tldr command already exists" >&2
+else
+  if command -v brew >/dev/null 2>&1; then
+    brew install tlrc
+  elif install_tlrc_from_release; then
+    :
+  else
+    if ! command -v cargo >/dev/null 2>&1; then
+      echo "cargo not found; run rustup install first" >&2
+      exit 1
+    fi
+    cargo install tlrc --locked
+  fi
 fi
-cargo install tlrc --locked
