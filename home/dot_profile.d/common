@@ -61,15 +61,64 @@ export GOROOT_BOOTSTRAP="$HOME/.go/gobootstrap"
 
 
 # completion source begin
-[[ $commands[qshell] ]] && source <(qshell completion zsh)
-[[ $commands[kubectl] ]] && source <(kubectl completion zsh)
-[[ $commands[helm] ]] && source <(helm completion zsh)
-[[ $commands[pulsarctl] ]] && source <(pulsarctl completion zsh)
-[[ $commands[task] ]] && source <(task --completion zsh)
-[[ $commands[chezmoi] ]] && source <(chezmoi completion zsh)
-[[ $commands[kubebuilder] ]] && source <(kubebuilder completion zsh)
-[[ $commands[virtctl] ]] && source <(virtctl completion zsh)
-[[ $commands[jd] ]] && source <(jd --complete zsh)
+if ! (( $+functions[compdef] )); then
+    autoload -Uz compinit
+    compinit -C
+fi
+if ! (( $+functions[complete] )); then
+    autoload -Uz bashcompinit
+    bashcompinit
+fi
+
+_completion_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions"
+_source_cached_completion() {
+    local name="$1"
+    shift
+
+    local binary="$1"
+    local binary_path="${commands[$binary]}"
+    [[ -n "$binary_path" ]] || return 0
+
+    mkdir -p "$_completion_cache_dir"
+    local cache_file="$_completion_cache_dir/$name.zsh"
+
+    if [[ ! -s "$cache_file" || "$binary_path" -nt "$cache_file" ]]; then
+        "$@" >| "$cache_file" 2>/dev/null || {
+            rm -f "$cache_file"
+            return 0
+        }
+    fi
+
+    source "$cache_file"
+}
+
+_source_cached_completion qshell qshell completion zsh
+_source_cached_completion kubectl kubectl completion zsh
+_source_cached_completion helm helm completion zsh
+_source_cached_completion pulsarctl pulsarctl completion zsh
+_source_cached_completion task task --completion zsh
+_source_cached_completion chezmoi chezmoi completion zsh
+_source_cached_completion kubebuilder kubebuilder completion zsh
+_source_cached_completion virtctl virtctl completion zsh
+_source_cached_completion jd jd --complete zsh
+
+if [[ -n "${commands[zellij]}" ]]; then
+    mkdir -p "$_completion_cache_dir"
+    _zellij_completion_cache="$_completion_cache_dir/zellij.zsh"
+    if [[ ! -s "$_zellij_completion_cache" || "${commands[zellij]}" -nt "$_zellij_completion_cache" ]]; then
+        zellij setup --generate-completion zsh \
+            | sed '/^_zellij "\$@"$/d' >| "$_zellij_completion_cache" 2>/dev/null || \
+            rm -f "$_zellij_completion_cache"
+    fi
+    if [[ -s "$_zellij_completion_cache" ]]; then
+        source "$_zellij_completion_cache"
+        compdef _zellij zellij
+    fi
+    unset _zellij_completion_cache
+fi
+
+unset -f _source_cached_completion
+unset _completion_cache_dir
 # completion source end
 
 # opencode

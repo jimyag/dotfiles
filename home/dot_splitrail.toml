@@ -1,0 +1,22 @@
+[server]
+url = "https://splitrail.dev"
+api_token = ""
+
+[upload]
+auto_upload = false
+upload_today_only = false
+retry_attempts = 3
+last_date_uploaded = 0
+
+[formatting]
+number_comma = true
+number_human = false
+locale = "en"
+decimal_places = 2
+
+[tui]
+reverse_sort_default = true
+hide_empty_periods = true
+
+[aliases]
+"gpt-5.3-codex-spark" = "gpt-5.3-codex"

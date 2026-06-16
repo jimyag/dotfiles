@@ -1,0 +1,69 @@
+# Command + Left：切换到上一个 tab
+keybind = super+left=previous_tab
+
+# Command + Right：切换到下一个 tab
+keybind = super+right=next_tab
+
+# Command + R：清屏，相当于终端里执行 clear / Ctrl+L 的效果
+keybind = super+r=clear_screen
+
+
+# --- Working directory inheritance ---
+
+# 新建 tab 时继承当前 shell 的工作目录
+# 例如当前在 ~/project，新 tab 也会从 ~/project 打开
+tab-inherit-working-directory = true
+
+# 新建 split pane 时继承当前 shell 的工作目录
+# 例如当前 pane 在 ~/project，新 split 也会从 ~/project 打开
+split-inherit-working-directory = true
+
+# 新建 window 时不继承当前 shell 的工作目录
+# false 表示新窗口使用默认启动目录，通常是 ~
+window-inherit-working-directory = false
+
+
+# --- Clipboard / selection ---
+
+# 选中文本后自动复制到系统剪贴板
+# clipboard 表示复制到系统 clipboard，而不是只复制到 primary selection
+copy-on-select = clipboard
+
+
+# --- Quick terminal / 下拉终端 ---
+
+# Ctrl + `：全局快捷键，用于显示或隐藏 quick terminal
+# global 表示即使 Ghostty 不在前台，这个快捷键也能触发
+# grave_accent 就是反引号/波浪号那个键，通常在键盘左上角 Esc 下方
+keybind = global:ctrl+grave_accent=toggle_quick_terminal
+
+# quick terminal 从屏幕顶部弹出
+# 可选方向通常包括 top / bottom / left / right
+quick-terminal-position = top
+
+# quick terminal 显示在哪块屏幕上
+# mouse 表示显示在鼠标当前所在的屏幕
+quick-terminal-screen = mouse
+
+# quick terminal 失焦后自动隐藏
+# true 表示点击其他窗口或切换焦点后会自动收起
+quick-terminal-autohide = true
+
+# quick terminal 弹出/收起动画时长
+# 单位是秒；0.15 表示 150ms
+quick-terminal-animation-duration = 0.15
+
+# quick terminal 尺寸
+# top/bottom 时：第一个值是高度，第二个值是宽度
+# 100%,100% 表示高度 100%、宽度 100%，基本等于全屏下拉终端
+quick-terminal-size = 100%,100%
+
+
+# --- Zellij compatibility ---
+
+# Ghostty 默认把 Option/Alt + Arrow 翻译成 shell 里的按词移动：
+# alt+arrow_left=esc:b，alt+arrow_right=esc:f。
+# 在 Zellij 里 esc:f 会被识别成 Alt+f，而 Alt+f 是 ToggleFloatingPanes。
+# 这里取消 Ghostty 的默认转换，避免 Alt+Right 误触发 Zellij floating pane。
+keybind = alt+arrow_left=unbind
+keybind = alt+arrow_right=unbind

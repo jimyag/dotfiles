@@ -1,0 +1,61 @@
+{
+  "signOffCommits": false,
+  "prefixes": [
+    {
+      "title": "feat",
+      "description": "引入新功能"
+    },
+    {
+      "title": "fix",
+      "description": "修补一个 bug"
+    },
+    {
+      "title": "enhance",
+      "description": "增强/优化现有功能"
+    },
+    {
+      "title": "style",
+      "description": "仅修改了空格，格式缩进，注释，分号等"
+    },
+    {
+      "title": "bug",
+      "description": "引入 bug"
+    },
+    {
+      "title": "docs",
+      "description": "仅修改文档"
+    },
+    {
+      "title": "bump",
+      "description": "升级依赖的版本"
+    },
+    {
+      "title": "test",
+      "description": "添加缺失的测试或纠正现有测试"
+    },
+    {
+      "title": "build",
+      "description": "仅修改构建系统"
+    },
+    {
+      "title": "ci",
+      "description": "仅修改 CI 配置和脚本"
+    },
+    {
+      "title": "perf",
+      "description": "改进性能的代码变更"
+    },
+    {
+      "title": "refactor",
+      "description": "既不修复错误也不增加功能的代码更改"
+    },
+    {
+      "title": "revert",
+      "description": "撤销上一个更改"
+    },
+    {
+      "title": "chore",
+      "description": "不属于任何其他类别的微小改动"
+    }
+  ]
+}

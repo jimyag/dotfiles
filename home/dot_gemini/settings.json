@@ -1,0 +1,31 @@
+{
+  "theme": "GitHub",
+  "selectedAuthType": "oauth-personal",
+  "preferredEditor": "cursor",
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
+  },
+  "general": {
+    "sessionRetention": {
+      "enabled": true,
+      "maxAge": "1000d",
+      "warningAcknowledged": true
+    }
+  },
+  "ui": {
+    "showMemoryUsage": true
+  },
+  "ide": {
+    "enabled": true
+  },
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "chrome-devtools-mcp@latest"
+      ]
+    }
+  }
+}
