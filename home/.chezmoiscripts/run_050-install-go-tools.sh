@@ -23,6 +23,11 @@ install_tool() {
     local pkg="$2"
     local spec="$pkg@latest"
 
+    if command -v "$binary" >/dev/null 2>&1; then
+        echo "skip $binary install: command already exists" >&2
+        return 0
+    fi
+
     echo "install $binary from $spec" >&2
     if go install "$spec"; then
         return 0
@@ -59,6 +64,8 @@ install_hugo_extended_or_record() {
 }
 
 install_or_record actionlint github.com/rhysd/actionlint/cmd/actionlint
+install_or_record act github.com/nektos/act
+install_or_record croc github.com/schollz/croc/v10
 install_or_record dive github.com/wagoodman/dive
 install_or_record dlv github.com/go-delve/delve/cmd/dlv
 install_or_record formattag github.com/momaek/formattag
@@ -72,6 +79,7 @@ install_or_record goreleaser github.com/goreleaser/goreleaser/v2
 install_or_record gotests github.com/cweill/gotests/gotests
 install_hugo_extended_or_record
 install_or_record impl github.com/josharian/impl
+install_or_record kind sigs.k8s.io/kind
 install_or_record kubebuilder sigs.k8s.io/kubebuilder/v4
 install_or_record mockgen go.uber.org/mock/mockgen
 install_or_record protoc-gen-go google.golang.org/protobuf/cmd/protoc-gen-go

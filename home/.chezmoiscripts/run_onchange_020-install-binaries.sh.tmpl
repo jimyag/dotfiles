@@ -7,11 +7,169 @@ if [ "${VPS:-}" = "1" ]; then
 fi
 
 # 同一次 chezmoi 里若先装了 rustup，需先加载 cargo 环境再检查
-# shellcheck disable=SC1090
+# shellcheck disable=SC1090,SC1091
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
 BIN_DIR="$HOME/.local/bin"
 mkdir -p "$BIN_DIR"
+export PATH="$BIN_DIR:$PATH"
+
+github_latest_tag() {
+  local repo="$1"
+
+  curl -fsSL "https://api.github.com/repos/$repo/releases/latest" |
+    grep '"tag_name":' |
+    sed -E 's/.*"([^"]+)".*/\1/'
+}
+
+install_release_binary() {
+  local name="$1"
+  local url="$2"
+  local binary_name="${3:-$name}"
+  local tmpdir asset
+
+  if command -v "$name" >/dev/null 2>&1; then
+    echo "skip $name install: command already exists" >&2
+    return 0
+  fi
+
+  tmpdir="$(mktemp -d)"
+  asset="$tmpdir/asset"
+
+  curl -fsSLo "$asset" "$url"
+  chmod 0755 "$asset"
+  install -m 0755 "$asset" "$BIN_DIR/$binary_name"
+  rm -rf "$tmpdir"
+  echo "$name installed to $BIN_DIR/$binary_name" >&2
+}
+
+install_release_archive_binary() {
+  local name="$1"
+  local url="$2"
+  local binary_name="${3:-$name}"
+  local tmpdir asset extracted
+
+  if command -v "$name" >/dev/null 2>&1; then
+    echo "skip $name install: command already exists" >&2
+    return 0
+  fi
+
+  tmpdir="$(mktemp -d)"
+  asset="$tmpdir/asset"
+
+  curl -fsSLo "$asset" "$url"
+  case "$url" in
+    *.tar.gz|*.tgz)
+      tar -xzf "$asset" -C "$tmpdir"
+      ;;
+    *.zip)
+      unzip -q "$asset" -d "$tmpdir"
+      ;;
+    *)
+      echo "unsupported archive for $name: $url" >&2
+      return 1
+      ;;
+  esac
+
+  extracted="$(find "$tmpdir" -type f -name "$binary_name" -perm -111 | head -n 1)"
+  if [ -z "$extracted" ]; then
+    extracted="$(find "$tmpdir" -type f -name "$binary_name" | head -n 1)"
+  fi
+  if [ -z "$extracted" ]; then
+    echo "binary $binary_name not found in $url" >&2
+    return 1
+  fi
+
+  install -m 0755 "$extracted" "$BIN_DIR/$binary_name"
+  rm -rf "$tmpdir"
+  echo "$name installed to $BIN_DIR/$binary_name" >&2
+}
+
+install_linux_release_tools() {
+  local difft_arch duckdb_arch fastfetch_arch trivy_arch cloudflared_arch zellij_arch websocat_arch
+  local version version_no_v
+
+  [ "{{ .chezmoi.os }}" = "linux" ] || return 0
+
+  case "{{ .chezmoi.arch }}" in
+    arm64)
+      difft_arch="aarch64-unknown-linux-gnu"
+      duckdb_arch="arm64"
+      fastfetch_arch="aarch64"
+      trivy_arch="ARM64"
+      cloudflared_arch="arm64"
+      websocat_arch="aarch64-unknown-linux-musl"
+      zellij_arch="aarch64-unknown-linux-musl"
+      ;;
+    amd64|x86_64)
+      difft_arch="x86_64-unknown-linux-gnu"
+      duckdb_arch="amd64"
+      fastfetch_arch="amd64"
+      trivy_arch="64bit"
+      cloudflared_arch="amd64"
+      websocat_arch="x86_64-unknown-linux-musl"
+      zellij_arch="x86_64-unknown-linux-musl"
+      ;;
+    *)
+      echo "release binary installation skipped: unsupported arch {{ .chezmoi.arch }}" >&2
+      return 0
+      ;;
+  esac
+
+  version="$(github_latest_tag cloudflare/cloudflared)"
+  install_release_binary \
+    cloudflared \
+    "https://github.com/cloudflare/cloudflared/releases/download/${version}/cloudflared-linux-${cloudflared_arch}"
+
+  version="$(github_latest_tag Wilfred/difftastic)"
+  install_release_archive_binary \
+    difft \
+    "https://github.com/Wilfred/difftastic/releases/download/${version}/difft-${difft_arch}.tar.gz" \
+    difft
+
+  version="$(github_latest_tag duckdb/duckdb)"
+  install_release_archive_binary \
+    duckdb \
+    "https://github.com/duckdb/duckdb/releases/download/${version}/duckdb_cli-linux-${duckdb_arch}.zip"
+
+  version="$(github_latest_tag fastfetch-cli/fastfetch)"
+  install_release_archive_binary \
+    fastfetch \
+    "https://github.com/fastfetch-cli/fastfetch/releases/download/${version}/fastfetch-linux-${fastfetch_arch}.tar.gz"
+
+  version="$(github_latest_tag aquasecurity/trivy)"
+  version_no_v="${version#v}"
+  install_release_archive_binary \
+    trivy \
+    "https://github.com/aquasecurity/trivy/releases/download/${version}/trivy_${version_no_v}_Linux-${trivy_arch}.tar.gz"
+
+  version="$(github_latest_tag vi/websocat)"
+  install_release_binary \
+    websocat \
+    "https://github.com/vi/websocat/releases/download/${version}/websocat.${websocat_arch}"
+
+  version="$(github_latest_tag zellij-org/zellij)"
+  install_release_archive_binary \
+    zellij \
+    "https://github.com/zellij-org/zellij/releases/download/${version}/zellij-${zellij_arch}.tar.gz"
+}
+
+install_cargo_tool() {
+  local binary="$1"
+  local crate="${2:-$binary}"
+
+  if command -v "$binary" >/dev/null 2>&1; then
+    echo "skip cargo install: $binary already exists" >&2
+    return 0
+  fi
+
+  if ! command -v cargo >/dev/null 2>&1; then
+    echo "cargo not found; run rustup install first" >&2
+    exit 1
+  fi
+
+  cargo install "$crate" --locked
+}
 
 # AutoCorrect
 repo='huacnlee/autocorrect'
@@ -113,6 +271,10 @@ if [ -n "${platform:-}" ]; then
     fi
   fi
 fi
+
+install_linux_release_tools
+
+install_cargo_tool tokei
 
 # tlrc — 优先官方推荐的 Homebrew；其次 GitHub release 二进制；最后才 fallback 到 cargo
 if command -v tldr >/dev/null 2>&1; then
