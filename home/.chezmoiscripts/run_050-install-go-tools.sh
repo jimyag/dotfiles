@@ -15,15 +15,6 @@ gobin="$(go env GOPATH)/bin"
 mkdir -p "$gobin"
 export PATH="$gobin:$PATH"
 
-# Keep private qbox modules off the public proxy and checksum database.
-go env -w GOPRIVATE='github.com/qbox/*' >/dev/null
-go env -w GONOPROXY='github.com/qbox/*' >/dev/null
-go env -w GONOSUMDB='github.com/qbox/*' >/dev/null
-
-if command -v git >/dev/null 2>&1; then
-    git config --global url."git@github.com:qbox/".insteadOf "https://github.com/qbox/" >/dev/null
-fi
-
 installed_module() {
     local binary="$1"
     go version -m "$binary" 2>/dev/null | awk '$1 == "mod" {print $2; exit}'
@@ -126,7 +117,6 @@ install_or_record protoc-gen-go google.golang.org/protobuf google.golang.org/pro
 install_or_record protoc-gen-go-grpc google.golang.org/grpc/cmd/protoc-gen-go-grpc google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.1
 install_or_record protoc-gen-go-vtproto github.com/planetscale/vtprotobuf github.com/planetscale/vtprotobuf/cmd/protoc-gen-go-vtproto v0.6.0
 install_or_record protoc-go-inject-tag github.com/favadi/protoc-go-inject-tag github.com/favadi/protoc-go-inject-tag v1.4.0
-install_or_record qcurl github.com/qbox/kodo-libs/auth/qcurl github.com/qbox/kodo-libs/auth/qcurl latest
 install_or_record qshell github.com/qiniu/qshell/v2 github.com/qiniu/qshell/v2/main v2.19.8
 if [ -x "$gobin/main" ]; then
     mv "$gobin/main" "$gobin/qshell"
