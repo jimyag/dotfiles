@@ -1,5 +1,0 @@
-{{- if eq .chezmoi.os "linux" -}}
-[ -f /usr/share/autojump/autojump.bash ] && source /usr/share/autojump/autojump.bash
-{{- else if eq .chezmoi.os "darwin" -}}
-[ -f /opt/homebrew/etc/profile.d/autojump.sh ] && source /opt/homebrew/etc/profile.d/autojump.sh
-{{- end -}}
