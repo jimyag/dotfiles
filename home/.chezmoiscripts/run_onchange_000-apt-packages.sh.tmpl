@@ -13,6 +13,26 @@ run_with_privileges() {
   fi
 }
 
+apt_install_required() {
+  run_with_privileges env DEBIAN_FRONTEND=noninteractive apt-get install -y "$@"
+}
+
+apt_install_best_effort() {
+  local failures=()
+  local package
+
+  for package in "$@"; do
+    if ! run_with_privileges env DEBIAN_FRONTEND=noninteractive apt-get install -y "$package"; then
+      failures+=("$package")
+      echo "warning: failed to install apt package: $package" >&2
+    fi
+  done
+
+  if [ "${#failures[@]}" -gt 0 ]; then
+    printf 'warning: failed optional apt packages: %s\n' "${failures[*]}" >&2
+  fi
+}
+
 if ! command -v apt-get >/dev/null 2>&1; then
   echo "apt-get not available on this system; skipping apt package installation." >&2
   exit 0
@@ -20,7 +40,7 @@ fi
 
 run_with_privileges apt-get update
 # 非交互安装，跳过 iperf3 等包关于启动 daemon 的询问
-run_with_privileges env DEBIAN_FRONTEND=noninteractive apt-get install -y \
+apt_install_required \
   ripgrep \
   vim \
   git \
@@ -36,8 +56,72 @@ run_with_privileges env DEBIAN_FRONTEND=noninteractive apt-get install -y \
   neovim \
   iperf3 \
   build-essential \
-  autojump \
   unzip \
   tree \
   gh
+
+# Keep Linux hosts close to the macOS Brewfile for common CLI tooling. Some
+# packages are unavailable on older Debian/Ubuntu releases, so install these as
+# best-effort and keep the bootstrap usable.
+apt_install_best_effort \
+  act \
+  bat \
+  bzip2 \
+  cloudflared \
+  cmake \
+  coreutils \
+  croc \
+  difftastic \
+  duckdb \
+  fastfetch \
+  fd-find \
+  ffmpeg \
+  fzf \
+  gawk \
+  gcc \
+  git-filter-repo \
+  git-lfs \
+  glab \
+  httpie \
+  ifstat \
+  imagemagick \
+  kind \
+  mtr-tiny \
+  ninja-build \
+  pandoc \
+  poppler-utils \
+  pre-commit \
+  progress \
+  protobuf-compiler \
+  pv \
+  qemu-system \
+  qemu-utils \
+  rclone \
+  restic \
+  s3cmd \
+  samba \
+  shellcheck \
+  shfmt \
+  socat \
+  telnet \
+  tig \
+  tldr \
+  tokei \
+  trivy \
+  websocat \
+  wget \
+  yq \
+  zellij \
+  zoxide
+
+bin_dir="$HOME/.local/bin"
+mkdir -p "$bin_dir"
+
+if command -v batcat >/dev/null 2>&1 && ! command -v bat >/dev/null 2>&1; then
+  ln -sf "$(command -v batcat)" "$bin_dir/bat"
+fi
+
+if command -v fdfind >/dev/null 2>&1 && ! command -v fd >/dev/null 2>&1; then
+  ln -sf "$(command -v fdfind)" "$bin_dir/fd"
+fi
 {{- end -}}

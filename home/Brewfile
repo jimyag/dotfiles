@@ -1,233 +1,300 @@
+# Run your GitHub Actions locally
 brew "act"
-
-brew "freetype"
-
-brew "glib"
-
-brew "libtiff"
-
-brew "gdk-pixbuf"
-
-brew "harfbuzz"
-
-brew "pango"
-
-brew "librsvg"
-
-brew "little-cms2"
-
-brew "jpeg-xl"
-
-brew "webp"
-
+# Codec library for encoding and decoding AV1 video streams
 brew "aom"
-
+# Core application library for C
+brew "glib"
+# Tools and libraries to work with AppStream metadata
 brew "appstream"
-
+# Linter and formatter to improve copywriting, correct spaces, words between CJK
 brew "autocorrect"
-
-brew "zoxide"
-
+# Bourne-Again SHell, a UNIX command interpreter
+brew "bash"
+# C library of Git core methods that is re-entrant and linkable
 brew "libgit2"
-
-brew "glab"
-
+# Clone of cat(1) with syntax highlighting and Git integration
 brew "bat"
-
+# Bash scripts that integrate bat with various command-line tools
 brew "bat-extras"
-
+# GNU binary tools for native development
 brew "binutils"
-
+# Freely available high-quality data compressor
 brew "bzip2"
-
+# Software library to render fonts
+brew "freetype"
+# Testing and linting Helm charts
 brew "chart-testing"
-
+# Manage your dotfiles across multiple diverse machines, securely
 brew "chezmoi"
-
+# Cloudflare Tunnel client (formerly Argo Tunnel)
 brew "cloudflared"
-
+# Cross-platform make
 brew "cmake"
-
+# GNU File, Shell, and Text utilities
 brew "coreutils"
-
+# Shell script to build fancy DMGs
 brew "create-dmg"
-
+# Securely send things from one computer to another
 brew "croc"
-
+# Get a file from an HTTP, HTTPS or FTP server
 brew "curl"
-
+# Diff that understands syntax
 brew "difftastic"
-
+# Embeddable SQL OLAP Database Management System
 brew "duckdb"
-
+# Open-source, cross-platform JavaScript runtime environment
+brew "node"
+# CLI to manage E2B sandboxes and templates
 brew "e2b"
-
+# Key value store for shared configuration and service discovery
 brew "etcd", restart_service: :changed
-
+# Scan log files and ban IPs showing malicious signs
 brew "fail2ban"
-
+# Like neofetch, but much faster because written mostly in C
+brew "fastfetch"
+# Simple, fast and user-friendly alternative to find
 brew "fd"
-
+# Play, record, convert, and stream select audio and video codecs
 brew "ffmpeg"
-
+# Command-line fuzzy finder written in Go
 brew "fzf"
-
+# GNU awk utility
 brew "gawk"
-
+# GNU compiler collection
 brew "gcc"
-
+# Library for encoding and decoding .avif files
 brew "libavif"
-
+# TIFF library and utilities
+brew "libtiff"
+# Image format providing lossless and lossy compression for web images
+brew "webp"
+# Graphics library to dynamically manipulate images
 brew "gd"
-
+# Toolkit for image loading and pixel buffer manipulation
+brew "gdk-pixbuf"
+# GitHub command-line tool
 brew "gh"
-
+# Command-line utility for uploading Gists
 brew "gist"
-
-brew "libiconv"
-
+# Distributed revision control system
 brew "git"
-
+# Quickly rewrite git repository history
 brew "git-filter-repo"
-
+# Git extension for versioning large files
 brew "git-lfs"
-
-brew "unbound"
-
-brew "gnutls"
-
+# Open-source GitLab command-line tool
+brew "glab"
+# Command-line option parsing utility
 brew "gnu-getopt"
-
+# GNU implementation of the famous stream editor
 brew "gnu-sed"
-
+# GNU Transport Layer Security (TLS) Library
+brew "gnutls"
+# Image manipulation
 brew "netpbm"
-
+# OpenType text shaping engine
+brew "harfbuzz"
+# Framework for layout and rendering of i18n text
+brew "pango"
+# Library to render SVG files using Cairo
+brew "librsvg"
+# Graph visualization software from AT&T and Bell Labs
 brew "graphviz"
-
+# Toolkit for creating graphical user interfaces
 brew "gtk4"
-
+# GNU Ubiquitous Intelligent Language for Extensions
 brew "guile"
-
+# Bash and zsh history suggest box
 brew "hstr"
-
+# Improved top (interactive process viewer)
 brew "htop"
-
+# User-friendly cURL replacement (command-line HTTP client)
 brew "httpie"
-
+# Tool to report network interface bandwidth
 brew "ifstat"
-
+# Color management engine supporting ICC profiles
+brew "little-cms2"
+# Tools and libraries to manipulate images in select formats
 brew "imagemagick"
-
+# Update of iperf: measures TCP, UDP, and SCTP bandwidth
 brew "iperf3"
-
+# CLI wrapper for basic network utilities on macOS - ip command
 brew "iproute2mac"
-
+# Json incremental digger
 brew "jid"
-
+# Git-compatible distributed version control system
 brew "jj"
-
+# New file format for still image compression
+brew "jpeg-xl"
+# Lightweight and flexible command-line JSON processor
 brew "jq"
-
+# Run local Kubernetes cluster in Docker
 brew "kind"
-
+# Building blocks for modern adaptive GNOME applications
 brew "libadwaita"
-
+# Conversion library
+brew "libiconv"
+# Minimalist GNU for Windows and GCC cross-compilers
 brew "mingw-w64"
-
+# 'traceroute' and 'ping' in a single tool
 brew "mtr"
-
+# Ambitious Vim-fork focused on extensibility and agility
 brew "neovim"
-
+# Open source visual route tracking CLI tool
 brew "nexttrace"
-
+# Small build system for use with gyp or CMake
 brew "ninja"
-
-brew "tmux"
-
+# Swiss-army knife of markup format conversion
 brew "pandoc"
-
+# PDF rendering library (based on the xpdf-3.0 code base)
 brew "poppler"
-
+# Object-relational database system
 brew "postgresql@17", restart_service: :changed
-
+# Framework for managing multi-language pre-commit hooks
 brew "pre-commit"
-
+# Coreutils progress viewer
 brew "progress"
-
+# Protocol buffers (Google's data interchange format)
 brew "protobuf"
-
+# Monitor data's progress through a pipe
 brew "pv"
-
+# Generic machine emulator and virtualizer
 brew "qemu"
-
+# Rsync for cloud storage
 brew "rclone"
-
+# Persistent key-value database, with built-in net interface
 brew "redis", restart_service: :changed
-
+# Fast, efficient and secure backup program
 brew "restic"
-
+# SVG rendering tool and library
 brew "resvg"
-
+# Search tool like grep and The Silver Searcher
 brew "ripgrep"
-
+# Command-line tool for the Amazon S3 service
 brew "s3cmd"
-
+# SMB/CIFS file, print, and login server for UNIX
 brew "samba"
-
+# 7-Zip is a file archiver with a high compression ratio
 brew "sevenzip"
-
+# Static analysis and lint tool, for (ba)sh scripts
 brew "shellcheck"
-
+# Autoformat shell script source code
 brew "shfmt"
-
+# SOcket CAT: netcat on steroids
 brew "socat"
-
+# User interface to the TELNET protocol
 brew "telnet"
-
+# Text interface for Git repositories
 brew "tig"
-
+# Simplified and community-driven man pages
 brew "tldr"
-
-brew "tree"
-
-brew "trivy"
-
-brew "vim"
-
-brew "websocat"
-
-brew "wget"
-
-brew "yq"
-
-brew "zsh"
-brew "zellij"
-
+# Official tldr client written in Rust
+brew "tlrc", link: false
+# Terminal multiplexer
+brew "tmux"
+# Program that allows you to count code, quickly
 brew "tokei"
-
+# Display directories as trees (with optional color/HTML output)
+brew "tree"
+# Vulnerability scanner for container images, file systems, and Git repos
+brew "trivy"
+# Validating, recursive, caching DNS resolver
+brew "unbound"
+# Vi 'workalike' with many additional features
+brew "vim"
+# Command-line client for WebSockets
+brew "websocat"
+# Internet file retriever
+brew "wget"
+# Process YAML, JSON, XML, CSV and properties documents from the CLI
+brew "yq"
+# Pluggable terminal workspace, with terminal multiplexer as the base feature
+brew "zellij"
+# Shell extension to navigate your filesystem faster
+brew "zoxide"
+# UNIX shell (command interpreter)
+brew "zsh"
+# Android SDK component
 cask "android-platform-tools"
-
+# Desktop password and login vault
 cask "bitwarden"
-
+# Menu bar usage monitor for Codex and Claude
+cask "codexbar"
+# Developer platform
 cask "dotnet-sdk"
 cask "font-fira-code-nerd-font"
 cask "font-symbols-only-nerd-font"
-
+# Terminal emulator that uses platform-native UI and GPU acceleration
 cask "ghostty"
-
+# Web browser
 cask "google-chrome"
-
-cask "thaw"
-
+# Window manager
+cask "loop"
+# File system integration
 cask "macfuse"
-
+# Open-source software for live streaming and screen recording
 cask "obs"
-
+# Replacement for Docker Desktop
 cask "orbstack"
+# Control your tools with a few keystrokes
 cask "raycast"
+# System monitor for the menu bar
 cask "stats"
+# Menu bar manager
+cask "thaw"
+# OpenJDK distribution from Azul
 cask "zulu"
-
+vscode "aaron-bond.better-comments"
+vscode "antfu.file-nesting"
+vscode "catppuccin.catppuccin-vsc"
+vscode "catppuccin.catppuccin-vsc-icons"
+vscode "eamodio.gitlens"
+vscode "emeraldwalk.runonsave"
+vscode "emmanuelbeziat.vscode-great-icons"
+vscode "esbenp.prettier-vscode"
+vscode "formulahendry.code-runner"
+vscode "github.vscode-pull-request-github"
+vscode "golang.go"
+vscode "huacnlee.autocorrect"
+vscode "huntertran.auto-markdown-toc"
+vscode "ms-ceintl.vscode-language-pack-zh-hans"
+vscode "ms-vscode-remote.remote-ssh"
+vscode "ms-vscode-remote.remote-ssh-edit"
+vscode "ms-vscode-remote.remote-wsl"
+vscode "ms-vscode.remote-explorer"
+vscode "ms-vscode.remote-server"
+vscode "ms-vscode.vscode-typescript-next"
+vscode "nisanthchunduru.copy-filepath-with-line-number"
+vscode "pkief.material-icon-theme"
+vscode "rust-lang.rust-analyzer"
+vscode "streetsidesoftware.code-spell-checker"
+vscode "task.vscode-task"
+vscode "timonwong.shellcheck"
+vscode "tooltitudeteam.tooltitude"
+vscode "wakatime.vscode-wakatime"
+go "github.com/rhysd/actionlint/cmd/actionlint"
+go "github.com/wagoodman/dive"
+go "github.com/go-delve/delve/cmd/dlv"
+go "github.com/momaek/formattag"
+go "github.com/onsi/ginkgo/v2/ginkgo"
+go "mvdan.cc/gofumpt"
+go "golang.org/x/tools/cmd/goimports"
+go "github.com/golangci/golangci-lint/v2/cmd/golangci-lint"
+go "github.com/fatih/gomodifytags"
+go "golang.org/x/tools/gopls"
+go "github.com/goreleaser/goreleaser/v2"
+go "github.com/cweill/gotests/gotests"
+go "github.com/gohugoio/hugo"
+go "github.com/josharian/impl"
+go "sigs.k8s.io/kubebuilder/v4"
+go "go.uber.org/mock/mockgen"
+go "google.golang.org/protobuf/cmd/protoc-gen-go"
+go "google.golang.org/grpc/cmd/protoc-gen-go-grpc"
+go "github.com/planetscale/vtprotobuf/cmd/protoc-gen-go-vtproto"
+go "github.com/qiniu/qshell/v2/main"
+go "honnef.co/go/tools/cmd/staticcheck"
+go "github.com/go-task/task/v3/cmd/task"
+uv "rapid-mlx"
 npm "@angular/cli"
 npm "@google/gemini-cli"
 npm "@microsoft/inshellisense"
