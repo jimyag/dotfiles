@@ -61,6 +61,9 @@ export GOPATH="$HOME/.go/gopath/"
 export GOROOT="$HOME/.go/goroot/"
 export PATH="$HOME/.go/goroot/bin:$PATH"
 export GOROOT_BOOTSTRAP="$HOME/.go/gobootstrap"
+export GOPRIVATE="github.com/qbox/*"
+export GONOPROXY="github.com/qbox/*"
+export GONOSUMDB="github.com/qbox/*"
 # golang end
 
 
