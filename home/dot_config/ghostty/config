@@ -1,3 +1,7 @@
+# --- Font ---
+
+font-family = "0xProto"
+
 # Command + Left：切换到上一个 tab
 keybind = super+left=previous_tab
 
