@@ -1,3 +1,23 @@
+# macOS
 .DS_Store
-.idea
-.vscode
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Editors and IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local environment overrides
+.env.local
+.env.*.local
+
+# AI coding tool local state
+.antigravitycli/
+.claude/settings.local.json
+.codex/

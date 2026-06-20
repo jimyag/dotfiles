@@ -2,6 +2,9 @@
 	name = jimyag
 	email = git@jimyag.com
 
+[include]
+	path = ~/.gitconfig.local
+
 [init]
 	defaultBranch = main
 
