@@ -1,6 +1,10 @@
 # --- Font ---
 
+# 使用 0xProto 作为终端字体，保持字符宽度和符号显示稳定。
 font-family = "0xProto"
+
+# 使用 Catppuccin Frappe 主题，和当前 Ghostty 本机配置保持一致。
+theme = Catppuccin Frappe
 
 # Command + Left：切换到上一个 tab
 keybind = super+left=previous_tab
