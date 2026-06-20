@@ -38,6 +38,41 @@ function t(){
   tmux_attach_or_new "$1"
 }
 
+function zellij_attach_or_new(){
+  # Avoid using "z": zoxide commonly owns it.
+  local name="${1:-${PWD##*/}}"
+  if [[ -z $name ]]; then
+    name="root"
+  fi
+
+  if ! command -v zellij >/dev/null 2>&1; then
+    echo "zellij is not installed"
+    return 1
+  fi
+
+  zellij attach --create "$name"
+}
+
+function zja(){
+  zellij_attach_or_new "$1"
+}
+
+function zjl(){
+  zellij list-sessions "$@"
+}
+
+function zjk(){
+  if [[ -z $1 ]]; then
+    echo "Usage: zjk <session>"
+    return 1
+  fi
+  zellij kill-session "$1"
+}
+
+function zjka(){
+  zellij kill-all-sessions
+}
+
 function bak(){
   if [[ -z $1 ]]; then
     echo "Usage: bak <file_name>"
