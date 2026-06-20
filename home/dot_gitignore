@@ -13,6 +13,10 @@
 *.swo
 *~
 
+# Python caches
+__pycache__/
+*.py[cod]
+
 # Local environment overrides
 .env.local
 .env.*.local
