@@ -4,25 +4,18 @@ if [[ -n "${ZSH_VERSION:-}" ]]; then
     ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[green]%}"
     ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
 
-    _jimyag_git_prompt_segment() {
-        local git_info git_status
-
-        if (( $+functions[_omz_git_prompt_info] )); then
-            git_info="$(_omz_git_prompt_info)"
-        else
-            git_info="$(git_prompt_info)"
-        fi
-        [[ -n "$git_info" ]] || return 0
-
-        if (( $+functions[_omz_git_prompt_status] )); then
-            git_status="$(_omz_git_prompt_status)"
-        else
-            git_status="$(git_prompt_status)"
-        fi
-
-        print -n " (${git_info}${git_status}%{$reset_color%})"
+    _jimyag_git_prompt_has_segment() {
+        [[ -n "$(git_prompt_info)$(git_prompt_status)" ]]
     }
 
-    PROMPT='%{$fg[magenta]%}%n@%m%{$reset_color%} %{$fg[blue]%}%~%{$reset_color%}$(_jimyag_git_prompt_segment)$ '
+    _jimyag_git_prompt_open() {
+        _jimyag_git_prompt_has_segment && print -n " ("
+    }
+
+    _jimyag_git_prompt_close() {
+        _jimyag_git_prompt_has_segment && print -n "%{$reset_color%})"
+    }
+
+    PROMPT='%{$fg[magenta]%}%n@%m%{$reset_color%} %{$fg[blue]%}%~%{$reset_color%}$(_jimyag_git_prompt_open)$(git_prompt_info)$(git_prompt_status)$(_jimyag_git_prompt_close)$ '
     RPROMPT='%(?..%{$fg[red]%}%? ↵%{$reset_color%}) $(ruby_prompt_info)'
 fi
