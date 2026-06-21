@@ -1,6 +1,8 @@
 # Keep the alanpeabody prompt layout, but render git state next to the path
 # instead of on the right edge of wide terminals.
 if [[ -n "${ZSH_VERSION:-}" ]]; then
+    autoload -Uz add-zsh-hook
+
     ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[green]%}"
     ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
 
@@ -15,6 +17,12 @@ if [[ -n "${ZSH_VERSION:-}" ]]; then
     _jimyag_git_prompt_close() {
         _jimyag_git_prompt_has_segment && print -n "%{$reset_color%})"
     }
+
+    _jimyag_clear_git_prompt_cache() {
+        unset '_OMZ_ASYNC_OUTPUT[_omz_git_prompt_info]'
+        unset '_OMZ_ASYNC_OUTPUT[_omz_git_prompt_status]'
+    }
+    add-zsh-hook chpwd _jimyag_clear_git_prompt_cache
 
     PROMPT='%{$fg[magenta]%}%n@%m%{$reset_color%} %{$fg[blue]%}%~%{$reset_color%}$(_jimyag_git_prompt_open)$(git_prompt_info)$(git_prompt_status)$(_jimyag_git_prompt_close)$ '
     RPROMPT='%(?..%{$fg[red]%}%? ↵%{$reset_color%}) $(ruby_prompt_info)'
