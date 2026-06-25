@@ -1,7 +1,21 @@
 local watchedApps = {
-    ["QuickTime Player"] = "com.apple.QuickTimePlayerX",
+    ["Automator"] = "com.apple.Automator",
+    ["Keynote"] = "com.apple.iWork.Keynote",
+    ["Numbers"] = "com.apple.iWork.Numbers",
+    ["Pages"] = "com.apple.iWork.Pages",
     ["Preview"] = "com.apple.Preview",
+    ["QuickTime Player"] = "com.apple.QuickTimePlayerX",
+    ["Script Editor"] = "com.apple.ScriptEditor2",
+    ["TextEdit"] = "com.apple.TextEdit",
 }
+
+local function watchedAppNames()
+    local names = {}
+    for appName, _ in pairs(watchedApps) do
+        table.insert(names, appName)
+    end
+    return names
+end
 
 local function quitIfNoWindows(bundleID)
     local app = hs.application.get(bundleID)
@@ -10,10 +24,7 @@ local function quitIfNoWindows(bundleID)
     end
 end
 
-local windowWatcher = hs.window.filter.new({
-    "QuickTime Player",
-    "Preview",
-})
+local windowWatcher = hs.window.filter.new(watchedAppNames())
 
 windowWatcher:subscribe(hs.window.filter.windowDestroyed, function(win, appName, event)
     local bundleID = watchedApps[appName]
