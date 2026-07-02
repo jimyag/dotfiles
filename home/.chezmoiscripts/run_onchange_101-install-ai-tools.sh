@@ -43,6 +43,7 @@ ensure_npm_global_package() {
 
 for package in \
   @openai/codex \
+  @pencil.dev/cli@0.2.7 \
   opencommit \
   @github/copilot \
   @google/gemini-cli \
