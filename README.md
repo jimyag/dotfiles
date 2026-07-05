@@ -1,5 +1,32 @@
 # dotfiles
 
+这是我的个人 dotfiles 仓库，里面有一些写死的个人配置，例如默认仓库 `jimyag/dotfiles`、默认 `chezmoi init jimyag`、Git 用户信息、邮箱和部分脚本提示。直接使用前建议先通读并替换为自己的值。
+
+## 复用说明
+
+如果想基于这个仓库维护自己的 dotfiles，可以先用 chezmoi 初始化到本地，再断开原仓库并换成自己的仓库：
+
+```bash
+chezmoi init jimyag
+cd "$(chezmoi source-path)"
+rm -rf .git
+git init
+git remote add origin git@github.com:<your-user>/<your-dotfiles-repo>.git
+```
+
+之后至少检查并替换这些个人化内容：
+
+- `home/dot_gitconfig` 中的 Git 用户名和邮箱
+- README 和安装命令里的 `jimyag/dotfiles`
+- `install.sh` 中未设置 `CHEZMOI_REPO` 时的默认 `chezmoi init --apply jimyag`
+- `docs/private-public-repo-management.md` 和脚本提示里的示例仓库地址
+
+也可以不修改脚本默认值，安装时显式指定自己的仓库：
+
+```bash
+CHEZMOI_REPO=<your-user>/<your-dotfiles-repo> ./install.sh
+```
+
 ## 一键安装
 
 安装脚本需 **bash** 执行（管道安装请使用 `| bash`）。
@@ -48,7 +75,7 @@ VPS=1 ./install.sh
 
 | 变量 | 说明 |
 |------|------|
-| `CREATE_USER` | 要创建的用户名，默认为 `jimyag`；设为非空时在 Linux 上执行创建用户和/或更新 SSH 授权 |
+| `CREATE_USER` | 要创建的用户名；不设置时不创建用户，设为非空时在 Linux 上执行创建用户和/或更新 SSH 授权 |
 | `GITHUB_USER` | 指定时将该 GitHub 用户的公钥写入对应用户的 `~/.ssh/authorized_keys`，不设则不拉取 |
 
 **仅要求 sudo，不创建用户（默认行为）：**
