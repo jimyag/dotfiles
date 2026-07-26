@@ -6,13 +6,15 @@ api_token = ""
 auto_upload = false
 upload_today_only = false
 retry_attempts = 3
-last_date_uploaded = 0
 
 [formatting]
 number_comma = true
 number_human = false
 locale = "en"
 decimal_places = 2
+
+[logging]
+level = "error"
 
 [tui]
 reverse_sort_default = true
