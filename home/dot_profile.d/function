@@ -22,7 +22,21 @@ function git_checkout_pr(){
 alias gitpr="git_checkout_pr $1"
 
 function git_clean_branch(){
-  git remote prune origin && git branch -vv | grep -E '丢失|gone|pr' | awk '{print $1}' | xargs git branch -D
+  git remote prune origin || return 1
+
+  local -a branches
+  branches=("${(@f)$(git for-each-ref \
+    --format='%(refname:short) %(upstream:track)' \
+    refs/heads | awk '$2 == "[gone]" {print $1}')}")
+
+  if [[ -z "${branches[1]:-}" ]]; then
+    echo "No gone branches found."
+    return 0
+  fi
+
+  printf 'Deleting merged branches with gone upstreams:\n'
+  printf '  %s\n' "${branches[@]}"
+  git branch -d -- "${branches[@]}"
 }
 
 function tmux_attach_or_new(){
@@ -135,7 +149,7 @@ function ssh_tmux() {
 
 
 function ca() {
-  chezmoi apply "$@"
+  chezmoi apply "$@" || return
   # shellcheck disable=SC1091
   source "$HOME/.zshrc"
 }

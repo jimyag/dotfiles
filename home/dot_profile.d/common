@@ -1,11 +1,11 @@
+typeset -U path PATH
+
 # hstr start
 if command -v hstr > /dev/null; then
     alias hh=hstr                    # hh to be alias for hstr
     setopt histignorespace           # skip cmds w/ leading space from history
     export HSTR_CONFIG=hicolor       # get more colors
     bindkey -s "\C-r" "\C-a hstr -- \C-j"     # bind hstr to Ctrl-r (for Vi mode check doc)
-else
-    echo "hstr not found"
 fi
 # hstr end
 
@@ -17,12 +17,9 @@ if command -v zoxide > /dev/null; then
     eval "$(zoxide init zsh)"
 fi
 
-# 关闭Node.js 中的 DeprecationWarning 提示
-export NODE_NO_WARNINGS=1
-
 # waketime 项目检测
 export ZSH_WAKATIME_PROJECT_DETECTION=true
-ulimit -n 10240
+ulimit -n 10240 2>/dev/null || true
 
 ## nvm start
 export NVM_DIR="$HOME/.nvm"

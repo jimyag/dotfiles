@@ -43,7 +43,6 @@ brew "difftastic"
 # Embeddable SQL OLAP Database Management System
 brew "duckdb"
 # Open-source, cross-platform JavaScript runtime environment
-brew "node"
 # CLI to manage E2B sandboxes and templates
 brew "e2b"
 # Key value store for shared configuration and service discovery
