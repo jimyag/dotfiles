@@ -1,0 +1,40 @@
+{
+  "skill_name": "writing-skills",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Audit a directory containing portable and client-extended Agent Skills, then produce a prioritized migration report.",
+      "expected_output": "A report that separates official specification failures, intentional client-extension exceptions, and best-practice warnings, with file-level evidence and validation commands.",
+      "assertions": [
+        "The report identifies the Agent Skills documentation and retrieval date used as the baseline",
+        "The report separates hard specification failures from recommendations",
+        "The report does not recommend removing a safety extension without an equivalent control",
+        "Every migration phase includes a concrete validation method"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create a new Agent Skill from a completed real-world workflow that includes a repeated Python helper.",
+      "expected_output": "A coherent portable skill with valid frontmatter, progressive disclosure, a PEP 723 script designed for agents, trigger queries, and output-quality evals.",
+      "assertions": [
+        "name matches the directory and the description states capability and trigger conditions",
+        "The Python helper declares bounded PEP 723 dependencies and runs with uv",
+        "The script is non-interactive and documents --help, errors, output, and exit behavior",
+        "The skill includes positive and near-miss negative trigger queries",
+        "The skill includes at least two realistic output eval cases"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "A 700-line discipline-enforcing SKILL.md has client-only frontmatter and unreliable triggering. Refactor it without weakening its safety behavior.",
+      "expected_output": "A staged refactor that preserves verified safety controls, splits details into directly linked references, optimizes the standard description through train/validation trigger evals, and compares behavior with the old version.",
+      "assertions": [
+        "The plan preserves client safety behavior until an equivalent replacement exists",
+        "SKILL.md is reduced below 500 lines with one-level conditional references",
+        "Description optimization uses positive, near-miss negative, train, validation, repeated runs, and fresh holdout queries",
+        "Output evaluation compares against a snapshot of the previous skill in clean contexts",
+        "The final result distinguishes portable compliance from local-client compatibility"
+      ]
+    }
+  ]
+}

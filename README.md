@@ -2,6 +2,15 @@
 
 这是我的个人 dotfiles 仓库，里面有一些写死的个人配置，例如默认仓库 `jimyag/dotfiles`、默认 `chezmoi init jimyag`、Git 用户信息、邮箱和部分脚本提示。直接使用前建议先通读并替换为自己的值。
 
+## Agent Skills
+
+`home/dot_agents/skills/` 包含可复用的 Agent Skills。它们会通过 Chezmoi
+应用到 `~/.agents/skills/`，也可以单独复制到兼容 Agent Skills 的客户端。
+
+部分 skill 使用 Claude Code/Codex 的扩展 frontmatter，或依赖同级
+`_shared/` 规则；这些兼容性要求会在各自的 `SKILL.md` 中说明。第三方来源
+及许可证见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+
 ## 复用说明
 
 如果想基于这个仓库维护自己的 dotfiles，可以先用 chezmoi 初始化到本地，再断开原仓库并换成自己的仓库：

@@ -1,0 +1,82 @@
+[
+  {
+    "query": "Audit every skill under ~/.agents/skills against agentskills.io and tell me which ones are not portable.",
+    "should_trigger": true
+  },
+  {
+    "query": "This SKILL.md description keeps activating for unrelated requests. Build positive and negative trigger tests and tighten it.",
+    "should_trigger": true
+  },
+  {
+    "query": "Turn the workflow we just completed into a reusable Agent Skill with scripts and references.",
+    "should_trigger": true
+  },
+  {
+    "query": "My skill is 900 lines long. Split it using progressive disclosure without losing the important gotchas.",
+    "should_trigger": true
+  },
+  {
+    "query": "Add output-quality evals that compare the current skill against the previous version.",
+    "should_trigger": true
+  },
+  {
+    "query": "Check whether these frontmatter fields pass the official Agent Skills validator.",
+    "should_trigger": true
+  },
+  {
+    "query": "Make this Python helper self-contained with PEP 723, uv run, --help, JSON output, and safe errors for an agent skill.",
+    "should_trigger": true
+  },
+  {
+    "query": "We use disable-model-invocation in Claude but want this skill to be portable to Codex and VS Code. Plan the migration.",
+    "should_trigger": true
+  },
+  {
+    "query": "Review whether these three skills overlap and propose one coherent scope and near-miss boundaries.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create a checklist for releasing a skill, including description trigger rates, baseline evals, token cost, and official validation.",
+    "should_trigger": true
+  },
+  {
+    "query": "Install the spreadsheet skill from this GitHub repository into my Codex setup.",
+    "should_trigger": false
+  },
+  {
+    "query": "Is there an existing skill that can review Terraform plans? Search the skill ecosystem.",
+    "should_trigger": false
+  },
+  {
+    "query": "Run the code review skill on my current git diff and report bugs.",
+    "should_trigger": false
+  },
+  {
+    "query": "Audit my MCP servers, hooks, AGENTS.md, and Claude settings for security drift.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a technical design document for our database migration.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create and push a conventional git commit for the current changes.",
+    "should_trigger": false
+  },
+  {
+    "query": "Package these tools as a Codex plugin with a plugin.json manifest.",
+    "should_trigger": false
+  },
+  {
+    "query": "Move this repeated repository convention into AGENTS.md so all tasks follow it.",
+    "should_trigger": false
+  },
+  {
+    "query": "Use the existing PDF skill to extract tables from quarterly-report.pdf.",
+    "should_trigger": false
+  },
+  {
+    "query": "Benchmark two language models on our customer-support dataset; this is not about skill activation.",
+    "should_trigger": false
+  }
+]

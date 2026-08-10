@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Review Loop"
+  short_description: "识别已有机器人并手动推进 GitHub PR 的 AI review 闭环"
+  default_prompt: "使用 /ai-review-loop 检查这个 PR 当前 head 已有的机器人 review，识别可用集成后按对应入口触发并处理成立的问题。"
