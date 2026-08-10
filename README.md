@@ -4,8 +4,22 @@
 
 ## Agent Skills
 
-`home/dot_agents/skills/` 包含可复用的 Agent Skills。它们会通过 Chezmoi
-应用到 `~/.agents/skills/`，也可以单独复制到兼容 Agent Skills 的客户端。
+根目录的 `skills/` 包含可复用的 Agent Skills，可以直接通过 `npx skills`
+查看或安装：
+
+```bash
+# 查看仓库中可用的 skills
+npx skills add jimyag/dotfiles --list
+
+# 安装全部 skills
+npx skills add jimyag/dotfiles --all
+
+# 安装指定 skill
+npx skills add jimyag/dotfiles --skill systematic-debugging
+```
+
+`home/dot_agents/skills` 是指向根目录 `skills/` 的相对软链接，用于通过
+Chezmoi 将同一份内容应用到 `~/.agents/skills/`，避免维护两份副本。
 
 部分 skill 使用 Claude Code/Codex 的扩展 frontmatter，或依赖同级
 `_shared/` 规则；这些兼容性要求会在各自的 `SKILL.md` 中说明。第三方来源

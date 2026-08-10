@@ -30,6 +30,14 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+canonical_path() {
+    python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$1"
+}
+
+relative_path_from() {
+    python3 -c 'import os, sys; print(os.path.relpath(os.path.realpath(sys.argv[1]), os.path.realpath(sys.argv[2])))' "$1" "$2"
+}
+
 # 检查子模块是否存在
 if [ ! -d "$PUBLIC_REPO_DIR" ]; then
     log_error "公开仓库目录不存在: $PUBLIC_REPO_DIR"
@@ -82,8 +90,8 @@ process_file() {
         # 如果已经是软链接，检查是否指向正确位置
         if [ -L "$private_path" ]; then
             local link_target="$(readlink "$private_path")"
-            local expected_target="$(realpath -m "$public_path")"
-            if [ "$link_target" != "$expected_target" ] && [ "$(realpath "$private_path")" != "$expected_target" ]; then
+            local expected_target="$(canonical_path "$public_path")"
+            if [ "$link_target" != "$expected_target" ] && [ "$(canonical_path "$private_path")" != "$expected_target" ]; then
                 log_warn "软链接已存在但指向不同位置: $relative_path"
                 log_warn "  当前指向: $link_target"
                 log_warn "  应该指向: $expected_target"
@@ -104,7 +112,7 @@ process_file() {
     fi
 
     # 创建软链接
-    local relative_link="$(realpath --relative-to="$parent_dir" "$public_path")"
+    local relative_link="$(relative_path_from "$public_path" "$parent_dir")"
     if ln -s "$relative_link" "$private_path" 2>/dev/null; then
         log_info "创建软链接: $relative_path"
         ((created_count++))
@@ -114,18 +122,18 @@ process_file() {
     fi
 }
 
-# 使用 find 命令遍历所有文件（包括隐藏文件）
+# 使用 find 命令遍历所有文件（包括隐藏文件和软链接目录中的文件）
 log_info "扫描公开仓库文件..."
 
 # 使用 process substitution 避免子 shell 问题
 # 临时禁用 set -e 以处理可能的空结果
 set +e
 while IFS= read -r -d '' public_path; do
-    # 只处理普通文件，跳过目录和符号链接
-    if [ -f "$public_path" ] && [ ! -L "$public_path" ]; then
+    # find -L 会解析公开 home 中指向仓库其他目录的软链接。
+    if [ -f "$public_path" ]; then
         process_file "$public_path"
     fi
-done < <(find "$PUBLIC_HOME_DIR" -type f -print0 2>/dev/null)
+done < <(find -L "$PUBLIC_HOME_DIR" -type f -print0 2>/dev/null)
 find_exit_code=$?
 set -e
 
@@ -143,24 +151,7 @@ while IFS= read -r -d '' private_path; do
         expected_public_path="$PUBLIC_HOME_DIR/$relative_path"
         
         # 检查软链接指向的文件是否存在
-        # 先尝试解析软链接的绝对路径
-        parent_dir="$(dirname "$private_path")"
-        link_target="$(readlink "$private_path")"
-        
-        # 解析为绝对路径
-        if [[ "$link_target" == /* ]]; then
-            resolved_target="$link_target"
-        else
-            # 相对路径，基于软链接所在目录解析
-            resolved_target="$(cd "$parent_dir" && realpath "$link_target" 2>/dev/null || echo "")"
-            if [ -z "$resolved_target" ]; then
-                # realpath 可能不可用，手动拼接
-                link_dir="$(cd "$parent_dir" && cd "$(dirname "$link_target")" 2>/dev/null && pwd || echo "")"
-                if [ -n "$link_dir" ]; then
-                    resolved_target="$link_dir/$(basename "$link_target")"
-                fi
-            fi
-        fi
+        resolved_target="$(canonical_path "$private_path")"
         
         # 检查软链接是否指向公开仓库，并且对应的文件已不存在
         if [[ "$resolved_target" == "$PUBLIC_HOME_DIR"/* ]] || [[ "$resolved_target" == "$PUBLIC_REPO_DIR"/* ]]; then
@@ -198,4 +189,3 @@ log_info "  跳过文件: $skipped_count"
 if [ $error_count -gt 0 ]; then
     log_error "  错误数量: $error_count"
 fi
-

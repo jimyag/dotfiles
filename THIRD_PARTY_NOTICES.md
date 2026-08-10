@@ -5,7 +5,7 @@ below. Their original copyright and license terms remain in effect.
 
 ## GitHub gh-stack
 
-- Component: `home/dot_agents/skills/gh-stack`
+- Component: `skills/gh-stack`
 - Source: <https://github.com/github/gh-stack/tree/main/skills/gh-stack>
 - License: MIT
 
@@ -31,7 +31,7 @@ SOFTWARE.
 
 ## Supabase Agent Skills
 
-- Component: `home/dot_agents/skills/supabase-postgres-best-practices`
+- Component: `skills/supabase-postgres-best-practices`
 - Source: <https://github.com/supabase/agent-skills>
 - License: MIT
 
