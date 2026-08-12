@@ -38,7 +38,7 @@ def check_skill(skill_dir: Path) -> list[str]:
     if not any(line.startswith("# ") for line in lines[end + 1 :]):
         errors.append(f"{skill_dir.name}: missing top-level heading")
 
-    if skill_dir.name in {"ci-analyze", "git-commit", "gh-view", "requesting-code-review"}:
+    if skill_dir.name in {"git-commit", "requesting-code-review"}:
         if "common-acceptance.md" not in body:
             errors.append(f"{skill_dir.name}: missing shared acceptance reference")
 

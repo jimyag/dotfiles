@@ -22,7 +22,7 @@ description: 在批量评审项目/比赛提交/作业仓库并需要源码证�
 
 - 单个 repo 的普通 code review；用 `requesting-code-review`。
 - 只要可运行性排障；用 `systematic-debugging`。
-- 只要 GitHub issue/PR 摘要；用 `gh-view`。
+- 只要 GitHub issue/PR 摘要；使用当前可用的 GitHub connector，不触发本 skill。
 
 ## 执行流程
 

@@ -1,6 +1,6 @@
 ---
 name: codecov-coverage
-description: 在需要通过 Codecov 查询仓库覆盖率、PR 覆盖率影响、commit 覆盖率、文件级覆盖率或覆盖率对比时使用。
+description: 在需要查询 Codecov 仓库、PR、commit、patch 或文件覆盖率，比较覆盖率变化，或诊断 codecov/project、codecov/patch 等覆盖率检查失败时使用。
 allowed-tools: >-
   Bash(command -v:*) Bash(npm install -g mcporter:*) Bash(mcporter:*)
   Bash(npx -y mcporter:*) Bash(bash scripts/codecov-*:*)
@@ -18,6 +18,7 @@ allowed-tools: >-
 - 查看某个 commit 的覆盖率详情
 - 查看某个文件的逐行覆盖率
 - 比较两个分支、tag 或 commit 之间的覆盖率变化
+- 诊断 `codecov/project`、`codecov/patch`、flag 或 component 覆盖率检查失败
 
 ## 前置条件
 
@@ -34,7 +35,7 @@ allowed-tools: >-
 npm install -g mcporter
 ```
 
-如果缺少 `jq`，提示用户安装 `jq` 后再继续。如果 token 未设置或无效，立即停止并提示用户配置，不要猜测或降级到网页抓取。
+如果缺少 `jq`，提示用户安装 `jq` 后再继续。普通覆盖率查询缺少 token 时立即停止并提示用户配置，不要猜测或降级到网页抓取。诊断 GitHub 上的 Codecov check 时，可以先读取 connector 已提供的 check 摘要；只有摘要足以支持结论时才能继续，否则仍需 Codecov API Access Token。
 
 ## 安全边界
 
@@ -85,6 +86,21 @@ npx -y mcporter call \
 - `get_file_coverage owner: repo: file_path: [ref:]`
 - `compare_coverage owner: repo: base: head:`
 
+## Codecov check 失败诊断
+
+1. 从 PR 或 commit 上下文确认失败的 check 名称、head SHA 和 details URL。优先使用可用的 GitHub connector，不把 `gh` CLI 作为默认入口。
+2. 根据 check 类型补齐 Codecov 数据：
+   - `codecov/project`：查询 repo、commit 和 PR 覆盖率，确认整体覆盖率是否低于项目阈值。
+   - `codecov/patch`：查询 PR 覆盖率并比较 base/head；需要定位具体缺口时再查询变更文件覆盖率。
+   - flag/component：确认失败状态对应的 flag 或 component，不用仓库总覆盖率替代它。
+3. 将失败归入一个可验证类别：
+   - 覆盖率确实低于阈值。
+   - base、head 或 upload 数据缺失/尚未处理完成。
+   - commit SHA、分支或 PR 映射不一致。
+   - flag/component 没有对应报告或配置不匹配。
+4. 只有日志、check 摘要或 Codecov API 数据能够直接支持时才下结论。需要本地 coverage 验证时遵循仓库测试规则，不主动运行未获授权的测试命令。
+5. Codecov 数据不足时明确列出缺失项，不把普通测试通过等同于 coverage gate 应当通过。
+
 ## 参数解析
 
 `owner` 和 `repo` 按以下顺序解析：
@@ -97,7 +113,7 @@ npx -y mcporter call \
 
 ## 故障处理
 
-- `CODECOV_TOKEN 未设置`：提示用户执行 `export CODECOV_TOKEN="..."`，不要输出 token
+- `CODECOV_TOKEN 未设置`：普通查询提示用户执行 `export CODECOV_TOKEN="..."`；check 诊断可先使用 GitHub connector 摘要，但数据不足时必须停止，不要输出 token
 - `401 Unauthorized`：token 无效或过期，提示重新生成 API Access Token
 - `404 Not Found`：检查 owner/repo 是否正确、仓库是否已接入 Codecov、目标 ref 是否有覆盖率数据
 - `commit_sha not found`：使用完整 40 位 commit SHA
@@ -109,6 +125,7 @@ npx -y mcporter call \
 - 百分比保留 Codecov 返回精度；需要手动计算时保留两位小数
 - 涉及 PR 时说明 base/head/patch 三类覆盖率
 - 涉及文件时优先指出未覆盖行或覆盖率最低的文件
+- 涉及失败 check 时说明 check 类型、失败阈值或缺失数据，以及支持结论的来源
 - 结论中区分事实与建议，不要把覆盖率变化夸大成业务风险
 
 ## Smoke Test
