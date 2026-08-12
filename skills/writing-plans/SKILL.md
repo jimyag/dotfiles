@@ -93,7 +93,7 @@ description: 在需求已经明确、实现步骤较多、或需要把任务拆�
 
 ## 文档路由
 
-计划包含高成本或长期设计选择时，按 [Design Doc 与 ADR 路由](../_shared/design-record-routing.md) 判断。命中条件时把相应文档列为实现前置步骤，不在执行计划中复制完整文档。
+计划包含高成本或长期设计选择时，按 [Design Doc 与 ADR 路由](references/design-record-routing.md) 判断。命中条件时把相应文档列为实现前置步骤，不在执行计划中复制完整文档。
 
 ## 输出要求
 

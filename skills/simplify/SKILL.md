@@ -1,6 +1,6 @@
 ---
 name: simplify
-description: Use this skill when recently written or modified code should be simplified for clarity, consistency, and maintainability without changing behavior. Focus on recently changed code unless a broader review is explicitly requested.
+description: Use this skill when the user explicitly asks to simplify, clean up, or refactor recently written or modified code for clarity, consistency, and maintainability without changing behavior. Do not trigger it merely because code was changed; focus on the requested scope unless a broader review is explicit.
 license: Apache-2.0 (see LICENSE)
 ---
 

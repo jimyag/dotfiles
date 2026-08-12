@@ -1,119 +1,61 @@
 ---
 name: git-commit
-description: 在用户明确要求创建 commit、生成 commit message、或 push 当前改动时使用。适用于当前改动已经完成并准备提交的场景。
-compatibility: Local Claude/Codex profile; requires client support for manual-invocation guards and argument hints, plus git and network access when pushing.
-when_to_use: 当前改动已经完成，工作区里有待提交内容，用户明确要求创建 commit、生成 commit message 或 push 当前分支。
-disable-model-invocation: true
-argument-hint: "[context]"
-allowed-tools: >-
-  Bash(git add:*) Bash(git branch:*) Bash(git commit:*) Bash(git diff:*)
-  Bash(git log:*) Bash(git status:*) Bash(git push:*)
+description: 在用户明确要求生成 commit message、创建 signed-off commit，或提交后 push 当前分支时使用。根据真实 diff 精准暂存并生成 Conventional Commit；只要求 message 时不修改仓库，push 只在明确要求时执行。
+compatibility: Requires git. Push requires network access and an authenticated remote.
+allowed-tools: Bash(git add:*) Bash(git branch:*) Bash(git commit:*) Bash(git diff:*) Bash(git log:*) Bash(git status:*) Bash(git push:*)
 ---
 
-# 规范化提交
+# 创建规范化提交
 
-开始时声明："我正在使用 git-commit skill 生成并提交规范化 commit。"
+## 边界
 
-## 快速开始
+- 用户只要 commit message：输出草案，不暂存、不提交、不 push。
+- 用户要求 commit：检查并精准暂存目标文件，执行提交，不默认 push。
+- 只有用户明确要求 push 时才 push。
+- 保留工作区中与本次任务无关的改动，不使用 `git add .` 代替范围判断。
 
-1. 查看 `status/diff/log`，确认提交范围与语言风格。
-2. 暂存目标文件并展示“将提交列表”。
-3. 生成符合 Angular 规范的 commit message。
-4. 用户只要 commit message 时输出草案并停止，不暂存、commit 或 push。
+## 流程
 
-## 预检查命令
+1. 确认目标仓库和当前状态：
 
-```bash
-git status --short
-git diff HEAD
-git branch --show-current
-git log --oneline -10
-```
+   ```bash
+   git rev-parse --git-dir
+   git status --short
+   git diff HEAD
+   git branch --show-current
+   git log --oneline -10
+   ```
 
-## 消息规范
+2. 根据用户授权和 diff 确定提交范围；混有无关改动时只暂存目标路径。
+3. 根据仓库近期惯例生成 `<type>(<scope>): <summary>`：
+   - `feat`、`fix`、`docs`、`refactor`、`perf`、`test`、`build`、`ci`、`chore`
+   - summary 使用祈使语气、现在时，不加句号或 emoji
+   - body 解释为什么改和影响范围；简单文档提交可省略
+   - 按需加入 `BREAKING CHANGE:`、`DEPRECATED:`、`Fixes #123` 或 `Closes #123`
+4. 暂存后再次检查：
 
-Header：`<type>(<scope>): <summary>`
+   ```bash
+   git diff --cached --stat
+   git diff --cached
+   ```
 
-Type：
-- `feat` 新功能
-- `fix` 缺陷修复
-- `docs` 文档改动
-- `refactor` 重构
-- `perf` 性能优化
-- `test` 测试相关
-- `build` 构建系统或依赖
-- `ci` CI 配置/脚本
-- `chore` 杂项维护
+5. 执行 `git commit -s`。`-s` 是必需的 sign-off，不得省略或用配置猜测替代。
+6. 读取新 commit 的 hash 和 summary。用户同时明确要求 push 时，再 push 当前分支；无 upstream 时使用明确的 remote 和 branch 建立 upstream。
 
-Summary 规则：祈使句、现在时、首字母小写、不加句号。
+## 失败处理
 
-Body 规则：
-- `docs` 可省略，其他类型建议必须有
-- 至少说明“为什么改”与“影响范围”
-- 非 `docs` 类型时，body 至少 20 个字符
-- 单段 body 不超过 3 行，保持简洁
+- 无可提交变更：报告当前状态，不创建空 commit。
+- hook 失败：保留完整错误，修复原因后重试；不使用 `--no-verify`。
+- push 冲突：报告远端差异，先判断应 fetch/rebase 还是停止，不强推。
+- 无法区分用户改动与任务改动：停止暂存并说明具体重叠文件。
 
-Footer（按需）：
-- `BREAKING CHANGE: ...`
-- `DEPRECATED: ...`
-- `Fixes #123` / `Closes #456`
-
-## 语言规则
-
-- 参考最近 10 条提交语言。
-- 近期中文为主则用中文；近期英文为主则用英文。
-
-## 执行流程
-
-1. 先确认提交文件列表。
-2. 生成并复核 commit message 草案。如果用户只要求生成 message，输出草案后停止。
-3. 用户明确要求执行 commit 时，执行 `git add`；该请求已满足提交确认，不再重复等待。
-4. 执行 `git commit -s`（必须带 sign-off 标志）。
-
-## 参数规则
-
-- 所有参数都视为上下文字符串，用于辅助生成 commit message。
-
-## 关键约束
-
-- 必须使用 `-s` 标志进行 sign-off，示例：`git commit -s -m "message"`
-- 不要使用 emoji 在 commit message 中
-
-## 输出边界
-
-- 只生成 message 时输出 `Push: 未执行`。
-
-## 输出模板
-
-只生成 message：
+## 输出
 
 ```text
-标题: <type(scope): summary>
-正文: <body 或 "无">
-已提交: 否
-Push: 未执行
+Commit: <hash / 未执行>
+Message: <title>
+Files: <staged files>
+Sign-off: yes / not executed
+Push: <remote/branch / 未执行>
+Verification: <actual checks>
 ```
-
-执行 commit：
-
-```text
-已提交: <commit-hash>
-标题: <type(scope): summary>
-分支: <branch>
-```
-
-## 失败回退
-
-- 工作区无变更：输出 `git status` 结果，提示无可提交内容。
-- `git commit` 失败（hook 报错）：输出完整报错，建议修复后重试，不跳过 hook。
-- `git push` 失败（远端冲突）：输出报错，建议先 pull/rebase 再重试。
-
-## 统一约束
-
-- 验收标准：遵循 `skills/_shared/common-acceptance.md`
-- 系统规范：遵循 `home/dot_agents/AGENTS.md`
-- 本 skill 的额外约束：commit 必须带 sign-off；commit message 不使用 emoji。
-
-## 参考资料
-
-- [Angular Commit Message Guidelines](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md)

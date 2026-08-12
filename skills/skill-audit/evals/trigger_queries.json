@@ -9,7 +9,7 @@
   },
   {
     "query": "Turn the workflow we just completed into a reusable Agent Skill with scripts and references.",
-    "should_trigger": true
+    "should_trigger": false
   },
   {
     "query": "My skill is 900 lines long. Split it using progressive disclosure without losing the important gotchas.",
@@ -25,7 +25,7 @@
   },
   {
     "query": "Make this Python helper self-contained with PEP 723, uv run, --help, JSON output, and safe errors for an agent skill.",
-    "should_trigger": true
+    "should_trigger": false
   },
   {
     "query": "We use disable-model-invocation in Claude but want this skill to be portable to Codex and VS Code. Plan the migration.",
@@ -36,7 +36,7 @@
     "should_trigger": true
   },
   {
-    "query": "Create a checklist for releasing a skill, including description trigger rates, baseline evals, token cost, and official validation.",
+    "query": "Audit our release checklist for missing trigger rates, baseline evals, token cost, and official validation.",
     "should_trigger": true
   },
   {
