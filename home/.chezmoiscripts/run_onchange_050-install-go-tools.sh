@@ -85,10 +85,6 @@ install_or_record mockgen go.uber.org/mock/mockgen
 install_or_record protoc-gen-go google.golang.org/protobuf/cmd/protoc-gen-go
 install_or_record protoc-gen-go-grpc google.golang.org/grpc/cmd/protoc-gen-go-grpc
 install_or_record protoc-gen-go-vtproto github.com/planetscale/vtprotobuf/cmd/protoc-gen-go-vtproto
-install_or_record qshell github.com/qiniu/qshell/v2/main
-if [ -x "$gobin/main" ]; then
-    mv "$gobin/main" "$gobin/qshell"
-fi
 install_or_record staticcheck honnef.co/go/tools/cmd/staticcheck
 install_or_record task github.com/go-task/task/v3/cmd/task
 
