@@ -93,7 +93,6 @@ _source_cached_completion() {
     source "$cache_file"
 }
 
-_source_cached_completion qshell qshell completion zsh
 _source_cached_completion kubectl kubectl completion zsh
 _source_cached_completion helm helm completion zsh
 _source_cached_completion pulsarctl pulsarctl completion zsh
