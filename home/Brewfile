@@ -189,8 +189,6 @@ brew "tig"
 brew "tldr"
 # Official tldr client written in Rust
 brew "tlrc", link: false
-# Terminal multiplexer
-brew "tmux"
 # Program that allows you to count code, quickly
 brew "tokei"
 # Display directories as trees (with optional color/HTML output)
