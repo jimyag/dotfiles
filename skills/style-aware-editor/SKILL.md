@@ -40,18 +40,19 @@ Do not use for:
 5. If the user provides sample writing, infer voice from it before editing.
 6. Mark protected spans before editing: quotes, code, commands, file paths, identifiers, citations, required terminology, and attributed text.
 7. For Chinese technical documentation, API/status copy, product/UI copy, operational steps, or troubleshooting, read [chinese-technical-copy.md](references/chinese-technical-copy.md).
-8. Choose scene and edit scope. Read [scene-scope-and-voice.md](references/scene-scope-and-voice.md) when the text is long, Chinese, or has strict preservation requirements.
-9. Run a pre-flight pass-strength check. Read [pass-strength.md](references/pass-strength.md) for light / mixed / full mode.
-10. Scan for AI-writing smells. Read [ai-writing-smells.md](references/ai-writing-smells.md) when doing a serious pass.
-11. For English marketing, social, blog, or deep audit requests, also read [advanced-ai-patterns.md](references/advanced-ai-patterns.md).
-12. Pick the style profile and register. Read [style-profiles.md](references/style-profiles.md) when the article type is not obvious.
-13. Edit in passes:
+8. For serious cleanup of finished Chinese prose, read [chinese-ai-patterns.md](references/chinese-ai-patterns.md). Use its trigger, exception, and minimum-fix rules; do not turn weak signals into global bans.
+9. Choose scene and edit scope. Read [scene-scope-and-voice.md](references/scene-scope-and-voice.md) when the text is long, Chinese, or has strict preservation requirements.
+10. Run a pre-flight pass-strength check. Read [pass-strength.md](references/pass-strength.md) for light / mixed / full mode.
+11. Scan for AI-writing smells. Read [ai-writing-smells.md](references/ai-writing-smells.md) when doing a serious pass.
+12. For English marketing, social, blog, or deep audit requests, also read [advanced-ai-patterns.md](references/advanced-ai-patterns.md).
+13. Pick the style profile and register. Read [style-profiles.md](references/style-profiles.md) when the article type is not obvious.
+14. Edit in passes:
    - remove padding and chatbot artifacts
    - replace generic claims with specific facts or delete them
    - vary rhythm without making the writing performative
    - restore author stance where appropriate
    - preserve technical precision
-14. Run the final checklist from [edit-checklist.md](references/edit-checklist.md).
+15. Run the final checklist from [edit-checklist.md](references/edit-checklist.md).
 
 For longer files, optionally run:
 
@@ -85,6 +86,7 @@ If unsure, ask one concise question: "这篇是教程、观点文、复盘，还
 - Edit in place by default. Do not silently reorder sections, merge paragraphs, or rewrite the structure unless the user asks.
 - In `detect` mode, separate clear problems from context-dependent patterns. Do not rewrite.
 - In `edit` mode, change only the flagged spans. Leave already-human paragraphs untouched.
+- Under `in-place` scope with light or mixed pass strength, use strict conservative editing: every changed span must map to a stated rule or user request, unmatched sentences stay unchanged, and target-author samples override generic punctuation or rhythm preferences.
 - Do not edit quoted material, code blocks, or text attributed to someone else unless the user explicitly asks. Flag issues there instead.
 - For large files, confirm the target section before broad edits.
 - Preserve coverage. If the source has five material points, the rewrite must still cover those five points unless the user asked to compress.
@@ -98,6 +100,7 @@ If unsure, ask one concise question: "这篇是教程、观点文、复盘，还
 - Remove chatbot residue: "当然", "希望这有帮助", "让我们深入探讨", "值得注意的是", "总而言之", "in conclusion", "let me know".
 - Remove copied chat UI artifacts: fake citations, placeholder fields, meta-prompts, and leftover assistant instructions.
 - Treat em dashes, curly quotes, passive voice, and formal vocabulary as weak signals. Fix them only when the context makes them harmful.
+- Do not manufacture sentence-length variation, casual particles, first-person voice, questions, or emotional detail merely to make prose look human.
 - Do not over-edit human-first drafts. Fragments, mixed feelings, self-corrections, and uneven rhythm can be evidence of real voice.
 - For Chinese technical writing, prefer short judgment sentences over slogan-like summaries.
 - For English technical writing, prefer plain verbs: use, is, has, shows, fails, returns.

@@ -1,0 +1,50 @@
+{
+  "skill_name": "style-aware-editor",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "请降低这段中文技术说明的 AI 味，保留标题、段落、命令、数字和判断强度：\n\n## 一、部署结果\n\n一句话总结：新版本可能显著提升部署效率。实际测试中，部署时间从 20 分钟降到 12 分钟。\n\n```bash\nkubectl rollout status deployment/api\n```",
+      "expected_output": "A conservative rewrite that removes the prompting colon and unnecessary numbered-heading shell, uses the existing 20-to-12-minute result instead of vague improvement language, and preserves the command, paragraph structure, and uncertainty marker.",
+      "assertions": [
+        "The output preserves the kubectl command exactly",
+        "The output preserves both 20 minutes and 12 minutes",
+        "The output does not invent a cause, benchmark, environment, or additional result",
+        "The output does not turn 可能 into an unconditional claim",
+        "The heading text and paragraph order remain intact apart from removing the unnecessary ordinal shell"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "帮我去掉 AI 味，但这是作者原稿，只做有明确依据的修改：\n\n这个问题值得再问一次吗？我列了 CPU、内存、磁盘三个方向。日志很长，但结论不复杂——磁盘没有写满。",
+      "expected_output": "The text remains unchanged because the question, three-item list, long sentence, and em dash are weak signals without a harmful cluster or conflict with the author's voice.",
+      "assertions": [
+        "The rewrite does not remove the question solely because it is a question",
+        "The rewrite preserves CPU、内存、磁盘",
+        "The rewrite does not replace or remove the em dash solely as an AI tell",
+        "No first-person detail, emotion, casual particle, or new evidence is added"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "只检测，不要改写：\n\n核心是：先完成迁移。这意味着我们先完成迁移。值得注意的是，回滚窗口只有 30 分钟。",
+      "expected_output": "A detect-only report that identifies the prompting colon, possible recap repetition, and possible missing paragraph referent while quoting the relevant spans and returning no rewritten paragraph.",
+      "assertions": [
+        "The response clearly separates high-confidence findings from context-dependent findings",
+        "The response quotes or locates the triggering phrases",
+        "The response does not include a rewritten version of the paragraph",
+        "The response does not claim the author is AI"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "按我的写作样本润色下面一段。样本一直使用破折号和长句，请保留这些习惯，只清理明确的套话。目标段落：\n\n说白了，这次失败没有隐藏原因——数据库连接池在 10:32 耗尽，服务在 10:35 恢复。",
+      "expected_output": "A minimal edit that removes the stock opener while preserving the author's em dash habit, timestamps, event order, and factual wording.",
+      "assertions": [
+        "说白了 is removed or directly replaced by the substantive claim",
+        "The em dash remains because the author sample explicitly establishes that habit",
+        "10:32 and 10:35 remain unchanged",
+        "The output does not invent why the pool was exhausted or how the service recovered"
+      ]
+    }
+  ]
+}

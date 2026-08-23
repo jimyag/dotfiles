@@ -11,6 +11,7 @@ Use this before returning the final rewrite.
 - Direct quotes, code, URLs, file paths, identifiers, and citation markers are intact unless the user asked to edit them.
 - Protected spans were identified before editing.
 - Material source points are still covered unless the user asked to compress.
+- Conditions, exceptions, causality, and certainty markers such as `可能`, `通常`, and `预计` retain their original strength.
 
 ## Voice
 
@@ -35,6 +36,7 @@ Use this before returning the final rewrite.
 - No conclusion section unless it adds information.
 - No false agency or lecturer voice unless the genre needs it.
 - No repeated paragraph shape such as "claim + explanation + abstract wrap-up" across several adjacent paragraphs.
+- No weak signal such as an em dash, question, passive sentence, long sentence, or three-item list was treated as a global ban.
 
 ## Readability
 
@@ -49,5 +51,7 @@ Use this before returning the final rewrite.
 Ask silently: "What still makes this sound like generated text?"
 
 Fix only the remaining high-signal issues. Do not keep rewriting until the text loses its meaning or voice.
+
+For strict conservative editing, confirm that every changed span maps to a stated rule or user request, unmatched sentences remain unchanged, and title/paragraph/list structure is intact.
 
 For `detect` mode, confirm that no rewrite was included. For `edit` mode, confirm that quoted text, code blocks, and attributed material were not silently changed.

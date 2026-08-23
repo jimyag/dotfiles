@@ -192,6 +192,12 @@ Do not flag these by themselves:
 - common transition words used sparingly
 - passive voice in academic, legal, or formal technical writing
 - bullet lists in docs, specs, PR descriptions, or checklists
+- similar sentence or paragraph lengths
+- questions, self-questions, or question-form headings
+- sentence-internal parallelism or exactly three list items
+- nominalization, long sentences, or repeated technical terms
+
+Do not manufacture sentence-length `burstiness`, casual particles, first-person voice, questions, or emotion to make text appear human. Treat dense em dashes, repeated three-part structures, and sentence-initial transitions as cluster signals only when they conflict with the genre or author sample.
 
 Preserve these human-writing signs:
 
