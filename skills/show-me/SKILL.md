@@ -1,11 +1,11 @@
 ---
 name: show-me
-description: Help the user understand the current topic visually with concise diagrams, code-shape sketches, and focused HTML artifacts.
+description: 使用简洁的图表、代码结构示意和聚焦主题的 HTML 页面，帮助用户直观理解当前讨论的内容。
 ---
 
-Help the user understand the current topic of conversation visually. Skip the preamble and keep prose brief. Pick the smallest view that makes the key point clear.
+用可视化方式帮助用户理解当前讨论的主题。直接展示内容，文字说明保持简短。选择能讲清关键点的最简视图。
 
-- Show logic or an algorithm as pseudocode:
+- 用伪代码展示逻辑或算法：
 
 ```text
 on(save)
@@ -15,7 +15,7 @@ on(save)
   return fresh result
 ```
 
-- Show runtime control flow as a call tree:
+- 用调用树展示运行时控制流：
 
 ```text
 submitForm
@@ -25,7 +25,7 @@ submitForm
   navigateToSession
 ```
 
-- Show UI structure as a component tree, including state and module boundaries that matter:
+- 用组件树展示界面结构，包含与当前问题有关的状态和模块边界：
 
 ```tsx
 <SessionPage> (apps/example/src/routes/session.tsx)
@@ -34,7 +34,7 @@ submitForm
     <RunSkillButton> (packages/ui)
 ```
 
-- Show file responsibility or a broad refactor as a shallow file tree:
+- 用层级较浅的文件树展示文件职责或大范围重构：
 
 ```text
 src/
@@ -43,7 +43,7 @@ src/
 └── transport/      # sends API requests
 ```
 
-- Show component interaction, control flow, or data flow with Mermaid:
+- 用 Mermaid 展示组件交互、控制流或数据流：
 
 ```mermaid
 sequenceDiagram
@@ -55,9 +55,9 @@ sequenceDiagram
     Daemon-->>UI: stream result
 ```
 
-- Use `diff` when the point is what changes and the surrounding shape already exists. Match the diff shape to the topic.
+- 当重点是说明变化，且已有周边结构可供对照时，使用 `diff`。根据讨论主题选择差异的展示形式。
 
-For a component change:
+组件变更：
 
 ```diff
  <SessionPage>
@@ -68,7 +68,7 @@ For a component change:
 +    <SkillResultCard />
 ```
 
-For a file-layout change:
+文件布局变更：
 
 ```diff
  src/
@@ -81,7 +81,7 @@ For a file-layout change:
 +    └── stream.ts
 ```
 
-For a call-tree or call-stack change:
+调用树或调用栈变更：
 
 ```diff
  submitForm
@@ -94,7 +94,7 @@ For a call-tree or call-stack change:
 +    subscribeToEvents
 ```
 
-For a state or control-flow change:
+状态或控制流变更：
 
 ```diff
  on(save)
@@ -105,7 +105,7 @@ For a state or control-flow change:
 +  invalidate cache
 ```
 
-- Show the whole block when most of it is new, when omitted context would hide ownership or order, or when the user needs a copyable target shape:
+- 当大部分内容是新增的、省略上下文会掩盖归属或执行顺序，或用户需要可直接复制的目标结构时，展示完整内容：
 
 ```ts
 function expandSkill(command: string): string {
@@ -114,14 +114,14 @@ function expandSkill(command: string): string {
 }
 ```
 
-- For a visual UI, layout, state comparison, or concept too dense for Mermaid, write one focused HTML file — a diagram, an infographic, or a short slide deck, whichever fits the point. Match the product's colors, type, spacing, and components; use real labels and data; support desktop and mobile. Then open it for the user:
+- 对于界面、布局、状态对比，或信息过于密集而不适合用 Mermaid 展示的概念，编写一个聚焦当前主题的 HTML 文件。根据内容选择图表、信息图或简短幻灯片。沿用产品的配色、字体、间距和组件，使用真实标签与数据，同时适配桌面端和移动端。完成后为用户打开：
 
 ```
 Bash(open path/to/show-me-{description}.html)
 ```
 
-### guidance
+### 使用原则
 
-Place each visual next to the short text it supports. Keep only the calls, files, props, states, and boundaries needed to answer the user's current question or the options to resolve the current discussion point.
+将每个可视化内容放在对应的简短说明旁边。只保留回答用户当前问题或说明当前讨论中备选方案所需的调用、文件、组件属性、状态和边界。
 
-You may use one of these, you may use several, it is unlikely you will use all of them. Use your judgement and don't overwhelm the user.
+可以选用一种或几种展示方式，通常无需全部使用。根据实际需要选择，避免一次展示过多内容。
