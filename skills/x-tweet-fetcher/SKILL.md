@@ -1,45 +1,42 @@
 ---
 name: x-tweet-fetcher
-description: >
-  Use when you need tweets, reply threads, user timelines, or Chinese social posts for research,
-  especially when you want to avoid official APIs or login requirements.
-  Zero-dependency single-tweet fetches work out of the box; threads, timelines, and search need Camofox.
-compatibility: Requires Python 3.10+ and uv. Replies, timelines, rendered pages, and discovery also require a running Camofox service and network access.
+description: 研究需要抓取 X 推文、回复串、时间线、文章或中文社交平台内容时使用。
+compatibility: 需要 Python 3.10+ 和 uv。回复、时间线、渲染页面和内容发现还需要运行中的 Camofox 服务与网络访问。
 ---
 
-# X Tweet Fetcher
+# X 推文抓取
 
-Use this skill to fetch content from X and several Chinese platforms without official APIs. Prefer the zero-dependency path for a single tweet, and switch to Camofox-backed mode only when the task needs replies, timelines, rendered pages, or discovery flows.
+无需官方 API 即可抓取 X 和多个中文平台的内容。单条推文优先使用零依赖方式；仅在任务需要回复、时间线、渲染页面或内容发现流程时切换到 Camofox 模式。
 
-## Choose the path
+## 选择方式
 
-- single public tweet: use the zero-dependency fetch path
-- replies, user timelines, X lists, monitoring: use the Camofox-backed path
-- WeChat / Weibo / Bilibili / CSDN and similar rendered pages: use `fetch_china.py`
-- if browser-backed mode is unavailable, say so explicitly instead of pretending the richer fetch succeeded
+- 单条公开推文：使用零依赖抓取方式。
+- 回复、用户时间线、X 列表、监控：使用 Camofox 方式。
+- 微信、微博、哔哩哔哩、CSDN 等渲染页面：使用 `fetch_china.py`。
+- 浏览器模式不可用时明确说明，不要假装已完成更完整的抓取。
 
-## Actual scripts in this skill
+## 技能中的实际脚本
 
-- `scripts/fetch_tweet.py`: X tweets, replies, timelines, articles, lists, monitoring
-- `scripts/fetch_china.py`: Chinese platform fetching
-- `scripts/camofox_client.py`: shared browser-backed client and search helper
-- `scripts/x_discover.py`: discovery-oriented workflows
+- `scripts/fetch_tweet.py`：X 推文、回复、时间线、文章、列表和监控。
+- `scripts/fetch_china.py`：中文平台内容抓取。
+- `scripts/camofox_client.py`：共享的浏览器客户端和搜索辅助工具。
+- `scripts/x_discover.py`：面向内容发现的工作流。
 
-## Additional resources
+## 补充资源
 
-- For real command examples and the correct script names, see [references/usage.md](references/usage.md).
-- For Camofox installation and health checks, see [references/camofox-setup.md](references/camofox-setup.md).
-- For output shape and known limitations, see [references/output-and-behavior.md](references/output-and-behavior.md).
+- 实际命令示例和正确脚本名见 [使用说明](references/usage.md)。
+- Camofox 安装和健康检查见 [Camofox 配置](references/camofox-setup.md)。
+- 输出结构和已知限制见 [输出与行为](references/output-and-behavior.md)。
 
-## Operating rules
+## 操作规则
 
-- start with the cheapest path that can answer the question
-- do not claim reply, timeline, or rendered-page coverage without browser-backed evidence
-- preserve source URLs and key metadata when summarizing fetched content
-- call out platform-imposed limits such as login-gated X articles or rate-limited rendered pages
+- 从能够回答问题且成本最低的方式开始。
+- 缺少浏览器证据时，不要宣称已覆盖回复、时间线或渲染页面。
+- 汇总抓取内容时保留来源 URL 和关键元数据。
+- 说明平台限制，例如需要登录的 X 文章或受到限流的渲染页面。
 
-## Output expectations
+## 输出要求
 
-- say which mode you used: zero-dependency, Camofox-backed, or China-platform fetch
-- include the fetched text or summary plus source URL
-- mention important gaps such as missing replies, partial article text, or login restrictions
+- 说明使用的模式：零依赖、Camofox 或中文平台抓取。
+- 提供抓取文本或摘要，并附来源 URL。
+- 说明重要缺口，例如缺少回复、文章不完整或登录限制。

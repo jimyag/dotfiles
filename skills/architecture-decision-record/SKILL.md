@@ -1,6 +1,6 @@
 ---
 name: architecture-decision-record
-description: 在已经形成具体技术决策，需要判断是否记录 ADR，或创建、更新、替代架构决策记录时使用。适用于有真实备选、非平凡取舍、难以回滚约束，或未来维护者需要理解“为什么”的场景。
+description: 已有具体技术决策，需要判断是否记录 ADR，或创建、更新、替代 ADR 时使用。
 ---
 
 # 架构决策记录
@@ -16,7 +16,7 @@ description: 在已经形成具体技术决策，需要判断是否记录 ADR，
 3. 决策不容易回滚或会约束未来设计
 4. 只看代码无法理解为什么没有选择另一个方案
 
-单点 bugfix、机械迁移、命名样式调整、沿用既有约定，或尚未形成选择时不写 ADR。理由较轻时放进 PR body、设计文档或代码注释。
+单点 bugfix、机械迁移、命名样式调整、沿用既有约定，或尚未形成选择时不写 ADR。理由较轻时放进 PR 正文、设计文档或代码注释。
 
 ## 评估模式
 
@@ -58,9 +58,9 @@ status: 被 ADR-NNNN 替代
 
 ```text
 ADR: <path / 未创建>
-Title: <title>
-Status: <status>
-Supersedes: none / ADR-NNNN
-Known gaps: <gaps>
-Verification: <checks>
+标题：<标题>
+状态：<状态>
+替代记录：无 / ADR-NNNN
+已知缺口：<缺口>
+验证：<检查>
 ```

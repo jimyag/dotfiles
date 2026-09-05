@@ -1,15 +1,15 @@
 ---
 name: eli5
-description: Explain a topic like I'm a 5 year old. Use when the user types /eli5 followed by a topic or asks for a dead-simple picture explainer of how something works.
+description: 像给 5 岁孩子讲解一样解释一个主题。在用户输入 /eli5 加主题，或要求用极简单的图解说明事物原理时使用。
 license: Apache-2.0
 ---
 
-# ELI5
+# 通俗图解
 
-Explain the topic from the current user request for someone who knows nothing about it. By default, produce a self-contained HTML visual explainer with big pictures and very few words.
+面向完全不了解该主题的读者，解释用户当前请求中的主题。默认生成自包含的 HTML 图解，使用大幅图片和极少文字。
 
-Do not rely on client-specific argument placeholders such as `$ARGUMENTS`. If the user requests another format, preserve the same simple, visual-first teaching style in that format.
+不要依赖 `$ARGUMENTS` 等特定客户端的参数占位符。如果用户要求其他格式，在该格式中保持同样简单、以视觉为主的教学方式。
 
-## Source
+## 来源
 
-Adapted for cross-client Agent Skills portability from Anthropic's `claude-plugins-community/eli5` at commit `f4c9452f5ca091f1be7064d9faab1b001ea21645`. The upstream skill was authored by Thariq Shihipar. This version removes the Claude-specific `$ARGUMENTS` dependency.
+基于 Anthropic 的 `claude-plugins-community/eli5`，提交为 `f4c9452f5ca091f1be7064d9faab1b001ea21645`，改编为可跨客户端使用的 Agent Skills。上游技能作者为 Thariq Shihipar。本版本移除了 Claude 专用的 `$ARGUMENTS` 依赖。

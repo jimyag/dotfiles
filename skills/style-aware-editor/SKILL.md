@@ -1,155 +1,157 @@
 ---
 name: style-aware-editor
-description: Use when auditing or editing Chinese or English writing that sounds AI-generated, robotic, generic, over-polished, template-like, or mismatched to the target article type; also use for precise Chinese technical, API, product, UI, operational, or troubleshooting copy that must preserve facts and machine-readable content.
+description: 用户要求检查或改写文本的 AI 味、文风、术语或技术文案时使用；重构中文技术长文的论证结构用 technical-writing。
 ---
 
-# Style Aware Editor
+# 按文体编辑
 
-## Purpose
+## 目标
 
-Edit writing so it sounds natural for its target context, not merely "more casual". Preserve facts, technical terms, structure that serves the reader, and the author's actual stance.
+使文本自然地适应目标场景，而非只是“更口语化”。保留事实、技术术语、有助于读者理解的结构，以及作者的真实立场。
 
-Treat AI-writing patterns as quality signals, not proof of authorship. Do not use this skill to make consequential claims about who wrote a text.
+将 AI 写作模式视为质量信号，而非作者身份的证据。不要用本技能对谁撰写了文本作出影响重大的断言。
 
-## When to Use
+## 何时使用
 
-Use for:
+适用于：
 
-- Text that feels like AI wrote it: generic, padded, evenly structured, over-explained, or full of stock phrases.
-- Drafts that need to match a target article type: technical tutorial, engineering note, opinion piece, incident review, PR/issue text, product update, or personal blog.
-- Chinese technical, API, product, UI, operational, or troubleshooting copy that needs fact-preserving terminology, status wording, steps, or error recovery guidance.
-- Requests like "降低 AI 味", "写得自然点", "别像 ChatGPT", "humanize this", "make this less robotic", "detect AI patterns", "flag only", "scan this", "按我的文风改".
+- 读起来像 AI 生成的文本：空泛、冗长、结构过于均匀、解释过度或充满套话。
+- 需要符合目标文章类型的草稿：技术教程、工程笔记、观点文章、事故复盘、PR 或问题说明、产品更新、个人博客。
+- 需要在保留事实的前提下处理术语、状态措辞、步骤或错误恢复指引的中文技术、API、产品、界面、操作或排障文案。
+- “降低 AI 味”“写得自然点”“别像 ChatGPT”“写得更像人”（`humanize this`）、“不要这么机械”（`make this less robotic`）、“检测 AI 写作模式”（`detect AI patterns`）、“只标记问题”（`flag only`）、“扫描这段文字”（`scan this`）“按我的文风改”等请求。
 
-Do not use for:
+不适用于：
 
-- Pure fact checking without rewriting.
-- Legal, medical, or policy text where exact wording matters more than style.
-- Rewriting to hide authorship or evade an explicit disclosure requirement.
+- 只核查事实，不改写文本。
+- 精确措辞比风格更重要的法律、医疗或政策文本。
+- 为隐藏作者身份或规避明确披露要求而改写。
 - 中文内部技术方案、评审稿、架构说明等需要重构论证路径的长文；那类场景优先 `technical-writing`。
 
-## Workflow
+## 流程
 
-1. Confirm there is actual source text to edit. If there is no text yet, stop and ask for it.
-2. Choose the operation mode:
-   - `rewrite`: default; audit briefly, then return revised text.
-   - `detect`: flag AI-writing patterns only, with no rewrite. Use when the user says "detect", "flag only", "audit only", "scan", or similar.
-   - `edit`: modify a named file in place. Use minimal, targeted edits and verify afterward.
-   - `review`: review a document and return flagged sections or recommendations.
-3. Identify the text type and target reader.
-4. If the text is a Chinese internal technical design, review note, or architecture writeup, switch to `technical-writing`.
-5. If the user provides sample writing, infer voice from it before editing.
-6. Mark protected spans before editing: quotes, code, commands, file paths, identifiers, citations, required terminology, and attributed text.
-7. For Chinese technical documentation, API/status copy, product/UI copy, operational steps, or troubleshooting, read [chinese-technical-copy.md](references/chinese-technical-copy.md).
-8. For serious cleanup of finished Chinese prose, read [chinese-ai-patterns.md](references/chinese-ai-patterns.md). Use its trigger, exception, and minimum-fix rules; do not turn weak signals into global bans.
-9. Choose scene and edit scope. Read [scene-scope-and-voice.md](references/scene-scope-and-voice.md) when the text is long, Chinese, or has strict preservation requirements.
-10. Run a pre-flight pass-strength check. Read [pass-strength.md](references/pass-strength.md) for light / mixed / full mode.
-11. Scan for AI-writing smells. Read [ai-writing-smells.md](references/ai-writing-smells.md) when doing a serious pass.
-12. For English marketing, social, blog, or deep audit requests, also read [advanced-ai-patterns.md](references/advanced-ai-patterns.md).
-13. Pick the style profile and register. Read [style-profiles.md](references/style-profiles.md) when the article type is not obvious.
-14. Edit in passes:
-   - remove padding and chatbot artifacts
-   - replace generic claims with specific facts or delete them
-   - vary rhythm without making the writing performative
-   - restore author stance where appropriate
-   - preserve technical precision
-15. Run the final checklist from [edit-checklist.md](references/edit-checklist.md).
+1. 确认存在需要编辑的原文。若还没有文本，停止并向用户索取。
+2. 选择操作模式：
+   - `rewrite`：默认模式；简要审查后返回改写文本。
+   - `detect`：只标记 AI 写作模式，不改写。用户说“检测”（`detect`）、“只标记”（`flag only`）、“只审查”（`audit only`）、“扫描”（`scan`）等时使用。
+   - `edit`：原地修改指定文件。做最小、定向修改并在之后验证。
+   - `review`：审查文档，返回有问题的段落或建议。
+3. 识别文本类型和目标读者。
+4. 如果文本是中文内部技术设计、评审说明或架构文章，切换到 `technical-writing`。
+5. 用户提供写作样本时，先根据样本判断文风，再编辑。
+6. 编辑前标记受保护内容：引用、代码、命令、文件路径、标识符、引文标注、必需术语和注明来源的文本。
+7. 处理中文技术文档、API 或状态文案、产品或界面文案、操作步骤或故障排查时，阅读 [中文技术文案](references/chinese-technical-copy.md)。
+8. 对已完成的中文文本进行深入清理时，阅读 [中文 AI 写作模式](references/chinese-ai-patterns.md)。遵循其中的触发条件、例外和最小修正规则，不把弱信号变成全局禁令。
+9. 选择场景和编辑范围。长文需要校准作者文风或明确结构修改边界时，阅读 [场景、范围与文风](references/scene-scope-and-voice.md)；中文本身不是加载条件。
+10. 根据问题密度选择修改强度；难以判断应局部修改还是全面改写时，阅读 [修改强度](references/pass-strength.md)。
+11. 扫描 AI 写作痕迹。深入处理时阅读 [AI 写作问题](references/ai-writing-smells.md)。
+12. 对英文营销、社交、博客文本或深入审查请求，另读 [高级 AI 写作模式](references/advanced-ai-patterns.md)。
+13. 文章类型不明显时，阅读 [文体配置](references/style-profiles.md)，选择文体和语域。
+14. 分轮编辑：
+   - 去掉冗余内容和聊天机器人痕迹。
+   - 将空泛断言替换为具体事实，或删除。
+   - 调整节奏，但不刻意表演文风。
+   - 适当恢复作者立场。
+   - 保留技术准确性。
+15. 对照原文检查事实、受保护内容和修改范围；长文或多轮改写容易遗漏信息时，再使用 [编辑检查清单](references/edit-checklist.md)。
 
-For longer files, optionally run:
+以上是按任务选择的处理路径，不要求逐项加载所有参考资料。目标明确的局部修改可直接编辑并检查对应内容。
+
+文件较长时，可选择运行：
 
 ```bash
 python3 scripts/scan-ai-smells.py <file>
 ```
 
-Use the script output as hints, not as a verdict.
+脚本输出仅作线索，不是定论。
 
-## Style Selection
+## 文体选择
 
-Choose the profile before editing:
+编辑前选择文体配置：
 
-| Text type | Default editing stance |
+| 文本类型 | 默认编辑取向 |
 |---|---|
-| Technical tutorial | Clear, direct, exact. Keep steps. Cut hype and filler. |
-| Engineering practice | Keep tradeoffs and constraints. Strengthen concrete judgment. |
-| Academic / formal technical | Preserve register, hedging, citations, passive voice, and domain terms. |
-| Opinion / commentary | Make the stance visible. Remove fake balance. |
-| Incident review | Factual, time-ordered, accountable. No dramatic language. |
-| PR / issue / changelog | Short, concrete, reviewer-friendly. No marketing language. |
-| Personal blog | Keep personal rhythm. Avoid corporate polish. |
+| 技术教程 | 清晰、直接、准确。保留步骤，去掉夸张和赘述。 |
+| 工程实践 | 保留取舍和约束，强化具体判断。 |
+| 学术或正式技术文本 | 保留语域、审慎措辞、引文、被动语态和领域术语。 |
+| 观点或评论 | 明确立场，去掉虚假平衡。 |
+| 事故复盘 | 基于事实，按时间组织，归责明确。不渲染戏剧性。 |
+| PR、问题说明或变更日志 | 简短、具体、便于评审。不使用营销语言。 |
+| 个人博客 | 保留个人节奏，避免企业化润色。 |
 
-If unsure, ask one concise question: "这篇是教程、观点文、复盘，还是 PR/issue 文案？"
+优先从原文和请求判断文体；只有不同选择会明显改变结果且无法自行判断时，才询问文体。
 
-## Editing Rules
+## 编辑规则
 
-- Meaning first, style second. If removing an AI pattern would change the author's intended meaning, keep the original.
-- Preserve conditions, exceptions, units, defaults, compatibility, failure handling, and certainty markers such as `可能`, `建议`, `通常`, and `预计`.
-- Distinguish human actions from automatic system behavior; do not turn system outcomes into extra user steps.
-- Edit in place by default. Do not silently reorder sections, merge paragraphs, or rewrite the structure unless the user asks.
-- In `detect` mode, separate clear problems from context-dependent patterns. Do not rewrite.
-- In `edit` mode, change only the flagged spans. Leave already-human paragraphs untouched.
-- Under `in-place` scope with light or mixed pass strength, use strict conservative editing: every changed span must map to a stated rule or user request, unmatched sentences stay unchanged, and target-author samples override generic punctuation or rhythm preferences.
-- Do not edit quoted material, code blocks, or text attributed to someone else unless the user explicitly asks. Flag issues there instead.
-- For large files, confirm the target section before broad edits.
-- Preserve coverage. If the source has five material points, the rewrite must still cover those five points unless the user asked to compress.
-- Do not delete whole sentences in long Chinese public-writing by default. Put empty sentences in a deletion suggestion list unless the user allowed structural rewriting.
-- For release notes, launch copy, changelog text, issue/PR prose, or product claims, ground wording in the actual artifact, diff, screenshot, or source text instead of inventing generic polish.
-- Keep facts and code exact. Do not invent names, numbers, citations, benchmark results, or anecdotes.
-- Prefer concrete nouns and verbs over abstract framing.
-- Delete empty transitions instead of replacing them with other empty transitions.
-- Keep useful repetition. Do not synonym-cycle technical terms.
-- Avoid turning every paragraph into a three-part structure.
-- Remove chatbot residue: "当然", "希望这有帮助", "让我们深入探讨", "值得注意的是", "总而言之", "in conclusion", "let me know".
-- Remove copied chat UI artifacts: fake citations, placeholder fields, meta-prompts, and leftover assistant instructions.
-- Treat em dashes, curly quotes, passive voice, and formal vocabulary as weak signals. Fix them only when the context makes them harmful.
-- Do not manufacture sentence-length variation, casual particles, first-person voice, questions, or emotional detail merely to make prose look human.
-- Do not over-edit human-first drafts. Fragments, mixed feelings, self-corrections, and uneven rhythm can be evidence of real voice.
-- For Chinese technical writing, prefer short judgment sentences over slogan-like summaries.
-- For English technical writing, prefer plain verbs: use, is, has, shows, fails, returns.
-- Preserve the author's intentional tone even when it is blunt, narrow, or opinionated.
-- Add personality only when the genre calls for it. Do not inject first-person emotion into docs, PRs, incident reports, or formal technical writing.
-- If the user asks for repeated cleanup, cap automatic rewrite passes at two. More passes usually erase voice faster than they remove real problems.
+- 含义优先，风格其次。去掉某种 AI 写作模式会改变作者原意时，保留原文。
+- 保留条件、例外、单位、默认值、兼容性、失败处理，以及“可能”“建议”“通常”“预计”等确定程度标记。
+- 区分人的操作和系统自动行为；不要把系统结果改写为额外的用户步骤。
+- 默认原地编辑。除非用户要求，不悄悄调整章节顺序、合并段落或重写结构。
+- `detect` 模式下，区分明确问题和依赖上下文的模式，不改写。
+- `edit` 模式下，只修改标记的内容。已经自然的段落保持原样。
+- 编辑范围为 `in-place` 且强度为轻度或混合时，严格保守：每处改动都必须对应明确规则或用户要求；未命中的句子不动；目标作者的样本优先于通用标点或节奏偏好。
+- 除非用户明确要求，否则不编辑引用、代码块或注明其他作者的文本，只标记其中的问题。
+- 大文件先根据用户请求确定修改范围；用户已明确要求全文修改时不重复确认，只有范围存在实质歧义时才询问。
+- 保留信息覆盖。原文有五个实质要点时，除非用户要求压缩，否则改写后仍须覆盖这五点。
+- 默认不删除中文长篇公开文章中的整句。除非用户允许结构性改写，否则将空洞句子列为删除建议。
+- 处理发布说明、上线文案、变更日志、问题或 PR 文本、产品主张时，根据实际产物、差异、截图或源文档措辞，不凭空做泛化润色。
+- 事实和代码保持准确。不编造名称、数字、引文、性能数据或轶事。
+- 优先使用具体名词和动词，而非抽象框架。
+- 删除空洞过渡句，不换成另一句空洞过渡。
+- 保留有用的重复，不为避免重复而轮换技术术语。
+- 不要把每个段落都改成三段式结构。
+- 删除聊天机器人残留，如“当然”“希望这有帮助”“让我们深入探讨”“值得注意的是”“总而言之”`in conclusion`（总结式收尾）、`let me know`（有需要请告诉我）。
+- 删除复制的聊天界面痕迹：伪造引用、占位字段、元提示词和残留的助手指令。
+- 将破折号、弯引号、被动语态和正式词汇视为弱信号，仅在具体语境中有害时修正。
+- 不要仅为了更像人写作，就刻意制造句长变化、口语助词、第一人称、问题或情绪细节。
+- 不要过度编辑原本自然的草稿。片段句、复杂感受、自我纠正和不均匀的节奏可能正是作者声音的体现。
+- 中文技术写作优先使用简短判断句，而非口号式总结。
+- 英文技术写作优先使用直白动词，例如 `use`（使用）、`is`（是）、`has`（具有）、`shows`（显示）、`fails`（失败）、`returns`（返回）。
+- 保留作者有意采用的语气，即使它直接、聚焦或带有明确观点。
+- 只有文体需要时才加入个性。不要向文档、PR、事故报告或正式技术写作中注入第一人称情绪。
+- 用户要求反复清理时，自动改写最多两轮。更多轮次往往会更快磨掉文风，而非解决问题。
 
-## Special Modes
+## 特殊模式
 
-### Document Review
+### 文档审查
 
-Use when the user asks to review a document rather than fully rewrite it.
+用户要求审查而非完整改写文档时使用。
 
-- Check for placeholder text, broken references, copied chat artifacts, and obvious privacy leakage.
-- For bilingual text, verify terminology and meaning stay aligned.
-- Return the reviewed text or flagged sections, not a broad essay about writing.
+- 检查占位文本、失效引用、复制的聊天痕迹和明显隐私泄漏。
+- 双语文本需要核对术语和含义是否一致。
+- 返回审查后的文本或标记的问题段落，不写泛泛长文。
 
-### Paragraph Coherence
+### 段落连贯性
 
-Use when the ask is mainly "顺不顺" or "连不连贯", not full rewriting.
+用户主要问“顺不顺”或“连不连贯”，而非要求全面改写时使用。
 
-1. Check whether each paragraph follows from the previous one.
-2. Flag abrupt topic shifts and monotone rhythm.
-3. Suggest the smallest viable fix: a bridge phrase, one reordered clause, or one sentence move.
+1. 检查每段是否承接前文。
+2. 标记突兀的话题切换和单调节奏。
+3. 提出最小可行修正：增加衔接短语、调整一个分句顺序或移动一句话。
 
-## Output
+## 输出
 
-For short text, return:
+短文本返回：
 
-1. Revised text
+1. 修改后的文本。
 
-For detect-only mode, return:
+仅检测模式返回：
 
-1. Findings grouped by severity
-2. The exact phrase or pattern
-3. Why it matters, including false-positive context when relevant
+1. 按严重程度分组的问题。
+2. 准确的短语或模式。
+3. 问题原因；适用时说明可能误判的上下文。
 
-For long text or file edits, return:
+长文本或文件编辑返回：
 
-1. Revised sections or applied changes
-2. Remaining risks: facts needing verification, places where style depends on user preference
-3. Optional smell summary if useful
+1. 修改后的章节或已应用的改动。
+2. 剩余风险：需要核实的事实，以及风格依赖用户偏好的位置。
+3. 有帮助时，可补充简要问题汇总。
 
-Do not over-explain every sentence-level edit unless the user asks. If the user asked only for the rewrite, stop after the edited text.
+除非用户要求，不逐句过度解释修改。如果用户只要改写，返回修改后的文本即结束。
 
-## Stop Conditions
+## 停止条件
 
-Stop and ask before rewriting if:
+以下情况在改写前暂停并询问：
 
-- The target audience or article type changes the style substantially.
-- The rewrite would require adding facts, examples, or citations not present in the source.
-- The text is contractual, legal, regulatory, or compliance-sensitive.
+- 目标读者或文章类型会显著改变风格。
+- 改写需要新增来源中没有的事实、示例或引文。
+- 文本涉及合同、法律、监管或合规敏感内容。

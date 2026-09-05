@@ -1,80 +1,83 @@
 ---
 name: skill-audit
-description: Use this skill when auditing an Agent Skills library for specification compliance, cross-client portability, trigger overlap, progressive disclosure, bundled script safety, or eval coverage; use it to produce an evidence-backed cleanup or migration plan, not to create a new skill.
-compatibility: Requires Python 3.10+ and uv for the bundled audit script. Official reference validation uses uvx and may require network access.
+description: 审计技能库的规范、可移植性、触发重叠、上下文加载、脚本和评测时使用；不用于创建技能。
+compatibility: 附带的审计脚本需要 Python 3.10+ 和 uv。官方参考校验使用 uvx，可能需要网络访问。
 ---
 
-# Audit Agent Skills
+# 审计 Agent Skills
 
-Audit skill libraries against the portable Agent Skills specification while separating hard errors, intentional client extensions, maintainability issues, and unverified behavioral quality.
+根据可移植的 Agent Skills 规范审计技能库，区分硬性错误、有意保留的客户端扩展、可维护性问题和尚未验证的行为质量。
 
-For creating or substantially rewriting a skill, use the current client's skill-creation guidance when available. This skill remains useful without any specific client because its audit workflow and script are self-contained.
+创建或大幅重写技能时，若当前客户端提供技能创建指南，则使用该指南。本技能的审计流程和脚本自包含，不依赖任何特定客户端。
 
-## Standards
+## 标准
 
-1. The [Agent Skills specification](https://agentskills.io/specification) is the portable baseline.
-2. Client-only fields and tool assumptions are portability exceptions, even when they work locally.
-3. A valid structure does not prove useful triggering, safe scripts, or better outputs.
+1. [Agent Skills 规范](https://agentskills.io/specification) 是可移植性的基线。
+2. 客户端专用字段和工具假设即使在本地可用，也属于可移植性例外。
+3. 结构有效不代表触发合理、脚本安全或输出更好。
 
-Read [the official checklist](references/official-agent-skills-checklist.md) for a full audit. Read [the client extension policy](references/client-extension-policy.md) when skills use non-standard frontmatter, sibling `_shared` files, plugins, connectors, or client-specific tools. Use [progressive disclosure guidance](references/progressive-disclosure.md) when a main file is large.
+完整审计时阅读 [官方检查清单](references/official-agent-skills-checklist.md)。技能使用非标准元数据、同级 `_shared` 文件、插件、连接器或客户端专用工具时，阅读 [客户端扩展策略](references/client-extension-policy.md)。主文件较大时使用 [渐进披露指南](references/progressive-disclosure.md)。
 
-## Audit workflow
+## 审计流程
 
-1. Establish scope and source of truth.
-   - Separate source-managed, installed, and live copies.
-   - Record the specification/reference date and intended clients.
-2. Inventory each skill.
-   - Capture name, description, frontmatter, line count, links, scripts, references, assets, and evals.
-   - Check adjacent skills and built-in client capabilities for overlap.
-3. Validate portable structure.
-   - Run the official validator for intended portable skills.
-   - Classify client-only fields and dependencies instead of silently accepting or deleting them.
-4. Inspect disclosure and packaging.
-   - Keep triggers, boundaries, minimum workflow, and high-risk constraints in `SKILL.md`.
-   - Move long templates, examples, command catalogs, and troubleshooting into one-level references.
-   - Verify that each skill still works when installed independently; sibling `_shared` content is not portable packaging.
-5. Inspect behavior quality.
-   - Check positive and near-miss negative trigger cases.
-   - Look for duplicated universal behavior that belongs in client/project instructions.
-   - Require baseline comparisons before claiming a rewrite improves quality or cost.
-6. Prioritize findings.
-   - Fix broken packaging and conflicting behavior first.
-   - Then remove duplicates, merge overlapping user intents, narrow descriptions, and reduce activation context.
-   - Do not optimize line count alone or split a cohesive capability into competing triggers.
-7. Verify source and live state separately after changes.
+1. 确定范围和权威来源。
+   - 区分源侧管理副本、已安装副本和生效副本。
+   - 记录规范或参考资料日期以及目标客户端。
+2. 清点每个技能。
+   - 记录名称、描述、元数据、行数、链接、脚本、参考资料、资源和评测。
+   - 检查相邻技能与客户端内建能力是否重叠。
+   - 描述只保留能力和真实触发边界；操作步骤、工具回退和长场景清单留在正文，不用宽泛关键词争取触发。
+3. 校验可移植结构。
+   - 对预期可移植的技能运行官方校验器。
+   - 将客户端专用字段和依赖分类，不要默默接受或删除。
+4. 检查披露方式和打包。
+   - 将触发条件、边界、最小流程和高风险约束留在 `SKILL.md`。
+   - 将长模板、示例、命令目录和排障说明移到一级参考文件中。
+   - 每个参考入口写清读取条件；多工作流技能按任务路由，简短且自包含的技能不为减少行数强行拆分。
+   - 确认每个技能独立安装后仍可工作；同级 `_shared` 内容不属于可移植的打包方式。
+5. 检查行为质量。
+   - 检查应触发的正例和接近触发条件但不应触发的反例。
+   - 查找属于客户端或项目指令的重复通用行为。
+   - 检查固定阅读清单、重复确认、首次实现后停工和过度验证；保留有实际依据的权限、发布和数据保护边界。
+   - 声称重写改善质量或成本前，必须有基线对比。
+6. 按优先级整理问题。
+   - 先修复打包损坏和行为冲突。
+   - 再去重、合并重叠的用户意图、收窄描述并减少激活时加载的上下文。
+   - 不要只优化行数，也不要把完整能力拆成相互竞争的触发入口。
+7. 修改后分别验证源侧和生效状态。
 
-## Commands
+## 命令
 
-Audit one skill or a directory:
+审计单个技能或整个目录：
 
 ```bash
 uv run scripts/audit_agent_skills.py /path/to/skills --profile portable --require-evals
 ```
 
-Use `--profile local` to report documented client extensions and sibling shared references without pretending they are portable. Use `--format json` for machine-readable output.
+使用 `--profile local` 报告已记录的客户端扩展和同级共享引用，不把它们当作可移植内容。使用 `--format json` 输出机器可读结果。
 
-Validate a portable skill with the reference implementation:
+使用参考实现校验可移植技能：
 
 ```bash
 uvx --from skills-ref agentskills validate /path/to/skill
 ```
 
-## Output contract
+## 输出约定
 
-Report:
+报告以下内容：
 
-1. scope, inventory, and source/reference versions;
-2. hard specification or packaging failures;
-3. intentional client-extension exceptions;
-4. overlap, verbosity, trigger, script, and eval findings;
-5. delete, merge, narrow, move-to-reference, or split recommendations with reasons;
-6. validation evidence and explicitly unverified behavior.
+1. 范围、清单和来源或参考版本；
+2. 违反规范或打包要求的硬性错误；
+3. 有意保留的客户端扩展例外；
+4. 重叠、冗长、触发、脚本和评测方面的问题；
+5. 删除、合并、收窄、移入参考文件或拆分的建议及理由；
+6. 验证证据，以及明确尚未验证的行为。
 
-Preserve verified safety behavior until an equivalent control exists. Do not make a public skill depend on a single client plugin when a connector, CLI/API fallback, or complete manual handoff can keep it portable.
+在具备等效控制前，保留已经验证的安全行为。若连接器、CLI/API 回退或完整的人工交接能保持可移植性，就不要让公开技能依赖单一客户端插件。
 
-## Supporting material
+## 补充资料
 
-- [Official checklist](references/official-agent-skills-checklist.md)
-- [Client extension policy](references/client-extension-policy.md)
-- [Frontmatter patterns](references/frontmatter-patterns.md)
-- [Progressive disclosure](references/progressive-disclosure.md)
+- [官方检查清单](references/official-agent-skills-checklist.md)
+- [客户端扩展策略](references/client-extension-policy.md)
+- [元数据模式](references/frontmatter-patterns.md)
+- [渐进披露](references/progressive-disclosure.md)

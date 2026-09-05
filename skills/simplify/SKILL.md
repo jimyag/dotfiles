@@ -1,53 +1,53 @@
 ---
 name: simplify
-description: Use this skill when the user explicitly asks to simplify, clean up, or refactor recently written or modified code for clarity, consistency, and maintainability without changing behavior. Do not trigger it merely because code was changed; focus on the requested scope unless a broader review is explicit.
+description: 用户明确要求简化、清理或重构近期改动且保持行为不变时使用；普通代码修改不自动触发。
 license: Apache-2.0 (see LICENSE)
 ---
 
-# Simplify Code
+# 简化代码
 
-Simplify and refine code while preserving its exact functionality. Prioritize readable, explicit code over compact or clever solutions.
+在完全保留功能的前提下简化和完善代码。优先选择易读、行为明确的代码，而非紧凑或巧妙的写法。
 
-## Principles
+## 原则
 
-1. **Preserve functionality**
-   - Never change features, outputs, side effects, or externally visible behavior.
-   - Treat behavior changes as out of scope unless the user explicitly requests them.
+1. 保留功能
+   - 不得改变功能、输出、副作用或外部可见行为。
+   - 除非用户明确要求，否则行为变更不在范围内。
 
-2. **Apply project standards**
-   - Read and follow the repository's applicable instruction files, such as `AGENTS.md` or `CLAUDE.md`.
-   - Prefer established project conventions over the generic defaults below.
-   - When applicable, use consistent imports, explicit top-level return types, clear component props, established error-handling patterns, and consistent naming.
+2. 遵守项目规范
+   - 阅读并遵守仓库中适用的指令文件，例如 `AGENTS.md` 或 `CLAUDE.md`。
+   - 项目已有约定优先于下面的通用默认规则。
+   - 适用时，保持导入方式一致、顶层返回类型明确、组件属性清晰，并遵循已有的错误处理模式和命名约定。
 
-3. **Enhance clarity**
-   - Reduce unnecessary complexity and nesting.
-   - Eliminate redundant code and abstractions.
-   - Improve readability with clear variable and function names.
-   - Consolidate closely related logic without combining separate concerns.
-   - Remove comments that only restate obvious code.
-   - Avoid nested ternary expressions; use `if`/`else` chains or `switch` statements for multiple conditions.
-   - Choose clarity over brevity.
+3. 提高清晰度
+   - 减少不必要的复杂度和嵌套。
+   - 消除冗余代码和抽象。
+   - 使用清晰的变量名和函数名提高可读性。
+   - 整合紧密相关的逻辑，不混合独立职责。
+   - 删除仅复述显而易见代码的注释。
+   - 避免嵌套三元表达式；多条件判断使用 `if`/`else` 链或 `switch`。
+   - 清晰度优先于简短。
 
-4. **Avoid over-simplification**
-   - Do not remove useful abstractions that improve organization.
-   - Do not create dense one-liners or clever constructs that are harder to debug.
-   - Do not combine too many concerns into one function or component.
-   - Do not prioritize fewer lines over maintainability.
+4. 避免过度简化
+   - 不要删除有助于组织代码的有效抽象。
+   - 不要引入难以调试的密集单行代码或巧妙结构。
+   - 不要把过多职责放进一个函数或组件。
+   - 不要为了减少行数牺牲可维护性。
 
-5. **Keep the scope narrow**
-   - Refine only code modified in the current task or session unless the user explicitly requests broader cleanup.
-   - Preserve unrelated user changes in the working tree.
+5. 保持范围收敛
+   - 除非用户明确要求扩大清理范围，否则只完善当前任务或会话中修改的代码。
+   - 保留工作区中用户的无关改动。
 
-## Workflow
+## 流程
 
-1. Identify the recently modified code and its existing behavior.
-2. Read the applicable project instructions and nearby conventions.
-3. Find concrete opportunities to reduce complexity or improve readability.
-4. Apply the smallest behavior-preserving refinements.
-5. Review the diff for unintended semantic changes or scope expansion.
-6. Run validation proportional to the change and allowed by the project instructions.
-7. Report only significant refinements and any verification gaps.
+1. 确定最近修改的代码及其现有行为。
+2. 阅读适用的项目指令和相邻代码约定。
+3. 找出具体的降复杂度或提高可读性的机会。
+4. 做保持行为不变的最小改进。
+5. 检查差异，确认没有意外的语义变化或范围扩张。
+6. 在项目指令允许的范围内，执行与改动规模相称的验证。
+7. 只报告重要改进和验证缺口。
 
-## Source
+## 来源
 
-Adapted from Anthropic's [`code-simplifier`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/code-simplifier) agent, licensed under the Apache License 2.0. Changes include conversion to the portable Agent Skills format, removal of the Claude-specific model selection, and generalization of project instruction handling.
+改编自 Anthropic 的 [`code-simplifier`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/code-simplifier) 代理，采用 Apache License 2.0 授权。改动包括转换为可移植的 Agent Skills 格式、移除 Claude 专用的模型选择，以及通用化项目指令处理方式。

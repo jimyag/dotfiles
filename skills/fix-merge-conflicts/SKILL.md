@@ -1,6 +1,6 @@
 ---
 name: fix-merge-conflicts
-description: 在分支出现 merge conflict、rebase conflict、或 cherry-pick 冲突时使用。适用于需要在尽量小的改动范围内完成冲突解决并重新验证结果的场景。
+description: 在分支出现合并冲突、变基冲突、或 cherry-pick 冲突时使用。适用于需要在尽量小的改动范围内完成冲突解决并重新验证结果的场景。
 ---
 
 # 解决合并冲突
@@ -29,7 +29,7 @@ description: 在分支出现 merge conflict、rebase conflict、或 cherry-pick 
 
 - `git status`
 - 搜索 `<<<<<<<`、`=======`、`>>>>>>>`
-- 相关测试、构建、lint
+- 相关测试、构建、静态检查
 
 ## 输出要求
 

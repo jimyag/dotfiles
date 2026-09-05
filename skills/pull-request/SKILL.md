@@ -1,37 +1,37 @@
 ---
 name: pull-request
-description: Use this skill when creating a GitHub pull request, updating an existing PR title or body, filling a repository PR template, or preparing complete PR content for manual publication. It works across clients by using an available GitHub connector first, falling back to gh CLI, or producing an executable handoff when neither is available.
-compatibility: Requires git. Remote creation or updates require network access plus an available GitHub connector or authenticated gh CLI.
+description: 创建 GitHub PR、更新标题或正文、填写 PR 模板，或准备人工发布内容时使用；不用于代码审查和 CI 修复。
+compatibility: 需要 git。远程创建或更新需要网络访问，以及可用的 GitHub 连接器或已认证的 gh CLI。
 ---
 
-# Create or update a pull request
+# 创建或更新拉取请求
 
-Build an accurate, reviewable PR from the real branch, diff, commits, validation results, linked work, and repository template. Do not require a particular AI client or plugin.
+依据真实分支、差异、提交、验证结果、关联工作和仓库模板，准备准确且便于评审的 PR。不依赖特定 AI 客户端或插件。
 
-## Capability routing
+## 能力路由
 
-Inspect the tools available in the current client instead of assuming a backend:
+检查当前客户端实际可用的工具，不预设后端：
 
-1. Use an available GitHub connector when it supports the required read or write operation.
-2. Otherwise use authenticated `gh` CLI.
-3. If neither can perform the remote write, generate the complete title, body, base/head information, and exact manual next step. Do not claim the PR was changed.
+1. 可用的 GitHub 连接器支持所需读写操作时，使用连接器。
+2. 否则使用已认证的 `gh` CLI。
+3. 两者均无法执行远程写入时，生成完整标题、正文、基准分支和来源分支信息，以及准确的人工后续步骤。不要声称 PR 已修改。
 
-The fallback is a capability decision, not a reason to weaken content checks. Never ask the user to install a particular plugin merely to use this skill.
+回退取决于工具能力，不意味着降低内容检查要求。不要仅为了使用本技能就要求用户安装特定插件。
 
-## Scope
+## 范围
 
-Use for:
+适用于：
 
-- creating a normal or draft PR;
-- updating an existing PR title or body;
-- filling or repairing a repository PR template;
-- producing publication-ready PR content when remote writes are unavailable.
+- 创建普通 PR 或草稿 PR；
+- 更新现有 PR 的标题或正文；
+- 填写或修复仓库 PR 模板；
+- 无法远程写入时，生成可直接发布的 PR 内容。
 
-Do not use for commit creation, code review, CI repair, or implementation changes.
+不用于创建提交、代码审查、修复 CI 或实现代码改动。
 
-## Evidence collection
+## 收集证据
 
-Always inspect the local repository first:
+始终先检查本地仓库：
 
 ```bash
 git rev-parse --git-dir
@@ -41,9 +41,9 @@ git remote -v
 git log --oneline -10
 ```
 
-Then use the selected GitHub capability to determine whether the current branch already has a PR and to read its number, URL, base, head, title, body, and state. If remote metadata is unavailable, report that limitation and infer nothing that affects publication.
+然后使用选定的 GitHub 工具，确认当前分支是否已有 PR，并读取编号、URL、基准分支、来源分支、标题、正文和状态。远程元数据不可用时，说明限制，不推测任何影响发布的信息。
 
-Determine the base branch from the existing PR, explicit user input, or the target repository's default branch. Do not hard-code `main`. Fetch the chosen base when possible, then inspect:
+根据现有 PR、用户明确输入或目标仓库默认分支确定基准分支，不要硬编码 `main`。条件允许时获取选定基准分支，再检查：
 
 ```bash
 git log <base-remote>/<base-branch>..HEAD --oneline --no-decorate
@@ -51,53 +51,53 @@ git diff <base-remote>/<base-branch>...HEAD --stat
 git diff <base-remote>/<base-branch>...HEAD
 ```
 
-Read [PR content rules](references/pr-content.md) before drafting or changing title/body.
+起草或修改标题和正文前，阅读 [PR 内容规则](references/pr-content.md)。
 
-## Workflow
+## 流程
 
-### Create
+### 创建
 
-1. Confirm there is meaningful committed diff and identify base/head.
-2. If a PR already exists for the head branch, return it instead of creating a duplicate.
-3. Build title and body from evidence and preserve the repository template.
-4. Push the branch only when the user requested PR creation and the branch is not remotely available.
-5. Create the PR through the selected capability. Use draft only when the user requests it or the change is explicitly not ready for review.
-6. Read the created PR back and verify number, URL, base, head, title, body, and draft state.
+1. 确认存在有意义的已提交差异，并确定基准分支和来源分支。
+2. 来源分支已有 PR 时返回现有 PR，不重复创建。
+3. 根据证据编写标题和正文，并保留仓库模板。
+4. 只有用户请求创建 PR 且远程尚无该分支时，才推送分支。
+5. 通过选定工具创建 PR。只有用户要求草稿或改动明确尚未准备好评审时，才使用草稿状态。
+6. 重新读取创建的 PR，验证编号、URL、基准分支、来源分支、标题、正文和草稿状态。
 
-### Update
+### 更新
 
-1. Read the existing PR and current diff; do not rewrite from stale local assumptions.
-2. Preserve still-valid context, template sections, issue links, migration notes, and reviewer guidance.
-3. Change only the requested or demonstrably stale content.
-4. Update through the selected capability, then read the PR back and verify the final title/body.
+1. 读取现有 PR 和当前差异，不根据过期的本地假设重写。
+2. 保留仍有效的上下文、模板章节、问题链接、迁移说明和评审指引。
+3. 只修改用户要求或有证据表明已过期的内容。
+4. 通过选定工具更新，再重新读取 PR，验证最终标题和正文。
 
-### No remote write capability
+### 无远程写入能力
 
-Return:
+返回：
 
-- resolved or explicitly unverified base/head;
-- final title;
-- complete body, not a summary;
-- whether a template was used;
-- an exact `gh pr create` or `gh pr edit` command when `gh` is a viable manual option, otherwise a concise GitHub UI handoff;
-- `Remote update: not performed`.
+- 已确认或明确标记为未验证的基准分支和来源分支；
+- 最终标题；
+- 完整正文，而非摘要；
+- 是否使用了模板；
+- 若 `gh` 可用于人工操作，提供准确的 `gh pr create` 或 `gh pr edit` 命令；否则提供简洁的 GitHub 界面操作说明；
+- “远程更新：未执行”。
 
-## Safety and accuracy
+## 安全与准确性
 
-- Do not fabricate tests, issue links, migration status, reviewers, or deployment results.
-- Do not hide breaking changes, configuration changes, known risks, or unrelated diff.
-- Do not create a duplicate PR or silently change its base.
-- Do not use PR wording to conceal an oversized or incoherent change; recommend splitting when reviewability is materially impaired.
-- A generated title/body is not proof of a remote update. Report the actual backend used and the read-back result.
+- 不编造测试、问题链接、迁移状态、评审者或部署结果。
+- 不隐瞒破坏性变更、配置变化、已知风险或无关差异。
+- 不重复创建 PR，也不悄悄更改基准分支。
+- 不用 PR 措辞掩盖过大或不自洽的改动；评审难度受到明显影响时，建议拆分。
+- 生成标题和正文不代表远程已经更新。报告实际使用的后端和重新读取的结果。
 
-## Output
+## 输出
 
 ```text
-Action: created / updated / prepared only
-PR: #<number> <url> / not created
-Base: <base>
-Head: <head>
-Backend: connector / gh / none
-Template: used / not found
-Verification: <read-back result or limitation>
+操作：已创建 / 已更新 / 仅准备内容
+PR：#<number> <url> / 未创建
+基准分支：<base>
+来源分支：<来源分支版本>
+后端：连接器 / gh / 无
+模板：已使用 / 未找到
+验证：<重新读取的结果或限制>
 ```

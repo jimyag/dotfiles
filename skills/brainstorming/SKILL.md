@@ -41,7 +41,7 @@ description: 在目标、范围或成功标准不清，存在接近的实现方�
 - 什么命令、测试、运行现象或指标能够证明成功
 - 错误方向的回滚和迁移成本
 
-高成本或长期决策按 [Design Doc 与 ADR 路由](references/design-record-routing.md) 判断。头脑风暴只完成路由，不在这里编写长文档。
+高成本或长期决策按 [设计文档与 ADR 路由](references/design-record-routing.md) 判断。头脑风暴只完成路由，不在这里编写长文档。
 
 ## 输出
 
