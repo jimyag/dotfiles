@@ -7,7 +7,7 @@ description: 在需要查询第三方库、框架、SDK、API 的最新官方文
 
 ## 目标
 
-通过 Context7 查询最新文档和代码示例，避免依赖过期记忆。
+查询当前版本的官方文档和代码示例，优先使用可用的 Context7，避免依赖过期记忆。
 
 ## 何时使用
 
@@ -24,8 +24,8 @@ description: 在需要查询第三方库、框架、SDK、API 的最新官方文
 ## 基本流程
 
 1. 先从项目文件识别技术栈和版本，例如 `package.json`、`go.mod`、`pyproject.toml`、`Cargo.toml`、`Gemfile`
-2. 先用 `npx ctx7@latest library` 解析库 ID
-3. 再用 `npx ctx7@latest docs` 查询具体问题
+2. Context7 可用时，先用 `npx ctx7@latest library` 解析库 ID，再用 `npx ctx7@latest docs` 查询具体问题
+3. Context7 不可用、缺少 `npx` 或遇到配额错误时，改用可用的官方文档、官方源码或项目内文档继续查询
 4. 用最相关的官方文档结果回答
 
 ## 常用命令
@@ -52,5 +52,5 @@ npx ctx7@latest docs /facebook/react "useEffect cleanup async"
 - 说明查的是哪个库/版本
 - 给出结论时尽量带简短示例
 - 若文档和你原本记忆冲突，以文档为准
-- 若遇到配额错误，明确说明并建议运行 `npx ctx7@latest login` 或设置 `CONTEXT7_API_KEY`
+- Context7 登录或配置 `CONTEXT7_API_KEY` 只是可选恢复方式，不作为继续原任务的前提；替代来源仍不足以回答时，报告具体缺口
 - 对实现建议说明依据来自官方文档、本地现有模式，还是二者共同支持
