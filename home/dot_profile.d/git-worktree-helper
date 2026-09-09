@@ -1,6 +1,6 @@
 function gwl() {
   # Enhanced git worktree list: shows PR and issue titles for each worktree
-  local worktrees nwo repo_url
+  local worktrees nwo repo_url head_repo_url head_owner
   worktrees=$(git worktree list 2>/dev/null)
   if [[ -z "$worktrees" ]]; then
     echo "Not in a git repository or no worktrees found."
@@ -14,6 +14,10 @@ function gwl() {
     return
   fi
   nwo=$(echo "$repo_url" | sed -E 's#^(https?://[^/]+/|git@[^:]+:)##; s#\.git$##')
+
+  # Match PRs from this checkout's fork, not same-named branches in other forks.
+  head_repo_url=$(git remote get-url origin 2>/dev/null || echo "$repo_url")
+  head_owner=$(echo "$head_repo_url" | sed -E 's#^(https?://[^/]+/|git@[^:]+:)##; s#\.git$##' | cut -d/ -f1)
 
   # Collect worktree info
   local -a wt_paths wt_branches
@@ -32,7 +36,7 @@ function gwl() {
 
   # Batch fetch all PRs (including merged/closed)
   local pr_json
-  pr_json=$(gh pr list --repo "$nwo" --state all --json headRefName,title,number,state --limit 100 2>/dev/null || echo "[]")
+  pr_json=$(gh pr list --repo "$nwo" --state all --json headRefName,headRepositoryOwner,title,number,state --limit 100 2>/dev/null || echo "[]")
 
   # Declare all loop variables outside the loop to avoid zsh printing assignments
   local -a rows_path rows_branch rows_issue rows_pr
@@ -48,7 +52,14 @@ function gwl() {
     # Look up PR title from batch result
     if [[ -n "$b" && -n "$pr_json" ]]; then
       # Add [M] for Merged, [C] for Closed, and nothing for Open
-      found=$(echo "$pr_json" | jq -r --arg branch "$b" '.[] | select(.headRefName == $branch) | (if .state == "MERGED" then "[M] " elif .state == "CLOSED" then "[C] " else "" end) + "#\(.number) \(.title)"' 2>/dev/null)
+      found=$(echo "$pr_json" | jq -r --arg branch "$b" --arg owner "$head_owner" '
+        [.[] | select(.headRefName == $branch and .headRepositoryOwner.login == $owner)]
+        | sort_by(if .state == "OPEN" then 1 else 0 end, .number)
+        | last
+        | if . == null then empty
+          else (if .state == "MERGED" then "[M] " elif .state == "CLOSED" then "[C] " else "" end) + "#\(.number) \(.title)"
+          end
+      ' 2>/dev/null)
       [[ -n "$found" ]] && pr_title="$found"
     fi
 
