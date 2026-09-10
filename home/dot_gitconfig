@@ -12,7 +12,7 @@
 	fsmonitor = true
 	untrackedcache = true
 	quotepath = false
-	excludesFile = $HOME/.gitignore
+	excludesFile = ~/.gitignore
 
 [pull]
 	rebase = true
