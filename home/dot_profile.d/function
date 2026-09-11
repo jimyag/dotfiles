@@ -39,8 +39,7 @@ function git_clean_branch(){
   git branch -d -- "${branches[@]}"
 }
 
-function za(){
-  # Avoid using "z": zoxide commonly owns it.
+function zt(){
   local name="${1:-${PWD##*/}}"
   if [[ -z $name ]]; then
     name="root"
