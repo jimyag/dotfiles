@@ -1,0 +1,143 @@
+#!/usr/bin/env bash
+
+# 使用 netshoot 向指定的 Kubernetes Pod 注入 Ephemeral Container。
+# 可以通过 --pod 精确指定 Pod，或通过 --selector 选择唯一的 Running Pod。
+
+set -euo pipefail
+
+usage() {
+    cat <<'EOF'
+Usage:
+  kdebug-pod --namespace <namespace> --pod <pod> [options] [-- <command> ...]
+  kdebug-pod --namespace <namespace> --selector <selector> [options] [-- <command> ...]
+
+Options:
+  -n, --namespace <namespace>  Pod 所在的 namespace，必填。
+  -p, --pod <pod>              精确指定 Pod 名称。
+  -l, --selector <selector>    Label selector；必须只匹配一个 Running Pod。
+  -t, --target <container>     目标容器名；需要查看目标容器进程时设置。
+  -i, --image <image>          调试镜像，默认 nicolaka/netshoot。
+      --container <name>       注入的 Ephemeral Container 名称，默认 netshoot。
+      --detach                 不连接终端，默认进入交互式 bash。
+  -h, --help                   显示帮助。
+
+Examples:
+  kdebug-pod -n production -p web-6d8f9c7b6f-x7k2m -t app
+  kdebug-pod -n production -l 'app=web' -t app
+  kdebug-pod -n production -l 'app=web' --detach -- sh -c 'ip addr; ss -lntp; sleep 60'
+EOF
+}
+
+namespace=""
+pod_name=""
+selector=""
+target_container=""
+image="${KDEBUG_IMAGE:-nicolaka/netshoot}"
+debug_container="netshoot"
+attach=true
+command_args=(bash)
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -n|--namespace)
+            [[ $# -ge 2 ]] || { echo "missing value for $1" >&2; exit 2; }
+            namespace="$2"
+            shift 2
+            ;;
+        -p|--pod)
+            [[ $# -ge 2 ]] || { echo "missing value for $1" >&2; exit 2; }
+            pod_name="$2"
+            shift 2
+            ;;
+        -l|--selector)
+            [[ $# -ge 2 ]] || { echo "missing value for $1" >&2; exit 2; }
+            selector="$2"
+            shift 2
+            ;;
+        -t|--target)
+            [[ $# -ge 2 ]] || { echo "missing value for $1" >&2; exit 2; }
+            target_container="$2"
+            shift 2
+            ;;
+        -i|--image)
+            [[ $# -ge 2 ]] || { echo "missing value for $1" >&2; exit 2; }
+            image="$2"
+            shift 2
+            ;;
+        --container)
+            [[ $# -ge 2 ]] || { echo "missing value for $1" >&2; exit 2; }
+            debug_container="$2"
+            shift 2
+            ;;
+        --detach)
+            attach=false
+            shift
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        --)
+            shift
+            command_args=("$@")
+            break
+            ;;
+        *)
+            echo "unknown argument: $1" >&2
+            usage >&2
+            exit 2
+            ;;
+    esac
+done
+
+if [[ -z "$namespace" ]]; then
+    echo "--namespace is required" >&2
+    usage >&2
+    exit 2
+fi
+
+if [[ -n "$pod_name" && -n "$selector" ]]; then
+    echo "--pod and --selector are mutually exclusive" >&2
+    exit 2
+fi
+
+if [[ -z "$pod_name" && -z "$selector" ]]; then
+    echo "one of --pod or --selector is required" >&2
+    usage >&2
+    exit 2
+fi
+
+if [[ -n "$pod_name" ]]; then
+    if ! phase="$(kubectl get pod "$pod_name" -n "$namespace" -o jsonpath='{.status.phase}')"; then
+        echo "failed to get pod/$pod_name in namespace $namespace" >&2
+        exit 1
+    fi
+    if [[ "$phase" != "Running" ]]; then
+        echo "pod/$pod_name is not Running: $phase" >&2
+        exit 1
+    fi
+else
+    candidates="$(kubectl get pods -n "$namespace" -l "$selector" \
+        --field-selector=status.phase=Running \
+        -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')"
+    candidate_count="$(printf '%s\n' "$candidates" | awk 'NF {count++} END {print count + 0}')"
+    if [[ "$candidate_count" -ne 1 ]]; then
+        echo "selector must match exactly one Running Pod: namespace=$namespace selector=$selector" >&2
+        printf '%s\n' "$candidates" | sed '/^$/d' >&2
+        exit 1
+    fi
+    pod_name="$(printf '%s\n' "$candidates" | awk 'NF {print; exit}')"
+fi
+
+debug_args=(debug --namespace "$namespace" "pod/$pod_name" "--image=$image" "--container=$debug_container")
+if [[ -n "$target_container" ]]; then
+    debug_args+=("--target=$target_container")
+fi
+if [[ "$attach" == true ]]; then
+    debug_args+=(-it)
+else
+    debug_args+=(--attach=false)
+fi
+
+echo "debugging pod/$pod_name in namespace $namespace with image $image" >&2
+kubectl "${debug_args[@]}" -- "${command_args[@]}"
