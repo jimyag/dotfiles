@@ -1,0 +1,67 @@
+{
+  "skill_name": "test-scenarios",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我要给 API 增加一个可选的 migration mode，涉及旧客户端兼容、错误回滚和最终状态确认。请先整理测试场景，不要写实现代码。",
+      "expected_output": "A scenario contract that separates legacy compatibility, the new mode, invalid input, rollback, final convergence, and any manual or integration evidence, with priorities and explicit non-goals.",
+      "assertions": [
+        "The output includes a stable scenario table with IDs, types, priorities, statuses, and evidence fields",
+        "The output covers legacy compatibility and rollback instead of only the happy path",
+        "The output does not invent implementation details or write feature code",
+        "The output distinguishes intermediate resource creation from final observable success"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "给一个 Go 函数补测试场景：输入为空时返回错误，重复 key 要保留最后一个值，正常输入返回排序后的结果。这个改动很小。",
+      "expected_output": "A concise inline scenario list or a recommendation to use existing tests directly, without creating a heavyweight multi-stage contract for a trivial local change.",
+      "assertions": [
+        "The response does not force an ADR, E2E plan, or broad workflow for the small change",
+        "The response still identifies empty input, duplicate key, and normal sorted output",
+        "The response does not add unrelated edge cases without evidence"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "测试场景已经写好了，请根据现有场景更新状态：TS-1 有单元测试命令和通过输出，TS-2 依赖真实集群但本轮没有集群，TS-3 用户手动验证通过。",
+      "expected_output": "An updated coverage summary that marks TS-1 and TS-3 covered with evidence, marks TS-2 skipped with the environment limitation and impact, and keeps automated and manual evidence distinct.",
+      "assertions": [
+        "TS-1 is marked covered with its test command and result",
+        "TS-2 is marked skipped with the missing cluster and impact stated",
+        "TS-3 is marked covered as manual evidence rather than mislabeled as an automated test",
+        "The response does not claim full coverage"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "修复一个曾经导致异步任务卡在 Pending 的 bug。请先整理这次改动应该补哪些测试和证据。",
+      "expected_output": "会提出按失败模式命名的回归场景、首失败到修复后的证据、最终状态检查和一个可单独运行的定向验证命令。",
+      "assertions": [
+        "The output includes a regression scenario tied to the failure mode",
+        "The output requires final state evidence rather than only an accepted request",
+        "The output includes a targeted verification command or runtime entry"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "一个 E2E 测试第一次失败、重试后通过。请更新场景证据并判断是否可以标记稳定通过。",
+      "expected_output": "会保留首失败证据，单独记录重试结果，不把一次重试通过当作无条件的稳定通过，并指出需要继续观察或补查的内容。",
+      "assertions": [
+        "The response preserves first-failure evidence",
+        "The response distinguishes retry success from stable coverage",
+        "The response identifies remaining flakiness evidence or follow-up"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "一个公开 API 修改了响应字段，同时有旧客户端、权限和明确的 P95 延迟目标。请整理测试场景。",
+      "expected_output": "会建立需求到场景、测试入口和证据的映射，覆盖合同兼容、权限和性能指标；不会在没有性能目标时机械添加负载测试。",
+      "assertions": [
+        "The output includes traceability from behavior or requirement to scenarios and evidence",
+        "The output covers compatibility and authorization for the API change",
+        "The output defines performance metrics because an explicit latency target exists"
+      ]
+    }
+  ]
+}
