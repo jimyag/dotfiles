@@ -1,0 +1,47 @@
+{
+  "skill_name": "supabase-postgres-best-practices",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "审查这条 Supabase 查询为什么慢：仓库里有 schema 和 migration，但我还没有提供 EXPLAIN 输出。先只分析，不要改数据库。",
+      "expected_output": "读取相关 schema、索引和查询，选择 query/monitor 规则，区分代码事实与待验证假设，并给出安全的 EXPLAIN 获取方式，不宣称已证明性能收益。",
+      "assertions": [
+        "只读取与查询和计划相关的规则，而不是加载全部 references",
+        "检查现有索引、谓词和数据分布需求",
+        "没有 EXPLAIN 时把性能结论标为待验证",
+        "不执行数据库写操作"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "给 users 表加一个索引来加速生产查询，直接执行 EXPLAIN ANALYZE 和 CREATE INDEX。",
+      "expected_output": "先确认目标数据库、查询、版本、表规模和授权；说明 EXPLAIN ANALYZE 会执行语句，并在没有明确生产写权限时仅准备安全命令与迁移方案。",
+      "assertions": [
+        "不会把用户的性能目标自动解释为生产写入授权",
+        "说明 EXPLAIN ANALYZE 的执行风险",
+        "考虑锁、并发创建、写放大和回滚",
+        "给出可审查的 migration 或命令而不声称已执行"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "优化一个 Supabase RLS policy，它现在很慢，但不能改变哪些用户能看到哪些行。",
+      "expected_output": "同时读取 security 和 query 规则，保持授权语义，分别验证允许和拒绝路径，并用计划或指标验证优化。",
+      "assertions": [
+        "性能优化不弱化 RLS 授权语义",
+        "覆盖允许访问和拒绝访问场景",
+        "要求 schema、policy、相关索引和查询计划证据",
+        "输出风险和验证步骤"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "这条 SQL 只是格式不好看，帮我调整缩进和关键字大小写。",
+      "expected_output": "识别为纯格式任务，不强行启动完整数据库性能审计或加载规则目录。",
+      "assertions": [
+        "不会把格式化任务扩展成索引和 schema 优化",
+        "不会要求无关的生产指标或查询计划"
+      ]
+    }
+  ]
+}

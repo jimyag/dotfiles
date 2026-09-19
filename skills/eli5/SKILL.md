@@ -10,6 +10,10 @@ license: Apache-2.0
 
 不要依赖 `$ARGUMENTS` 等特定客户端的参数占位符。如果用户要求其他格式，在该格式中保持同样简单、以视觉为主的教学方式。
 
+先确认核心事实，再选择类比；类比不能改变关键因果关系。用一句短注说明类比不适用的边界，避免读者把简化模型当成完整实现。主题依赖最新事实时先验证来源。
+
+HTML 无法安全生成、打开或验证时，回退到简短 ASCII/Markdown 图解，不让交付格式阻塞解释。
+
 ## 来源
 
 基于 Anthropic 的 `claude-plugins-community/eli5`，提交为 `f4c9452f5ca091f1be7064d9faab1b001ea21645`，改编为可跨客户端使用的 Agent Skills。上游技能作者为 Thariq Shihipar。本版本移除了 Claude 专用的 `$ARGUMENTS` 依赖。

@@ -1,127 +1,51 @@
 ---
 name: show-me
-description: 使用简洁的图表、代码结构示意和聚焦主题的 HTML 页面，帮助用户直观理解当前讨论的内容。
+description: 在调用关系、状态变化、层级结构或多个组件的关系用短文本难以讲清时使用聚焦的 ASCII、Mermaid、diff 或 HTML 可视化；不为单一事实、简单步骤或纯视觉设计审查额外制作图表。
 ---
 
-用可视化方式帮助用户理解当前讨论的主题。直接展示内容，文字说明保持简短。选择能讲清关键点的最简视图。
+# 聚焦可视化说明
 
-- 用伪代码展示逻辑或算法：
+用最小的可视化回答当前问题。可视化必须让关系、顺序、层级或变化比短文本更容易理解；如果一句话或短列表已经清楚，直接回答，不创建图表。
 
-```text
-on(save)
-  if content is unchanged
-    return cached result
-  write new content
-  return fresh result
-```
+## 选择视图
 
-- 用调用树展示运行时控制流：
+| 需要表达 | 默认形式 |
+| --- | --- |
+| 算法、条件和短控制流 | 伪代码或短流程图 |
+| 调用关系、组件归属、文件职责 | 调用树、组件树或浅层文件树 |
+| 三个以上参与者的时序或数据流 | Mermaid sequence/flowchart |
+| 修改前后结构或状态变化 | 聚焦 diff |
+| 界面布局、密集比较或需要交互探索 | HTML 页面 |
 
-```text
-submitForm
-  createSession
-    persistPrompt
-    launchAgent
-  navigateToSession
-```
+一次只选择能回答问题的形式。只有两个视图分别表达不同且必要的信息时才组合使用。
 
-- 用组件树展示界面结构，包含与当前问题有关的状态和模块边界：
+详细格式示例见 [references/examples.md](references/examples.md)，需要对应形式时再读取。
 
-```tsx
-<SessionPage> (apps/example/src/routes/session.tsx)
-  useSessionEvents()
-  <SessionToolbar>
-    <RunSkillButton> (packages/ui)
-```
+## 最小流程
 
-- 用层级较浅的文件树展示文件职责或大范围重构：
+1. 用一句话写清用户需要理解的关系或变化。
+2. 从代码、配置、用户提供的内容或已验证事实中提取最小节点和连接。
+3. 选择上表中的最简单形式，删除与问题无关的文件、字段、组件和分支。
+4. 在图旁用一两句话解释读图方式和最重要的结论。
+5. 复核节点名称、方向、顺序和状态；无法确认的关系标记为“推测”或省略，不把示意图画成已验证事实。
 
-```text
-src/
-├── commands/       # parses user actions
-├── sessions/       # owns session state
-└── transport/      # sends API requests
-```
+## HTML 边界
 
-- 用 Mermaid 展示组件交互、控制流或数据流：
+只有静态文本视图明显不足时才创建 HTML。沿用目标产品的颜色、字体和组件；没有真实设计系统时使用克制的中性样式，不虚构品牌。
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant UI
-    participant Daemon
-    User->>UI: choose command
-    UI->>Daemon: send expanded prompt
-    Daemon-->>UI: stream result
-```
+- 使用真实标签与经过验证的数据；示例数据必须明确标记。
+- 同时检查桌面和窄屏布局。
+- 生成后实际打开或渲染，确认无脚本错误、遮挡、溢出和不可读文本。
+- 用户未要求持久文件时，写到安全的临时或任务输出目录，不污染源码树。
+- 创建文件不等于授权发布或部署。
 
-- 当重点是说明变化，且已有周边结构可供对照时，使用 `diff`。根据讨论主题选择差异的展示形式。
+## 输出契约
 
-组件变更：
+最终结果包括：
 
-```diff
- <SessionPage>
-   useSessionEvents()
-   <SessionToolbar>
-+    <RunSkillButton />
-   <SessionTimeline>
-+    <SkillResultCard />
-```
+- 可视化本体或生成文件的可点击路径；
+- 一段简短说明，指出视图覆盖的范围；
+- 任何为了清晰而省略、简化或仍未验证的部分；
+- HTML 的打开或渲染验证结果。
 
-文件布局变更：
-
-```diff
- src/
- ├── commands/
-+│   └── show-me.ts       # expands the slash command
- ├── sessions/
--└── transport.ts
-+└── transport/
-+    ├── client.ts
-+    └── stream.ts
-```
-
-调用树或调用栈变更：
-
-```diff
- submitForm
-   createSession
-     persistPrompt
-+    expandSkillMention
-     launchAgent
--  navigateToSession
-+  navigateToSession
-+    subscribeToEvents
-```
-
-状态或控制流变更：
-
-```diff
- on(save)
--  write content
-+  if content is unchanged
-+    return cached result
-+  write new content
-+  invalidate cache
-```
-
-- 当大部分内容是新增的、省略上下文会掩盖归属或执行顺序，或用户需要可直接复制的目标结构时，展示完整内容：
-
-```ts
-function expandSkill(command: string): string {
-  const skillName = command.slice(1)
-  return `use the ${skillName} skill`
-}
-```
-
-- 对于界面、布局、状态对比，或信息过于密集而不适合用 Mermaid 展示的概念，编写一个聚焦当前主题的 HTML 文件。根据内容选择图表、信息图或简短幻灯片。沿用产品的配色、字体、间距和组件，使用真实标签与数据，同时适配桌面端和移动端。完成后为用户打开：
-
-```
-Bash(open path/to/show-me-{description}.html)
-```
-
-### 使用原则
-
-将每个可视化内容放在对应的简短说明旁边。只保留回答用户当前问题或说明当前讨论中备选方案所需的调用、文件、组件属性、状态和边界。
-
-可以选用一种或几种展示方式，通常无需全部使用。根据实际需要选择，避免一次展示过多内容。
+不要用装饰性图表重复已经清楚的正文，也不要用可视化替代必要的代码、日志或来源证据。

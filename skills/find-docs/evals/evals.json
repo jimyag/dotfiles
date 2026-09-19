@@ -1,0 +1,34 @@
+{
+  "skill_name": "find-docs",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "这个 Go 项目里的 grpc-go 版本是否支持 NewClient？请按项目版本查官方文档。",
+      "expected_output": "先从 go.mod 确认 grpc-go 版本，再查询该版本的官方文档或源码，并清楚说明版本与结论。",
+      "assertions": [
+        "先识别项目使用的实际版本",
+        "使用官方文档或官方源码",
+        "说明结论适用的版本"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "有没有现成的 Agent Skill 可以做数据库迁移评审？",
+      "expected_output": "不运行普通文档查询流程，指出这是技能发现请求并交给 find-skills。",
+      "assertions": [
+        "识别为技能发现而不是库文档查询",
+        "路由到 find-skills"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "React 文档和项目现有封装对 useEffect 清理方式说法不一致，应该怎么改？",
+      "expected_output": "同时检查项目现有实现与匹配版本的 React 官方文档，区分项目约定和官方语义后再提出建议。",
+      "assertions": [
+        "不会只用外部文档覆盖项目约定",
+        "优先使用官方来源",
+        "标明建议的证据来源"
+      ]
+    }
+  ]
+}
