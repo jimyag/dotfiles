@@ -1,0 +1,180 @@
+#!/bin/bash
+
+set -euo pipefail
+
+readonly CFT_CONFIG_DIR="${CLOUDFLARED_CONFIG_DIR:-$HOME/.cloudflared/cftunnel}"
+readonly CFT_DOMAIN_FILE="${CFTUNNEL_DOMAIN_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/cftunnel/domain}"
+
+cft_usage() {
+    cat <<'EOF'
+Usage:
+  cftunnel [port|http(s)://url] [name]
+
+Examples:
+  cftunnel
+  cftunnel 3000
+  cftunnel https://127.0.0.1:8443
+  cftunnel 3000 my-app
+
+The name defaults to the current directory name. An existing local
+configuration is reused; otherwise, the tunnel is created first.
+
+Domain:
+  Set CFTUNNEL_DOMAIN, or write the domain to:
+  ~/.config/cftunnel/domain
+EOF
+}
+
+cft_require_command() {
+    if ! command -v "$1" >/dev/null 2>&1; then
+        echo "$1 is not installed" >&2
+        exit 1
+    fi
+}
+
+cft_normalize_origin() {
+    local target="${1:-8080}"
+
+    if [[ "$target" =~ ^[0-9]+$ ]]; then
+        if (( 10#$target < 1 || 10#$target > 65535 )); then
+            echo "Port must be between 1 and 65535" >&2
+            exit 2
+        fi
+        printf 'http://127.0.0.1:%d' "$((10#$target))"
+        return
+    fi
+
+    case "$target" in
+        http://*|https://*)
+            printf '%s' "$target"
+            ;;
+        *)
+            cft_usage >&2
+            exit 2
+            ;;
+    esac
+}
+
+cft_domain() {
+    local domain="${CFTUNNEL_DOMAIN:-}"
+
+    if [[ -z "$domain" && -f "$CFT_DOMAIN_FILE" ]]; then
+        IFS= read -r domain <"$CFT_DOMAIN_FILE"
+    fi
+
+    domain="${domain%.}"
+    if [[ -z "$domain" || "$domain" != *.* || "$domain" == *..* || ! "$domain" =~ ^[a-zA-Z0-9.-]+$ ]]; then
+        echo "Cloudflare domain is not configured." >&2
+        echo "Write it to $CFT_DOMAIN_FILE or set CFTUNNEL_DOMAIN." >&2
+        exit 1
+    fi
+
+    printf '%s' "$domain"
+}
+
+cft_name() {
+    local raw_name
+    local name
+
+    raw_name="${1:-$(basename "$PWD")}" # Defaults to the current directory.
+
+    name=$(printf '%s' "$raw_name" \
+        | LC_ALL=C tr '[:upper:]' '[:lower:]' \
+        | LC_ALL=C sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')
+    name="${name:0:63}"
+    name="${name%-}"
+
+    if [[ -z "$name" ]]; then
+        echo "Cannot derive a valid tunnel name from: $raw_name" >&2
+        exit 2
+    fi
+
+    printf '%s' "$name"
+}
+
+cft_create() {
+    local origin="$1"
+    local name="$2"
+    local domain
+    local hostname
+    local tunnel_id
+    local credentials_file
+    local config_file
+    local temp_file
+    local create_output
+
+    domain=$(cft_domain)
+    hostname="${name}.${domain}"
+
+    create_output=$(cloudflared tunnel create --output json "$name")
+    tunnel_id=$(jq -er '.id' <<<"$create_output")
+    credentials_file="$HOME/.cloudflared/$tunnel_id.json"
+
+    mkdir -p "$CFT_CONFIG_DIR"
+    temp_file=$(mktemp "$CFT_CONFIG_DIR/$name.yml.tmp.XXXXXX")
+    config_file="$CFT_CONFIG_DIR/$name.yml"
+
+    cat >"$temp_file" <<EOF
+tunnel: $tunnel_id
+credentials-file: $credentials_file
+
+ingress:
+  - hostname: $hostname
+    service: $origin
+  - service: http_status:404
+EOF
+
+    if ! cloudflared tunnel --config "$temp_file" ingress validate; then
+        rm -f "$temp_file"
+        exit 1
+    fi
+    mv "$temp_file" "$config_file"
+
+    if ! cloudflared tunnel route dns "$tunnel_id" "$hostname"; then
+        echo "Tunnel and local config were created, but the DNS route failed." >&2
+        echo "Retry with: cloudflared tunnel route dns $tunnel_id $hostname" >&2
+        exit 1
+    fi
+
+    printf 'URL:       https://%s\n' "$hostname"
+    printf 'Origin:    %s\n' "$origin"
+    printf 'Tunnel:    %s\n' "$name"
+    printf 'Tunnel ID: %s\n' "$tunnel_id"
+    printf 'Config:    %s\n' "$config_file"
+    printf 'Resume:    cftunnel 8080 %s\n' "$name"
+
+    cloudflared tunnel --config "$config_file" run
+}
+
+main() {
+    local target="${1:-8080}"
+    local name="${2:-}"
+    local config_file
+
+    case "${1:-}" in
+        -h|--help)
+            cft_usage
+            exit 0
+            ;;
+    esac
+
+    if (( $# > 2 )); then
+        cft_usage >&2
+        exit 2
+    fi
+
+    cft_require_command cloudflared
+    name=$(cft_name "$name")
+    config_file="$CFT_CONFIG_DIR/$name.yml"
+
+    if [[ -f "$config_file" ]]; then
+        cloudflared tunnel --config "$config_file" run
+        return
+    fi
+
+    cft_require_command jq
+    target=$(cft_normalize_origin "$target") || exit $?
+    cft_create "$target" "$name"
+}
+
+main "$@"
