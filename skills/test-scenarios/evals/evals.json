@@ -62,6 +62,26 @@
         "The output covers compatibility and authorization for the API change",
         "The output defines performance metrics because an explicit latency target exists"
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "一个 E2E 场景在旧版本失败，修改后第一次运行失败，第二次重试通过。请整理 baseline、treatment、原始证据和最终 verdict。",
+      "expected_output": "会保留旧版本和修改后首轮运行作为对照，记录第一次失败与重试结果，并在缺少稳定性证据时给出 INCONCLUSIVE。",
+      "assertions": [
+        "The output distinguishes baseline, treatment, and raw evidence",
+        "The output preserves the first treatment failure instead of only reporting the retry",
+        "The output does not mark a single retry success as VERIFIED"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "请评估一个单元测试：它只断言依赖函数被调用一次、返回值非空，并把同一个 fixture 同时作为输入和期望值。",
+      "expected_output": "会指出这些断言不能证明用户可观察行为，要求通过公共边界调用被测代码并断言字面结果、最终状态或可观察副作用。",
+      "assertions": [
+        "The output identifies the call-count, non-empty, and fixture-self assertions as weak evidence",
+        "The output asks for a public-boundary behavior assertion",
+        "The output does not recommend adding unrelated edge cases"
+      ]
     }
   ]
 }
