@@ -92,6 +92,24 @@ cft_name() {
     printf '%s' "$name"
 }
 
+cft_show_config() {
+    local name="$1"
+    local config_file="$2"
+    local tunnel_id
+    local hostname
+    local origin
+
+    tunnel_id=$(awk '$1 == "tunnel:" { print $2; exit }' "$config_file")
+    hostname=$(awk '$1 == "-" && $2 == "hostname:" { print $3; exit }' "$config_file")
+    origin=$(awk '$1 == "service:" { print $2; exit }' "$config_file")
+
+    [[ -n "$hostname" ]] && printf 'URL:       https://%s\n' "$hostname"
+    [[ -n "$origin" ]] && printf 'Origin:    %s\n' "$origin"
+    printf 'Tunnel:    %s\n' "$name"
+    [[ -n "$tunnel_id" ]] && printf 'Tunnel ID: %s\n' "$tunnel_id"
+    printf 'Config:    %s\n' "$config_file"
+}
+
 cft_create() {
     local origin="$1"
     local name="$2"
@@ -168,6 +186,7 @@ main() {
     config_file="$CFT_CONFIG_DIR/$name.yml"
 
     if [[ -f "$config_file" ]]; then
+        cft_show_config "$name" "$config_file"
         cloudflared tunnel --config "$config_file" run
         return
     fi
