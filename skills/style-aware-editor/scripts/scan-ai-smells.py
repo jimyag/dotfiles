@@ -8,6 +8,8 @@ from pathlib import Path
 
 PATTERNS: list[tuple[str, str]] = [
     ("chatbot residue", r"\b(let'?s dive in|i hope this helps|let me know|of course|certainly)\b|当然|希望这.*帮助"),
+    ("agent process narration", r"我(?:正在|将|会).*使用.*(?:skill|技能)|接下来我(?:会|将).*调用.*(?:工具|skill|技能)"),
+    ("empty template section", r"^\s*(?:#{1,6}\s*)?(?:剩余风险|未验证区域|正常区域|下一步|参考)[：:]?\s*(?:无|暂无|不适用|none|n/a)\s*$"),
     ("chat ui artifact", r"turn\d+search\d+|citeturn\d+search\d+|oai_citation|:contentReference\[|contentReference\[oaicite|\[web:\d+\]|\[attached_file:\d+\]|utm_source=(chatgpt\.com|claude\.ai|copilot\.com|openai)|referrer=grok\.com|grok_card"),
     ("placeholder leakage", r"\[(INSERT NAME|YEAR|COMPANY|INDUSTRY|TODO|TBD)\]|20\d\d-xx-xx"),
     ("cutoff disclaimer", r"\b(as of my last update|i don'?t have access to real-time|specific details are limited|based on available information)\b"),
