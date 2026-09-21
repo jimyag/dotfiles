@@ -38,6 +38,9 @@ window-inherit-working-directory = false
 # clipboard 表示复制到系统 clipboard，而不是只复制到 primary selection
 copy-on-select = clipboard
 
+# 搜索框获得焦点时，显式支持 Command + V 粘贴
+keybind = super+v=paste_from_clipboard
+
 
 # --- Quick terminal / 下拉终端 ---
 
