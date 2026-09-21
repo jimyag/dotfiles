@@ -25,3 +25,6 @@ __pycache__/
 .antigravitycli/
 .claude/settings.local.json
 .codex/
+
+# Git worktrees under repository roots
+/.worktrees/
