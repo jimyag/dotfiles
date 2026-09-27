@@ -194,5 +194,5 @@ chezmoi apply -v
 ## 其他
 
 ```bash
-brew bundle dump --file=~/.local/share/chezmoi/Brewfile
+brew bundle dump --file=~/.local/share/chezmoi/home/Brewfile
 ```

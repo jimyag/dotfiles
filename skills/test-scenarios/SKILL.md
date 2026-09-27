@@ -144,5 +144,5 @@ description: Use this skill when the user asks for a test plan, acceptance crite
 
 ## 统一约束
 
-- 验收标准：遵循 `skills/_shared/common-acceptance.md`。
+- 验收标准：遵循 `../_shared/common-acceptance.md`。
 - 场景契约只描述边界和证据，不授权启动服务、写入外部系统或修改业务代码。

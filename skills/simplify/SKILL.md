@@ -35,4 +35,4 @@ license: Apache-2.0 (see LICENSE)
 
 ## 来源
 
-改编自 Anthropic 的 [`code-simplifier`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/code-simplifier) 代理，采用 Apache License 2.0 授权。改动包括转换为可移植的 Agent Skills 格式、移除 Claude 专用的模型选择，以及通用化项目指令处理方式。
+改编自 Anthropic 的 [`code-simplifier`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/code-simplifier) 代理，采用 Apache License 2.0 授权，已改编为可移植的 Agent Skills 格式。
