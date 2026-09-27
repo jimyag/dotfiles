@@ -2,6 +2,8 @@
 
 这是我的个人 dotfiles 仓库，里面有一些写死的个人配置，例如默认仓库 `jimyag/dotfiles`、默认 `chezmoi init jimyag`、Git 用户信息、邮箱和部分脚本提示。直接使用前建议先通读并替换为自己的值。
 
+[![Check](https://github.com/jimyag/dotfiles/actions/workflows/check.yaml/badge.svg)](https://github.com/jimyag/dotfiles/actions/workflows/check.yaml)
+
 ## Agent Skills
 
 根目录的 `skills/` 包含可复用的 Agent Skills，可以直接通过 `npx skills`
@@ -185,6 +187,14 @@ chezmoi add ~/.zshrc --template
 chezmoi diff
 
 chezmoi apply -v
+```
+
+## 开发
+
+提交和 PR 会检查安装脚本与辅助脚本的 Bash 语法。可在本地运行：
+
+```bash
+bash -n install.sh scripts/sync_public_dotfiles.sh skills/codecov-coverage/scripts/*.sh
 ```
 
 ## 进阶用法
