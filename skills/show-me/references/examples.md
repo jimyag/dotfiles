@@ -52,6 +52,36 @@ sequenceDiagram
     Daemon-->>UI: stream result
 ```
 
+## 架构与数据流
+
+以下名称仅为示意；实际使用时从代码核对节点、方向和消息类型。
+
+一张图用分组圈出模块，组内展示处理步骤，跨组箭头展示数据交接：
+
+```mermaid
+flowchart LR
+    subgraph Receive[接收阶段]
+        API[接收入口]
+        Validate[校验消息]
+        API --> Validate
+    end
+    subgraph Send[发送阶段]
+        Inbox[(消息队列)]
+        Worker[发送协程]
+    end
+    subgraph Handle[结果处理阶段]
+        Outbox[(接收通道)]
+        Consumer[业务处理]
+    end
+    Validate -->|写入 Message| Inbox
+    Inbox -->|读取 Message| Worker
+    Worker -->|发送 Message| Remote[远端服务]
+    Remote -->|返回 Result| Outbox
+    Outbox -->|读取 Result| Consumer
+```
+
+说明数据流时按箭头顺序写清：入口产生 `Message` 并写入队列；发送协程读取后交给远端；远端返回 `Result`，由本地处理逻辑消费。队列和通道是异步边界，发送协程与业务处理分别消费不同数据。
+
 ## 聚焦差异
 
 ```diff
