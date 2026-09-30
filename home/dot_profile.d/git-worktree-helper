@@ -1,6 +1,6 @@
 function gwl() {
   # Enhanced git worktree list: shows PR and issue titles for each worktree
-  local worktrees nwo repo_url
+  local worktrees nwo repo_url upstream_url origin_url parent_repo
   worktrees=$(git worktree list 2>/dev/null)
   if [[ -z "$worktrees" ]]; then
     echo "Not in a git repository or no worktrees found."
@@ -8,12 +8,27 @@ function gwl() {
   fi
 
   # Determine owner/repo from remote
-  repo_url=$(git remote get-url upstream 2>/dev/null || git remote get-url origin 2>/dev/null)
+  upstream_url=$(git remote get-url upstream 2>/dev/null)
+  origin_url=$(git remote get-url origin 2>/dev/null)
+  repo_url=${upstream_url:-$origin_url}
   if [[ -z "$repo_url" ]]; then
+    print -u2 -- 'gwl: 未配置 upstream 或 origin，无法查询 PR 和 Issue。'
     git worktree list
     return
   fi
   nwo=$(echo "$repo_url" | sed -E 's#^(https?://[^/]+/|git@[^:]+:)##; s#\.git$##')
+  local -a repos
+  repos=("$nwo")
+  if [[ -n "$origin_url" && "$origin_url" != "$repo_url" ]]; then
+    repos+=("$(echo "$origin_url" | sed -E 's#^(https?://[^/]+/|git@[^:]+:)##; s#\.git$##')")
+  fi
+  if [[ -z "$upstream_url" ]]; then
+    if parent_repo=$(gh repo view "$nwo" --json parent --jq 'if .parent then .parent.owner.login + "/" + .parent.name else empty end'); then
+      [[ -n "$parent_repo" ]] && repos+=("$parent_repo")
+    else
+      print -u2 -- "gwl: 无法确定 $nwo 的 fork 上游。"
+    fi
+  fi
 
   # Collect worktree info
   local -a wt_paths wt_branches
@@ -31,8 +46,14 @@ function gwl() {
   [[ -n "$current_path" ]] && { wt_paths+=("$current_path"); wt_branches+=("$current_branch"); }
 
   # Batch fetch all PRs (including merged/closed)
-  local pr_json
-  pr_json=$(gh pr list --repo "$nwo" --author @me --state all --json headRefName,title,number,state --limit 100 2>/dev/null || echo "[]")
+  local pr_json='[]' repo_json repo
+  for repo in "${repos[@]}"; do
+    if repo_json=$(gh pr list --repo "$repo" --author @me --state all --json headRefName,title,number,state,closingIssuesReferences --limit 100); then
+      pr_json=$(jq -cn --argjson existing "$pr_json" --argjson incoming "$repo_json" --arg repo "$repo" '$existing + ($incoming | map(. + {repo: $repo}))') || return 1
+    else
+      print -u2 -- "gwl: 查询 $repo 的 PR 失败。"
+    fi
+  done
 
   # Declare all loop variables outside the loop to avoid zsh printing assignments
   local -a rows_path rows_branch rows_issue rows_pr
@@ -50,19 +71,26 @@ function gwl() {
       # Add [M] for Merged, [C] for Closed, and nothing for Open
       found=$(echo "$pr_json" | jq -r --arg branch "$b" '
         [.[] | select(.headRefName == $branch)]
+        | if length > 0 then .[0].repo as $repo | map(select(.repo == $repo)) else . end
         | sort_by(if .state == "OPEN" then 1 else 0 end, .number)
         | last
         | if . == null then empty
-          else (if .state == "MERGED" then "[M] " elif .state == "CLOSED" then "[C] " else "" end) + "#\(.number) \(.title)"
-          end
-      ' 2>/dev/null)
-      [[ -n "$found" ]] && pr_title="$found"
+          else . end
+      ')
+      if [[ -n "$found" ]]; then
+        pr_title=$(jq -r '(if .state == "MERGED" then "[M] " elif .state == "CLOSED" then "[C] " else "" end) + "#\(.number) \(.title)"' <<< "$found")
+        issue_title=$(jq -r '[.closingIssuesReferences[]? | "#\(.number) \(.title)"] | if length == 0 then "-" else join("; ") end' <<< "$found")
+      elif [[ "$b" != main && "$b" != master && "$b" != '-' ]]; then
+        print -u2 -- "gwl: 分支 $b 未找到匹配 PR（已查询 ${repos[*]}，每仓库最近 100 个本人 PR）。"
+      fi
     fi
 
-    # Look up issue title if branch matches issue-<N>
-    if [[ "$b" =~ ^issue-([0-9]+)$ ]]; then
+    # Fall back to the branch number when the PR has no linked issues.
+    if [[ "$issue_title" == '-' && "$b" =~ ^issue-([0-9]+)$ ]]; then
       issue_num="${match[1]}"
-      found_issue=$(gh issue view "$issue_num" --repo "$nwo" --json title,number --jq '"#\(.number) \(.title)"' 2>/dev/null || true)
+      repo="$nwo"
+      [[ -n "$found" ]] && repo=$(jq -r '.repo' <<< "$found")
+      found_issue=$(gh issue view "$issue_num" --repo "$repo" --json title,number --jq '"#\(.number) \(.title)"') || print -u2 -- "gwl: 查询 $repo 的 Issue #$issue_num 失败。"
       [[ -n "$found_issue" ]] && issue_title="$found_issue"
     fi
 

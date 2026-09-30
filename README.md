@@ -191,6 +191,13 @@ chezmoi apply -v
 
 ## 开发
 
+`gwl` 列出当前仓库的 worktree，并查询本人最近 100 个 PR（含已关闭、已合并）。
+优先匹配 `upstream`，再匹配 `origin`；没有 `upstream` 时，自动查询 fork 的上游仓库。
+PR 的关联 Issue 会显示在 ISSUE 列；没有关联信息时，尝试从 `issue-<数字>` 分支查询。
+找不到匹配 PR 或 GitHub 查询失败时，会在标准错误中提示。
+
+修改 `gwl` 后可运行 `bash scripts/test-gwl.sh` 验证查询与回退行为。
+
 提交和 PR 会检查安装脚本与辅助脚本的 Bash 语法。可在本地运行：
 
 ```bash
