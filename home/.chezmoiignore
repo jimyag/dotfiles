@@ -1,0 +1,12 @@
+.oh-my-zsh/cache/*
+{{ if eq .chezmoi.os "linux" }}
+.agents
+.gemini
+.comet.json
+.splitrail.toml
+.hammerspoon
+.config/ghostty
+.config/kitty
+.config/nvim
+Brewfile
+{{ end }}

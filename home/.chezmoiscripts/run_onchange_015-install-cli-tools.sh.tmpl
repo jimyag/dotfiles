@@ -1,0 +1,66 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -euo pipefail
+
+export PATH="$HOME/.local/bin:$PATH"
+tmpdir="$(mktemp -d)"
+trap 'rm -rf "$tmpdir"' EXIT
+github_auth=()
+if [ -n "${GITHUB_TOKEN:-}" ]; then
+    github_auth=(-H "Authorization: Bearer $GITHUB_TOKEN")
+fi
+if ! command -v jd >/dev/null 2>&1; then
+    url="$(curl -fsSL "${github_auth[@]}" https://api.github.com/repos/jimyag/jd/releases/latest |
+        jq -er --arg suffix "_linux_{{ .chezmoi.arch }}" '.assets[] | select(.name | startswith("jd_") and endswith($suffix)) | .browser_download_url')"
+    curl -fsSL "$url" -o "$tmpdir/jd"
+    mkdir -p "$HOME/.local/bin"
+    install -m 0755 "$tmpdir/jd" "$HOME/.local/bin/jd"
+fi
+
+# Fetch the current registry before jd's short network timeout can fall back to stale entries.
+registry_dir="${XDG_CACHE_HOME:-$HOME/.cache}/jd"
+mkdir -p "$registry_dir"
+curl -fsSL https://raw.githubusercontent.com/jimyag/jd/main/internal/registry/builtin/packages.yaml -o "$tmpdir/packages.yaml"
+install -m 0644 "$tmpdir/packages.yaml" "$registry_dir/packages.yaml"
+
+for tool in gh zoxide yq zellij croc nexttrace mihomo; do
+    if ! command -v "$tool" >/dev/null 2>&1; then
+        jd "$tool" --method binary
+    fi
+done
+
+if ! command -v tldr >/dev/null 2>&1; then
+    case "{{ .chezmoi.arch }}" in
+        amd64) arch=x86_64 ;;
+        arm64) arch=aarch64 ;;
+        *) echo "Unsupported tldr architecture" >&2; exit 1 ;;
+    esac
+    url="$(curl -fsSL "${github_auth[@]}" https://api.github.com/repos/tldr-pages/tlrc/releases/latest |
+        jq -er --arg suffix "-${arch}-unknown-linux-musl.tar.gz" '.assets[] | select(.name | endswith($suffix)) | .browser_download_url')"
+    curl -fsSL "$url" -o "$tmpdir/tlrc.tar.gz"
+    tar -xzf "$tmpdir/tlrc.tar.gz" -C "$tmpdir"
+    install -m 0755 "$tmpdir/tldr" "$HOME/.local/bin/tldr"
+fi
+
+if ! command -v yt-dlp >/dev/null 2>&1; then
+    case "{{ .chezmoi.arch }}" in
+        amd64) asset=yt-dlp_linux ;;
+        arm64) asset=yt-dlp_linux_aarch64 ;;
+        *) echo "Unsupported yt-dlp architecture" >&2; exit 1 ;;
+    esac
+    curl -fsSL "https://github.com/yt-dlp/yt-dlp/releases/latest/download/$asset" -o "$tmpdir/yt-dlp"
+    install -m 0755 "$tmpdir/yt-dlp" "$HOME/.local/bin/yt-dlp"
+fi
+
+if ! command -v uv >/dev/null 2>&1; then
+    jd uv
+fi
+
+if ! command -v pre-commit >/dev/null 2>&1; then
+    uv tool install pre-commit
+fi
+
+if ! command -v git-filter-repo >/dev/null 2>&1; then
+    uv tool install git-filter-repo
+fi
+{{ end -}}

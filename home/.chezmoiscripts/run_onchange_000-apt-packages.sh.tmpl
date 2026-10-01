@@ -14,7 +14,7 @@ run_with_privileges() {
 }
 
 apt_install_required() {
-  run_with_privileges env DEBIAN_FRONTEND=noninteractive apt-get install -y "$@"
+  run_with_privileges env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "$@"
 }
 
 if ! command -v apt-get >/dev/null 2>&1; then
@@ -38,48 +38,25 @@ apt_install_required \
   net-tools \
   neovim \
   iperf3 \
-  build-essential \
   unzip \
   tree \
-  gh \
   bat \
   bzip2 \
-  cmake \
   coreutils \
   fd-find \
-  ffmpeg \
   fzf \
   gawk \
-  gcc \
-  git-filter-repo \
   git-lfs \
-  glab \
   httpie \
   ifstat \
-  imagemagick \
   mtr-tiny \
-  ninja-build \
-  pandoc \
-  poppler-utils \
-  pre-commit \
-  progress \
-  protobuf-compiler \
-  pv \
-  qemu-system \
-  qemu-utils \
-  rclone \
-  restic \
-  s3cmd \
-  samba \
-  shellcheck \
-  shfmt \
   socat \
   telnet \
   tig \
-  tldr \
   wget \
-  yq \
-  zoxide
+  tmux \
+  fail2ban \
+  python3-systemd
 
 bin_dir="$HOME/.local/bin"
 mkdir -p "$bin_dir"

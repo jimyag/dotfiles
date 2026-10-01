@@ -9,7 +9,7 @@ if [ ! -d "$HOME/.oh-my-zsh" ] || [ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
     echo "oh-my-zsh directory exists but installation appears incomplete, reinstalling..." >&2
     rm -rf "$HOME/.oh-my-zsh"
   fi
-  RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 else
   echo "oh-my-zsh already installed, skipping installation" >&2
 fi

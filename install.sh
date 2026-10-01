@@ -1,6 +1,6 @@
 #!/bin/bash
 # 需 bash（若用 curl 安装请：curl ... | bash）
-set -e
+set -euo pipefail
 
 print_usage() {
   cat <<'EOF'
@@ -9,14 +9,10 @@ dotfiles installer
 Usage:
   curl -fsSL https://dotfiles.jimyag.com | bash
 
-Full install:
-  curl -fsSL https://dotfiles.jimyag.com | VPS=0 bash
-
 Help:
   curl -fsSL https://dotfiles.jimyag.com | bash -s -- --help
 
 Options:
-  VPS=0          Install full local/dev tooling instead of VPS profile.
   SET_HOSTNAME   Linux hostname.
 EOF
 }
@@ -29,17 +25,21 @@ case "${1:-}" in
 esac
 
 # 必须由具备 sudo 权限的用户执行
-if ! sudo -n true 2>/dev/null; then
+if [ "$(id -u)" -eq 0 ]; then
+  sudo() {
+    if [ -n "$(type -P sudo)" ]; then
+      command sudo "$@"
+    else
+      "$@"
+    fi
+  }
+elif ! sudo -n true 2>/dev/null; then
   echo "此脚本需要由具备 sudo 权限的用户执行，请先执行 sudo -v 或使用 sudo 运行。" >&2
   exit 1
 fi
 
 # 环境变量说明见下方，先统一导出
-export VPS="${VPS:-}"
 export SET_HOSTNAME="${SET_HOSTNAME:-}"
-export GIT_CONFIG_GLOBAL=/dev/null
-export GIT_CONFIG_SYSTEM=/dev/null
-export GIT_CONFIG_NOSYSTEM=1
 
 # CHEZMOI_SOURCE: 本地 dotfiles 目录
 # CHEZMOI_REPO: GitHub 用户名或仓库 URL
@@ -54,14 +54,19 @@ ensure_chezmoi() {
   if command -v chezmoi >/dev/null 2>&1; then return; fi
   local bin_dir="${HOME:?}/.local/bin"
   mkdir -p "$bin_dir"
-  if command -v curl >/dev/null 2>&1; then
-    sh -c "$(curl -fsSL https://git.io/chezmoi)" -- -b "$bin_dir"
-  elif command -v wget >/dev/null 2>&1; then
-    sh -c "$(wget -qO- https://git.io/chezmoi)" -- -b "$bin_dir"
-  else
-    echo "To install chezmoi, you need curl or wget." >&2
-    exit 1
-  fi
+  (
+    tmp_script="$(mktemp)"
+    trap 'rm -f "$tmp_script"' EXIT
+    if command -v curl >/dev/null 2>&1; then
+      curl -fsSL https://get.chezmoi.io -o "$tmp_script"
+    elif command -v wget >/dev/null 2>&1; then
+      wget -qO "$tmp_script" https://get.chezmoi.io
+    else
+      echo "To install chezmoi, you need curl or wget." >&2
+      exit 1
+    fi
+    sh "$tmp_script" -b "$bin_dir"
+  )
 }
 
 # 执行 chezmoi init --apply（依赖 CHEZMOI_SOURCE / CHEZMOI_REPO / SCRIPT_DIR）
@@ -85,7 +90,7 @@ run_chezmoi_apply() {
 # 创建用户并配置 SSH 公钥（仅 Linux，CREATE_USER 非空时）
 create_user_and_ssh() {
   local u="$1"
-  local keys_url user_home ssh_dir auth_keys
+  local keys_url user_home ssh_dir auth_keys keys_file
 
   if ! id "$u" >/dev/null 2>&1; then
     sudo useradd -m -s /bin/bash "$u"
@@ -99,18 +104,30 @@ create_user_and_ssh() {
   auth_keys="$ssh_dir/authorized_keys"
   [ ! -d "$user_home" ] && return
 
+  keys_file="$(mktemp)"
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL "$keys_url" -o "$keys_file" || { rm -f "$keys_file"; echo "拉取 GitHub 公钥失败。" >&2; return 1; }
+  elif command -v wget >/dev/null 2>&1; then
+    wget -qO "$keys_file" "$keys_url" || { rm -f "$keys_file"; echo "拉取 GitHub 公钥失败。" >&2; return 1; }
+  else
+    rm -f "$keys_file"
+    echo "需要 curl 或 wget 以拉取 GitHub 公钥。" >&2
+    return 1
+  fi
+  if ! ssh-keygen -l -f "$keys_file" >/dev/null; then
+    rm -f "$keys_file"
+    echo "下载内容不是有效的 SSH 公钥。" >&2
+    return 1
+  fi
   sudo mkdir -p "$ssh_dir"
   sudo chmod 700 "$ssh_dir"
-  if command -v curl >/dev/null 2>&1; then
-    curl -fsSL "$keys_url" | sudo tee "$auth_keys" >/dev/null || { echo "拉取 GitHub 公钥失败。" >&2; return; }
-  elif command -v wget >/dev/null 2>&1; then
-    wget -qO- "$keys_url" | sudo tee "$auth_keys" >/dev/null || { echo "拉取 GitHub 公钥失败。" >&2; return; }
-  else
-    echo "需要 curl 或 wget 以拉取 GitHub 公钥。" >&2
-    return
+  if sudo test -f "$auth_keys"; then
+    sudo cat "$auth_keys" >> "$keys_file"
+    sort -u "$keys_file" -o "$keys_file"
   fi
-  sudo chmod 600 "$auth_keys"
-  sudo chown -R "$u:$u" "$ssh_dir"
+  sudo install -o "$u" -g "$u" -m 0600 "$keys_file" "$auth_keys"
+  sudo chown "$u:$u" "$ssh_dir"
+  rm -f "$keys_file"
 }
 
 # 用户名合法：不含 /、..、空格
@@ -132,6 +149,10 @@ set_system_hostname() {
 SCRIPT_DIR="$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")" && pwd -P)"
 
 # --- 主流程 ---
+if [ "$(uname -s)" = "Linux" ] && command -v apt-get >/dev/null 2>&1; then
+  sudo apt-get update
+  sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ca-certificates curl git sudo
+fi
 set_system_hostname
 
 if [ -n "${CREATE_USER:-}" ] && [ "$(uname)" = "Linux" ] && is_valid_username "$add_user"; then
@@ -139,9 +160,10 @@ if [ -n "${CREATE_USER:-}" ] && [ "$(uname)" = "Linux" ] && is_valid_username "$
   target_home=$(getent passwd "$add_user" 2>/dev/null | cut -d: -f6) || target_home="/home/$add_user"
   exec sudo -u "$add_user" env \
     HOME="$target_home" USER="$add_user" LOGNAME="$add_user" \
-    VPS="$VPS" SET_HOSTNAME="$SET_HOSTNAME" CHEZMOI_SOURCE="${CHEZMOI_SOURCE:-}" CHEZMOI_REPO="${CHEZMOI_REPO:-}" SCRIPT_DIR="$SCRIPT_DIR" \
-    GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_CONFIG_NOSYSTEM=1 \
+    SET_HOSTNAME="$SET_HOSTNAME" CHEZMOI_SOURCE="${CHEZMOI_SOURCE:-}" CHEZMOI_REPO="${CHEZMOI_REPO:-}" SCRIPT_DIR="$SCRIPT_DIR" \
+    GITHUB_TOKEN="${GITHUB_TOKEN:-}" \
     bash -s << DECLARE_AND_RUN
+set -euo pipefail
 $(declare -f ensure_chezmoi run_chezmoi_apply)
 run_chezmoi_apply
 DECLARE_AND_RUN

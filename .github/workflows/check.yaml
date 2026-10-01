@@ -19,4 +19,4 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Check shell syntax
-        run: bash -n install.sh scripts/sync_public_dotfiles.sh skills/codecov-coverage/scripts/*.sh
+        run: bash -n install.sh scripts/sync_public_dotfiles.sh scripts/test-linux-install.sh skills/codecov-coverage/scripts/*.sh

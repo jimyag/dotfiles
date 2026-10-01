@@ -56,7 +56,7 @@ CHEZMOI_REPO=<your-user>/<your-dotfiles-repo> ./install.sh
 
 安装脚本需 **bash** 执行（管道安装请使用 `| bash`）。
 
-### 本地环境安装
+### 安装
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | bash
@@ -68,35 +68,32 @@ curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | b
 wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | bash
 ```
 
-### VPS 环境安装
+### 默认安装清单
 
-在 VPS 上安装时，设置 `VPS=1` 环境变量以跳过某些开发工具的安装：
+Linux 使用下面这一份清单，没有 VPS/开发模式切换：
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | VPS=1 bash
-```
+- APT：zsh、bash-completion、hstr、coreutils、gawk、ripgrep、fd-find、fzf、tree、bat、unzip、bzip2、vim、neovim、git、git-lfs、tig、htop、dnsutils、net-tools、iperf3、ifstat、mtr-tiny、socat、telnet、curl、wget、httpie、jq、tmux、fail2ban。
+- jd：gh、zoxide、yq（Mike Farah 版本）、zellij、croc、nexttrace、mihomo、uv。
+- 官方发布包：tldr（tlrc 的 musl 二进制）、yt-dlp。当前 jd 发布版没有这两个工具的 Linux 二进制安装路径。
+- uv：pre-commit、git-filter-repo，避免 APT 的 nodeenv 依赖拉入编译工具，并支持 Debian 11。
+- Shell：oh-my-zsh、zsh-autosuggestions、fast-syntax-highlighting、zsh-wakatime、powerlevel10k，以及仓库中的 zsh 配置。默认主题保持 alanpeabody，可自行切换到 powerlevel10k。
+- 服务与系统：Docker 官方一键脚本（get.docker.com）、非 root 用户加入 docker 组、Tailscale、ZeroTier、IPv4/IPv6 转发、禁用 SSH 密码和交互式认证。SSH 修改要求当前用户已有 `authorized_keys`，并在重载前校验配置。Tailscale、ZeroTier 安装后仍需自行登录或加入网络；mihomo 只安装命令，不写入代理配置或启动服务。
 
-或者：
+默认不安装 glab、splitrail、Rust、Node、Go 开发工具、AI CLI、Kubernetes CLI、QEMU 和媒体处理工具。Linux 不下发桌面和 AI 配置；Neovim 使用系统包和默认配置，避免开发环境的插件自动下载工具链。已有软件不自动卸载。
 
-```bash
-wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | VPS=1 bash
-```
+`jd` 和 `uv` 安装到 `~/.local/bin`，`batcat`、`fdfind` 分别映射为 `bat`、`fd`。Python 是 httpie、pre-commit、fail2ban 等工具的依赖，`python3-systemd` 用于 fail2ban 读取 SSH 日志。可以设置 `GITHUB_TOKEN`，避免多个安装共用出口 IP 时触发 GitHub API 限流。
 
 ### 从本地仓库安装
 
 如果已经克隆了仓库到本地：
 
 ```bash
-# 本地安装
 ./install.sh
-
-# VPS 安装
-VPS=1 ./install.sh
 ```
 
 ### Linux 上创建用户并配置 SSH
 
-脚本需由具备 sudo 权限的用户执行。在 Linux VPS 上可通过环境变量创建带 sudo 的用户，并将指定 GitHub 用户的公钥写入其 `~/.ssh/authorized_keys`（仅 Linux，macOS 不创建用户）：
+脚本需由 root 或具备 sudo 权限的用户执行。在 Linux 上可通过环境变量创建带 sudo 的用户，并将指定 GitHub 用户的公钥写入其 `~/.ssh/authorized_keys`（仅 Linux，macOS 不创建用户）：
 
 | 变量 | 说明 |
 |------|------|
@@ -172,11 +169,7 @@ CREATE_USER=jimyag ./install.sh
 ```bash
 chezmoi init jimyag
 
-# 本地环境
 chezmoi apply -v
-
-# VPS 环境
-VPS=1 chezmoi apply -v
 ```
 
 ## 常用命令
@@ -203,6 +196,26 @@ PR 的关联 Issue 会显示在 ISSUE 列；没有关联信息时，尝试从 `i
 ```bash
 bash -n install.sh scripts/sync_public_dotfiles.sh skills/codecov-coverage/scripts/*.sh
 ```
+
+在干净容器中验证默认安装、工具运行、SSH 配置、zsh 启动及重复安装：
+
+```bash
+docker run --rm -v "$PWD:/src:ro" debian:13-slim bash -c 'cp -a /src /tmp/dotfiles; bash /tmp/dotfiles/scripts/test-linux-install.sh'
+```
+
+同样检查 `debian:11-slim`、`debian:12-slim`、`ubuntu:22.04`、`ubuntu:24.04`、`ubuntu:26.04`。
+容器内只验证服务软件安装和持久配置；服务启动、实时转发和 SSH 登录需要在真实主机上验证。
+
+Debian 11 的 LTS 已于 2026-08-31 结束，默认安全源可能仍提供索引但已移除包，导致 404。
+安装前需要准备可用的归档源；安装器不自动覆盖已有的 APT 源。
+本次兼容性验证使用官方 Debian 归档和最后一天的安全仓库快照：
+
+```text
+deb [check-valid-until=no] http://archive.debian.org/debian bullseye main
+deb [check-valid-until=no] http://snapshot.debian.org/archive/debian-security/20260831T235959Z bullseye-security main
+```
+
+快照保留 Debian 签名校验，但不提供后续安全更新。参见 [Debian 官方仓库迁移讨论](https://lists.debian.org/debian-mirrors/2026/09/msg00001.html)。
 
 ## 进阶用法
 

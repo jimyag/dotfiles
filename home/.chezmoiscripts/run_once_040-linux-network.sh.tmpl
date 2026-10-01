@@ -2,19 +2,27 @@
 #!/bin/bash
 set -euo pipefail
 
-# 启用 IPv4/IPv6 转发（如做网关或 VPN 时需要）
-grep -q '^net.ipv4.ip_forward = 1' /etc/sysctl.conf 2>/dev/null || echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.conf
-grep -q '^net.ipv6.conf.all.forwarding = 1' /etc/sysctl.conf 2>/dev/null || echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.conf
-sudo sysctl -p /etc/sysctl.conf
+# Keep forwarding settings in a drop-in; recent distributions may omit sysctl.conf.
+printf '%s\n' 'net.ipv4.ip_forward = 1' 'net.ipv6.conf.all.forwarding = 1' |
+  sudo tee /etc/sysctl.d/99-dotfiles-forwarding.conf >/dev/null
+if [ -d /run/systemd/system ]; then
+  sudo sysctl -p /etc/sysctl.d/99-dotfiles-forwarding.conf
+else
+  echo "Forwarding configuration saved; live sysctl changes require a host session." >&2
+fi
 
 # WSL2 上不安装 Tailscale / ZeroTier
 if grep -qi microsoft /proc/version 2>/dev/null; then
   echo "WSL2 detected; skipping Tailscale and ZeroTier installation." >&2
 else
   # Tailscale
-  curl -fsSL https://tailscale.com/install.sh | sh
+  if ! command -v tailscale >/dev/null 2>&1; then
+    curl -fsSL https://tailscale.com/install.sh | sh
+  fi
 
   # ZeroTier
-  curl -s https://install.zerotier.com | sudo bash
+  if ! command -v zerotier-cli >/dev/null 2>&1; then
+    curl -fsSL https://install.zerotier.com | sudo bash
+  fi
 fi
 {{- end -}}

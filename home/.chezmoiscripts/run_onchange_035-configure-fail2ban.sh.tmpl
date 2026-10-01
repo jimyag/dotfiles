@@ -1,0 +1,13 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -euo pipefail
+
+# Debian/Ubuntu hosts may use journald without /var/log/auth.log.
+printf '%s\n' '[sshd]' 'enabled = true' 'backend = systemd' |
+    sudo tee /etc/fail2ban/jail.d/00-dotfiles-sshd.local >/dev/null
+sudo fail2ban-client -t
+if [ -d /run/systemd/system ]; then
+    sudo systemctl enable fail2ban
+    sudo systemctl restart fail2ban
+fi
+{{ end -}}

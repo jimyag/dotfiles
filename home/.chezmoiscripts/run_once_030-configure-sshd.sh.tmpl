@@ -2,7 +2,16 @@
 #!/bin/bash
 set -euo pipefail
 
-CONFIG_PATH="/etc/ssh/sshd_config.d/99-security.conf"
+CONFIG_PATH="/etc/ssh/sshd_config.d/00-dotfiles-security.conf"
+
+if ! command -v sshd >/dev/null 2>&1; then
+  echo "sshd is not installed; skipping SSH configuration." >&2
+  exit 0
+fi
+if [ ! -s "$HOME/.ssh/authorized_keys" ]; then
+  echo "No authorized_keys for $(id -un); refusing to disable password authentication." >&2
+  exit 1
+fi
 
 tmp_config="$(mktemp)"
 trap 'rm -f "$tmp_config"' EXIT
@@ -25,12 +34,21 @@ if ! command -v sudo >/dev/null 2>&1; then
   fi
 fi
 
+sudo sshd -t -f "$tmp_config"
+
 config_dir="$(dirname "$CONFIG_PATH")"
 if [ ! -d "$config_dir" ]; then
   sudo install -d -m 0755 "$config_dir"
 fi
 
 changed=0
+backup="$(mktemp)"
+had_config=0
+if sudo test -f "$CONFIG_PATH"; then
+  sudo cp "$CONFIG_PATH" "$backup"
+  had_config=1
+fi
+trap 'rm -f "$tmp_config" "$backup"' EXIT
 if [ -f "$CONFIG_PATH" ]; then
   if ! sudo cmp -s "$tmp_config" "$CONFIG_PATH"; then
     sudo install -m 0644 "$tmp_config" "$CONFIG_PATH"
@@ -41,11 +59,22 @@ else
   changed=1
 fi
 
-if [ "$changed" -eq 1 ] && command -v systemctl >/dev/null 2>&1; then
+if ! effective_config="$(sudo sshd -T)" || ! sudo sshd -t || ! grep -qx 'passwordauthentication no' <<< "$effective_config" ||
+    ! grep -qx 'kbdinteractiveauthentication no' <<< "$effective_config"; then
+  if [ "$had_config" -eq 1 ]; then
+    sudo cp "$backup" "$CONFIG_PATH"
+  else
+    sudo rm -f "$CONFIG_PATH"
+  fi
+  echo "SSH configuration validation failed; restored previous configuration." >&2
+  exit 1
+fi
+
+if [ "$changed" -eq 1 ] && [ -d /run/systemd/system ]; then
   if sudo systemctl status sshd >/dev/null 2>&1; then
-    sudo systemctl reload sshd >/dev/null 2>&1 || sudo systemctl restart sshd >/dev/null 2>&1 || true
+    sudo systemctl reload sshd
   elif sudo systemctl status ssh >/dev/null 2>&1; then
-    sudo systemctl reload ssh >/dev/null 2>&1 || sudo systemctl restart ssh >/dev/null 2>&1 || true
+    sudo systemctl reload ssh
   fi
 fi
 {{- end -}}
