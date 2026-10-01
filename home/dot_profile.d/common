@@ -1,4 +1,7 @@
 typeset -U path PATH
+if [[ "$OSTYPE" == linux* ]]; then
+    path+=(/usr/local/sbin /usr/sbin /sbin)
+fi
 
 # hstr start
 if command -v hstr > /dev/null; then
