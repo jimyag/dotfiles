@@ -3,13 +3,12 @@ set -euo pipefail
 
 # Install oh-my-zsh if not already installed or if installation is incomplete
 if [ ! -d "$HOME/.oh-my-zsh" ] || [ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
-  # Use RUNZSH=no to prevent auto-switching during installation
-  # We'll switch the default shell manually after installation
+  # Do not launch zsh during installation; verify the default shell below.
   if [ -d "$HOME/.oh-my-zsh" ] && [ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
     echo "oh-my-zsh directory exists but installation appears incomplete, reinstalling..." >&2
     rm -rf "$HOME/.oh-my-zsh"
   fi
-  RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  RUNZSH=no CHSH=yes KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 else
   echo "oh-my-zsh already installed, skipping installation" >&2
 fi
