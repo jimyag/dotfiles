@@ -45,6 +45,18 @@
         "10:32 and 10:35 remain unchanged",
         "The output does not invent why the pool was exhausted or how the service recovered"
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "把这段运维说明改清楚一点，不要改变操作含义：\n\n只有健康检查通过，才允许重启 api 服务。上传完成后，删除本地备份。如果自动回滚没有成功，通知值班人员。worker 通知 scheduler 后，它会重试三次。",
+      "expected_output": "The first three sentences stay unchanged because their conditions are already clear; the last sentence is kept with its ambiguous referent flagged, or a focused question asks which component retries.",
+      "assertions": [
+        "The restart rule is not rewritten as a sufficient condition such as 健康检查通过后重启 api 服务",
+        "The deletion still depends on the upload being complete",
+        "The on-call notification still applies when an enabled rollback fails; it is not rewritten as 未开启自动回滚",
+        "它 is not silently resolved to worker or scheduler",
+        "api, worker, scheduler, and 三次 remain unchanged"
+      ]
     }
   ]
 }
