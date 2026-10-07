@@ -35,7 +35,7 @@ done
 docker run --rm -v "$PWD:/src:ro" debian:13-slim bash -c 'cp -a /src /tmp/dotfiles; bash /tmp/dotfiles/install.sh'
 ```
 
-从本地仓库安装后，在仓库根目录使用 `chezmoi --source "$PWD/home" verify` 检查文件是否与源配置一致，使用 `zsh -ic` 检查 Shell 加载。存在 `sshd` 时，用 `sshd -t` 检查配置语法；安装 Fail2ban 后，用 `fail2ban-client -t` 检查配置。
+从本地仓库安装后，在仓库根目录使用 `chezmoi --source "$PWD/home" verify --exclude scripts` 检查文件是否与源配置一致，使用 `zsh -ic` 检查 Shell 加载。脚本由安装过程执行，文件校验时通过 `--exclude scripts` 排除。存在 `sshd` 时，用 `sshd -t` 检查配置语法；安装 Fail2ban 后，用 `fail2ban-client -t` 检查配置。
 
 容器可验证软件安装和持久配置。服务启动、实时转发和 SSH 登录需在真实主机上验证；macOS 桌面应用的界面行为需人工验证。
 
