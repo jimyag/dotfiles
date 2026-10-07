@@ -5,12 +5,15 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    - cron: '0 20 * * 0'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: check-${{ github.ref }}
+  group: check-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -19,4 +22,104 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Check shell syntax
-        run: bash -n install.sh scripts/sync_public_dotfiles.sh scripts/test-linux-install.sh skills/codecov-coverage/scripts/*.sh
+        run: |
+          for script in install.sh scripts/*.sh skills/codecov-coverage/scripts/*.sh; do
+            bash -n "$script"
+          done
+
+  linux-install:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    name: Install (${{ matrix.image }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - debian:11-slim
+          - debian:12-slim
+          - debian:13-slim
+          - ubuntu:22.04
+          - ubuntu:24.04
+          - ubuntu:26.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install and verify in a clean container
+        env:
+          IMAGE: ${{ matrix.image }}
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          docker run --rm -i -e GITHUB_TOKEN -v "$PWD:/src:ro" "$IMAGE" bash -s <<'CONTAINER'
+          set -euo pipefail
+          cp -a /src /tmp/dotfiles
+          cd /tmp/dotfiles
+
+          # Prepare the retired Debian 11 repositories only in this disposable container.
+          . /etc/os-release
+          if [ "$ID" = debian ] && [ "$VERSION_ID" = 11 ]; then
+            printf '%s\n' \
+              'deb [check-valid-until=no] http://archive.debian.org/debian bullseye main' \
+              'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian-security/20260831T235959Z bullseye-security main' \
+              > /etc/apt/sources.list
+          fi
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ca-certificates openssh-server
+          mkdir -p /run/sshd "$HOME/.ssh"
+          ssh-keygen -q -t ed25519 -N '' -f /tmp/ci-key
+          install -m 0600 /tmp/ci-key.pub "$HOME/.ssh/authorized_keys"
+
+          bash ./install.sh
+          export PATH="$HOME/.local/bin:$PATH"
+          for tool in chezmoi zsh rg fd bat gh jd uv docker tailscale zerotier-cli \
+            yq tldr zoxide zellij croc nexttrace mihomo yt-dlp pre-commit git-filter-repo; do
+            command -v "$tool"
+          done
+          zsh -n "$HOME/.zshrc"
+          zsh -ic 'command -v rg fd bat zoxide jd; test "$ZSH_THEME" = alanpeabody'
+          cmp home/dot_zshrc "$HOME/.zshrc"
+          nvim --clean --headless '+quit'
+          sshd -t
+          sshd -T > /tmp/sshd-effective.conf
+          grep -qx 'passwordauthentication no' /tmp/sshd-effective.conf
+          grep -qx 'kbdinteractiveauthentication no' /tmp/sshd-effective.conf
+          fail2ban-client -t
+          grep -qx 'net.ipv4.ip_forward = 1' /etc/sysctl.d/99-dotfiles-forwarding.conf
+          grep -qx 'net.ipv6.conf.all.forwarding = 1' /etc/sysctl.d/99-dotfiles-forwarding.conf
+          test ! -d "$HOME/.agents"
+          test ! -d "$HOME/.config/nvim"
+          chezmoi verify
+
+          bash ./install.sh
+          chezmoi verify
+          CONTAINER
+
+  macos-install:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    name: Install (macos-26)
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install
+        shell: bash
+        run: bash ./install.sh
+      - name: Verify configuration and repeat installation
+        shell: bash
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          command -v chezmoi zsh
+          zsh -n "$HOME/.zshrc"
+          zsh -ic 'test "$ZSH_THEME" = alanpeabody; typeset -f gwl >/dev/null'
+          cmp home/dot_zshrc "$HOME/.zshrc"
+          test -f "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+          test -f "$HOME/.oh-my-zsh/custom/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+          test -f "$HOME/.config/nvim/init.lua"
+          test -f "$HOME/.config/ghostty/config"
+          test -f "$HOME/.config/zellij/config.kdl"
+          test -f "$HOME/.agents/skills/technical-writing/SKILL.md"
+          test -f "$HOME/.agents/skills/style-aware-editor/SKILL.md"
+          chezmoi verify
+
+          bash ./install.sh
+          chezmoi verify
