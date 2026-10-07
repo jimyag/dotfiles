@@ -88,10 +88,10 @@ jobs:
           grep -qx 'net.ipv6.conf.all.forwarding = 1' /etc/sysctl.d/99-dotfiles-forwarding.conf
           test ! -d "$HOME/.agents"
           test ! -d "$HOME/.config/nvim"
-          chezmoi --source "$PWD/home" verify
+          chezmoi --source "$PWD/home" verify || { chezmoi --source "$PWD/home" diff; exit 1; }
 
           bash ./install.sh
-          chezmoi --source "$PWD/home" verify
+          chezmoi --source "$PWD/home" verify || { chezmoi --source "$PWD/home" diff; exit 1; }
           CONTAINER
 
   macos-install:
@@ -121,7 +121,7 @@ jobs:
           test -f "$HOME/.agents/skills/technical-writing/SKILL.md"
           test -f "$HOME/.agents/skills/style-aware-editor/SKILL.md"
           diff -qr skills "$HOME/.agents/skills"
-          chezmoi --source "$PWD/home" verify
+          chezmoi --source "$PWD/home" verify || { chezmoi --source "$PWD/home" diff; exit 1; }
 
           bash ./install.sh
-          chezmoi --source "$PWD/home" verify
+          chezmoi --source "$PWD/home" verify || { chezmoi --source "$PWD/home" diff; exit 1; }
