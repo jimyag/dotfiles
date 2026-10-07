@@ -67,7 +67,7 @@ npx skills add jimyag/dotfiles --all
 npx skills add jimyag/dotfiles --skill systematic-debugging
 ```
 
-`home/dot_agents/skills` 指向根目录 `skills/`。macOS 应用配置时，安装脚本将该目录中的内容复制到 `~/.agents/skills/`，技能源码只维护一份。
+技能源码统一维护在根目录 `skills/`，使用上面的 `npx skills add` 命令安装。`home/dot_agents/skills` 的相对软链接供私有 Chezmoi 仓库同步源码；私有仓库已有脚本将各客户端的技能目录链接到 `~/.agents/skills/`。
 
 部分技能使用 Claude Code/Codex 的扩展 frontmatter，或依赖同级 `_shared/` 规则；客户端兼容性和工具依赖见各自的 `SKILL.md`。第三方来源及许可证见 [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md)。
 

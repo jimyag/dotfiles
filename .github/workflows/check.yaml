@@ -118,9 +118,6 @@ jobs:
           test -f "$HOME/.config/nvim/init.lua"
           test -f "$HOME/.config/ghostty/config"
           test -f "$HOME/.config/zellij/config.kdl"
-          test -f "$HOME/.agents/skills/technical-writing/SKILL.md"
-          test -f "$HOME/.agents/skills/style-aware-editor/SKILL.md"
-          diff -qr skills "$HOME/.agents/skills"
           chezmoi --source "$PWD/home" verify --exclude scripts || { chezmoi --source "$PWD/home" diff --exclude scripts; exit 1; }
 
           bash ./install.sh
