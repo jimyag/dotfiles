@@ -120,6 +120,7 @@ jobs:
           test -f "$HOME/.config/zellij/config.kdl"
           test -f "$HOME/.agents/skills/technical-writing/SKILL.md"
           test -f "$HOME/.agents/skills/style-aware-editor/SKILL.md"
+          diff -qr skills "$HOME/.agents/skills"
           chezmoi --source "$PWD/home" verify
 
           bash ./install.sh
