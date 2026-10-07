@@ -88,10 +88,10 @@ jobs:
           grep -qx 'net.ipv6.conf.all.forwarding = 1' /etc/sysctl.d/99-dotfiles-forwarding.conf
           test ! -d "$HOME/.agents"
           test ! -d "$HOME/.config/nvim"
-          chezmoi verify
+          chezmoi --source "$PWD/home" verify
 
           bash ./install.sh
-          chezmoi verify
+          chezmoi --source "$PWD/home" verify
           CONTAINER
 
   macos-install:
@@ -107,6 +107,7 @@ jobs:
       - name: Verify configuration and repeat installation
         shell: bash
         run: |
+          set -x
           export PATH="$HOME/.local/bin:$PATH"
           command -v chezmoi zsh
           zsh -n "$HOME/.zshrc"
@@ -119,7 +120,7 @@ jobs:
           test -f "$HOME/.config/zellij/config.kdl"
           test -f "$HOME/.agents/skills/technical-writing/SKILL.md"
           test -f "$HOME/.agents/skills/style-aware-editor/SKILL.md"
-          chezmoi verify
+          chezmoi --source "$PWD/home" verify
 
           bash ./install.sh
-          chezmoi verify
+          chezmoi --source "$PWD/home" verify
