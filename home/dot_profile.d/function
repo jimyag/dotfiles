@@ -134,3 +134,24 @@ function ca() {
 function chezmoiu() {
   chezmoi update "$@"
 }
+
+function y() {
+    local tmp cwd result
+    tmp="$(mktemp -t yazi-cwd.XXXXXX)" || return
+    if yazi "$@" --cwd-file="$tmp"; then
+        result=0
+    else
+        result=$?
+    fi
+    if (( result == 0 )); then
+        if cwd="$(command cat -- "$tmp")"; then
+            if [[ -n "$cwd" && "$cwd" != "$PWD" ]]; then
+                builtin cd -- "$cwd" || result=$?
+            fi
+        else
+            result=$?
+        fi
+    fi
+    rm -f -- "$tmp" || return
+    return "$result"
+}

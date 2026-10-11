@@ -83,10 +83,3 @@ if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-wakatime" ]; then
 else
   echo "zsh-wakatime plugin already installed, skipping" >&2
 fi
-
-# Install powerlevel10k theme if not already installed
-if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ]; then
-  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
-else
-  echo "powerlevel10k theme already installed, skipping" >&2
-fi

@@ -1,6 +1,6 @@
 # 环境安装
 
-脚本需由 root 或具备 sudo 权限的用户通过 Bash 执行。非 root 用户先运行 `sudo -v`。Linux 会安装软件、配置系统并应用 dotfiles；macOS 会应用配置和安装 Shell 插件，Homebrew 清单需单独执行。
+脚本需由 root 或具备 sudo 权限的用户通过 Bash 执行。非 root 用户先运行 `sudo -v`。Linux 会安装软件、配置系统并应用 dotfiles；macOS 会应用配置、安装 Shell 插件，并通过 Homebrew 安装 Starship、fzf、eza、bat 和 Yazi，其余 Homebrew 清单需单独执行。
 
 Linux 上存在 `sshd` 时，应用 SSH 安全配置要求目标用户的 `~/.ssh/authorized_keys` 非空，否则会停止。已部署的机器应先确认公钥登录可用；新用户可通过下方的 `GITHUB_USER` 导入公钥。
 
@@ -22,9 +22,9 @@ Linux 默认安装以下工具：
 
 - APT：zsh、bash-completion、hstr、coreutils、gawk、ripgrep、fd-find、fzf、tree、bat、unzip、bzip2、vim、neovim、git、git-lfs、tig、htop、dnsutils、net-tools、iperf3、ifstat、mtr-tiny、socat、telnet、curl、wget、httpie、jq、tmux、fail2ban。
 - jd：gh、zoxide、yq（Mike Farah 版本）、zellij、croc、nexttrace、mihomo、uv。
-- 官方发布包：tldr（tlrc 的 musl 二进制）、yt-dlp。当前 jd 发布版没有这两个工具的 Linux 二进制安装路径。
+- 官方发布包：Starship（官方安装器，安装到 `~/.local/bin`）、eza、Yazi、tldr（tlrc 的 musl 二进制）、yt-dlp。Yazi 和 x86_64 的 eza 使用 musl 构建，ARM64 的 eza 使用 GNU 构建。
 - uv：pre-commit、git-filter-repo，避免 APT 的 nodeenv 依赖拉入编译工具，并支持 Debian 11。
-- Shell：oh-my-zsh、zsh-autosuggestions、fast-syntax-highlighting、zsh-wakatime、powerlevel10k，以及仓库中的 zsh 配置。默认主题保持 alanpeabody，可自行切换到 powerlevel10k。
+- Shell：oh-my-zsh、zsh-autosuggestions、fast-syntax-highlighting、zsh-wakatime，以及仓库中的 zsh 配置。提示符使用 Starship，oh-my-zsh 只负责插件与 Shell 配置。
 - 服务与系统：Docker 官方一键脚本（get.docker.com）、非 root 用户加入 docker 组、Tailscale、ZeroTier、IPv4/IPv6 转发、禁用 SSH 密码和交互式认证，以及 Fail2ban 配置。SSH 配置在重载前校验；Tailscale、ZeroTier 安装后仍需自行登录或加入网络，WSL 会跳过这两个工具；mihomo 只安装命令，不写入代理配置或启动服务。
 
 默认不安装 glab、splitrail、Rust、Node、Go 开发工具、AI CLI、Kubernetes CLI、QEMU 和媒体处理工具。Linux 不下发桌面和 AI 配置；Neovim 使用系统包和默认配置，避免开发环境的插件自动下载工具链。已有软件不自动卸载。

@@ -29,6 +29,31 @@ for tool in gh zoxide yq zellij croc nexttrace mihomo; do
     fi
 done
 
+mkdir -p "$HOME/.local/bin"
+case "{{ .chezmoi.arch }}" in
+    amd64) terminal_arch=x86_64; eza_target=x86_64-unknown-linux-musl ;;
+    arm64) terminal_arch=aarch64; eza_target=aarch64-unknown-linux-gnu ;;
+    *) echo "Unsupported terminal tools architecture" >&2; exit 1 ;;
+esac
+
+if ! command -v eza >/dev/null 2>&1; then
+    url="$(curl -fsSL "${github_auth[@]}" https://api.github.com/repos/eza-community/eza/releases/latest |
+        jq -er --arg asset "eza_${eza_target}.tar.gz" '.assets[] | select(.name == $asset) | .browser_download_url')"
+    curl -fsSL "$url" -o "$tmpdir/eza.tar.gz"
+    tar -xzf "$tmpdir/eza.tar.gz" -C "$tmpdir"
+    install -m 0755 "$tmpdir/eza" "$HOME/.local/bin/eza"
+fi
+
+if ! command -v yazi >/dev/null 2>&1; then
+    target="yazi-${terminal_arch}-unknown-linux-musl"
+    url="$(curl -fsSL "${github_auth[@]}" https://api.github.com/repos/sxyazi/yazi/releases/latest |
+        jq -er --arg asset "$target.zip" '.assets[] | select(.name == $asset) | .browser_download_url')"
+    curl -fsSL "$url" -o "$tmpdir/yazi.zip"
+    unzip -q "$tmpdir/yazi.zip" -d "$tmpdir"
+    install -m 0755 "$tmpdir/$target/yazi" "$HOME/.local/bin/yazi"
+    install -m 0755 "$tmpdir/$target/ya" "$HOME/.local/bin/ya"
+fi
+
 if ! command -v tldr >/dev/null 2>&1; then
     case "{{ .chezmoi.arch }}" in
         amd64) arch=x86_64 ;;

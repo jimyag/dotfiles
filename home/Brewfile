@@ -57,6 +57,12 @@ brew "fd"
 brew "ffmpeg"
 # Command-line fuzzy finder written in Go
 brew "fzf"
+# Cross-shell prompt
+brew "starship"
+# Directory listings with icons
+brew "eza"
+# Terminal file manager
+brew "yazi"
 # GNU awk utility
 brew "gawk"
 # GNU compiler collection

@@ -1,0 +1,93 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Catppuccin Powerline, matching Ghostty's Frappe theme.
+palette = 'catppuccin_frappe'
+format = """
+[](red)\
+$username$hostname\
+[](fg:red bg:peach)\
+$directory\
+[](fg:peach bg:yellow)\
+$git_branch$git_status$git_state\
+[](fg:yellow bg:green)\
+$golang$nodejs$python$rust$ruby\
+[](fg:green bg:lavender)\
+$cmd_duration\
+[](lavender)\
+$line_break$status$character"""
+
+[username]
+show_always = true
+style_user = 'fg:crust bg:red'
+style_root = 'bold fg:crust bg:red'
+format = '[ $user]($style)'
+
+[hostname]
+ssh_only = false
+style = 'fg:crust bg:red'
+format = '[@$hostname ]($style)'
+
+[directory]
+style = 'fg:crust bg:peach'
+format = '[ $path$read_only ]($style)'
+truncation_length = 3
+truncation_symbol = '…/'
+
+[git_branch]
+symbol = ' '
+style = 'fg:crust bg:yellow'
+format = '[ $symbol$branch ]($style)'
+
+[git_status]
+style = 'fg:crust bg:yellow'
+format = '[$all_status$ahead_behind ]($style)'
+
+[git_state]
+style = 'fg:crust bg:yellow'
+format = '[ $state($progress_current/$progress_total) ]($style)'
+
+[golang]
+symbol = ' '
+style = 'fg:crust bg:green'
+format = '[ $symbol($version) ]($style)'
+
+[nodejs]
+symbol = ' '
+style = 'fg:crust bg:green'
+format = '[ $symbol($version) ]($style)'
+
+[python]
+symbol = ' '
+style = 'fg:crust bg:green'
+format = '[ $symbol($version)( $virtualenv) ]($style)'
+
+[rust]
+symbol = ' '
+style = 'fg:crust bg:green'
+format = '[ $symbol($version) ]($style)'
+
+[ruby]
+symbol = ' '
+style = 'fg:crust bg:green'
+format = '[ $symbol($version) ]($style)'
+
+[cmd_duration]
+style = 'fg:crust bg:lavender'
+format = '[ $duration ]($style)'
+
+[status]
+disabled = false
+style = 'bold red'
+format = '[$status ]($style)'
+
+[character]
+success_symbol = '[❯](bold green)'
+error_symbol = '[❯](bold red)'
+
+[palettes.catppuccin_frappe]
+red = '#e78284'
+peach = '#ef9f76'
+yellow = '#e5c890'
+green = '#a6d189'
+lavender = '#babbf1'
+crust = '#232634'

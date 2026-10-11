@@ -7,6 +7,20 @@ font-family = "Maple Mono NL NF CN"
 # 使用 Catppuccin Frappe 主题，和当前 Ghostty 本机配置保持一致。
 theme = Catppuccin Frappe
 
+# --- Window ---
+window-padding-x = 12
+window-padding-y = 8
+macos-titlebar-style = tabs
+background-opacity = 0.92
+background-blur = 20
+window-save-state = always
+mouse-hide-while-typing = true
+
+# 长命令结束且终端不在前台时通知，避免打断当前操作。
+notify-on-command-finish = unfocused
+notify-on-command-finish-action = no-bell,notify
+notify-on-command-finish-after = 45s
+
 # Command + Left：切换到上一个 tab
 keybind = super+left=previous_tab
 

@@ -10,6 +10,27 @@ chezmoi diff
 chezmoi apply -v
 ```
 
+## Starship 提示符
+
+配置位于 [home/dot_config/starship.toml](../home/dot_config/starship.toml)，采用 Catppuccin Frappe 彩虹条，与 Ghostty 配色一致。第一行显示用户名、主机名、目录、Git 状态、项目语言版本和命令耗时；第二行用于输入，失败时显示退出码。终端需支持 Nerd Font 图标。
+
+Starship 由 [zsh-prompt](../home/dot_profile.d/zsh-prompt) 初始化，oh-my-zsh 不再加载主题。现有自动建议、语法高亮、WakaTime 和补全缓存保持原有配置。
+
+安装 Starship 后，可运行 `bash scripts/test-starship.sh` 检查非仓库、Git 分支、未提交修改、命令失败和 zsh 初始化。
+
+## 终端操作
+
+- `Ctrl+R`：fzf 搜索历史命令；hstr 保留为 `hh`，不再绑定 Ctrl+R。
+- `Ctrl+T`：fzf 搜索文件；`cd **<Tab>` 等写法触发模糊补全。
+- `z` / `zi`：zoxide 目录跳转及交互选择。
+- `ll` / `lt`：eza 详细列表和两层树形视图，`ls` 保留原有行为。
+- `bat 文件`：语法高亮查看文件，`cat` 保留原有行为。
+- `y`：打开 Yazi，正常退出后切到浏览的目录；`yazi` 直接启动则不改变 Shell 目录。
+
+Ghostty 使用 12×8 内边距、标签式标题栏、0.92 透明度和毛玻璃背景，退出后保存窗口布局。输入时隐藏鼠标；耗时至少 45 秒的命令结束且终端不在前台时发送桌面通知。通知使用 Ghostty 原生能力，Starship 只显示耗时，避免重复通知。窗口恢复不恢复正在运行的进程。
+
+运行 `bash scripts/test-terminal-tools.sh` 检查快捷键、别名和 Yazi 的目录切换及失败处理。
+
 ## Git worktree 辅助命令
 
 `gwl` 列出当前仓库的 worktree，并查询本人最近 100 个 PR（含已关闭、已合并）。

@@ -72,11 +72,13 @@ jobs:
           bash ./install.sh
           export PATH="$HOME/.local/bin:$PATH"
           for tool in chezmoi zsh rg fd bat gh jd uv docker tailscale zerotier-cli \
-            yq tldr zoxide zellij croc nexttrace mihomo yt-dlp pre-commit git-filter-repo; do
+            yq tldr zoxide zellij croc nexttrace mihomo yt-dlp pre-commit git-filter-repo starship eza yazi; do
             command -v "$tool"
           done
           zsh -n "$HOME/.zshrc"
-          zsh -ic 'command -v rg fd bat zoxide jd; test "$ZSH_THEME" = alanpeabody'
+          zsh -ic 'command -v rg fd bat zoxide jd starship && test -z "$ZSH_THEME" && (( $+functions[prompt_starship_precmd] ))'
+          bash scripts/test-starship.sh
+          bash scripts/test-terminal-tools.sh
           cmp home/dot_zshrc "$HOME/.zshrc"
           nvim --clean --headless '+quit'
           sshd -t
@@ -109,9 +111,11 @@ jobs:
         run: |
           set -x
           export PATH="$HOME/.local/bin:$PATH"
-          command -v chezmoi zsh
+          command -v chezmoi zsh starship fzf eza bat yazi
           zsh -n "$HOME/.zshrc"
-          zsh -ic 'test "$ZSH_THEME" = alanpeabody; typeset -f gwl >/dev/null'
+          zsh -ic 'test -z "$ZSH_THEME" && (( $+functions[prompt_starship_precmd] )) && typeset -f gwl >/dev/null'
+          bash scripts/test-starship.sh
+          bash scripts/test-terminal-tools.sh
           cmp home/dot_zshrc "$HOME/.zshrc"
           test -f "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
           test -f "$HOME/.oh-my-zsh/custom/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
