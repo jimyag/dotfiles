@@ -4,7 +4,7 @@
 
 ## 仓库功能
 
-- Shell 与 Git：zsh、Starship 两行提示符、oh-my-zsh 插件、别名、函数和 Git 配置；`gwl` 可查看 worktree 及关联的 GitHub PR。
+- Shell 与 Git：zsh、Starship 单行提示符、oh-my-zsh 插件、别名、函数和 Git 配置；`gwl` 可查看 worktree 及关联的 GitHub PR。
 - macOS 配置：Homebrew 软件清单、Neovim、Ghostty、Kitty、Zellij 和 Hammerspoon 配置。
 - Linux 初始化：安装命令行工具、Docker 和网络工具，配置 SSH 公钥认证、Fail2ban 与 IP 转发；可创建用户、导入 GitHub 公钥和设置主机名。
 - Agent Skills：需求澄清、调试、评审、GitHub 交付、技术写作、技能维护和专项分析。

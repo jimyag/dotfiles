@@ -12,7 +12,7 @@ chezmoi apply -v
 
 ## Starship 提示符
 
-配置位于 [home/dot_config/starship.toml](../home/dot_config/starship.toml)，采用 Catppuccin Frappe 彩虹条，与 Ghostty 配色一致。第一行显示用户名、主机名、目录、Git 状态、项目语言版本和命令耗时；第二行用于输入，失败时显示退出码。终端需支持 Nerd Font 图标。
+配置位于 [home/dot_config/starship.toml](../home/dot_config/starship.toml)，沿用原 alanpeabody 的单行布局：紫色用户名和主机名、蓝色完整路径、括号内的绿色 Git 分支与状态，末尾为 `$`。右侧显示失败退出码、Ruby 版本和长命令耗时。
 
 Starship 由 [zsh-prompt](../home/dot_profile.d/zsh-prompt) 初始化，oh-my-zsh 不再加载主题。现有自动建议、语法高亮、WakaTime 和补全缓存保持原有配置。
 

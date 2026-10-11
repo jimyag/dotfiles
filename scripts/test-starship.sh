@@ -11,11 +11,12 @@ export STARSHIP_CACHE="$tmpdir/cache"
 command -v starship >/dev/null
 prompt="$(starship prompt --path "$tmpdir" --logical-path "$tmpdir" --status 0 2>"$tmpdir/stderr")"
 test ! -s "$tmpdir/stderr"
-[[ "$prompt" == *"$(id -un)"* && "$prompt" == *'@'* && "$prompt" == *$'\n'* && "$prompt" == *'❯'* ]]
+[[ "$prompt" == *"$(id -un)"* && "$prompt" == *'@'* && "$prompt" == *"$tmpdir"* && "$prompt" == *'$ '* ]]
+[[ "$prompt" != *$'\n'* && "$prompt" != *''* && "$prompt" != *'('* ]]
 
-prompt="$(starship prompt --path "$tmpdir" --logical-path "$tmpdir" --status 42 --cmd-duration 5000 2>"$tmpdir/stderr")"
+prompt="$(starship prompt --right --path "$tmpdir" --logical-path "$tmpdir" --status 42 --cmd-duration 5000 2>"$tmpdir/stderr")"
 test ! -s "$tmpdir/stderr"
-[[ "$prompt" == *'42 '* && "$prompt" == *'5s'* ]]
+[[ "$prompt" == *'42 ↵'* && "$prompt" == *'5s'* ]]
 
 git init -q "$tmpdir/repo"
 git -C "$tmpdir/repo" checkout -qb prompt-check
@@ -23,7 +24,7 @@ git -C "$tmpdir/repo" -c user.name=Test -c user.email=test@example.invalid \
     -c commit.gpgsign=false -c core.hooksPath=/dev/null commit --allow-empty -qm fixture
 prompt="$(starship prompt --path "$tmpdir/repo" --logical-path "$tmpdir/repo" --status 0 2>"$tmpdir/stderr")"
 test ! -s "$tmpdir/stderr"
-[[ "$prompt" == *'prompt-check'* ]]
+[[ "$prompt" == *'('* && "$prompt" == *'prompt-check'* && "$prompt" == *') $ '* ]]
 touch "$tmpdir/repo/untracked"
 prompt="$(starship prompt --path "$tmpdir/repo" --logical-path "$tmpdir/repo" --status 0 2>"$tmpdir/stderr")"
 test ! -s "$tmpdir/stderr"
