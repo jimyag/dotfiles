@@ -1,7 +1,10 @@
 export ZSH="$HOME/.oh-my-zsh"
 if [ -f "$ZSH/oh-my-zsh.sh" ]; then
   ZSH_THEME=""
+  export NVM_DIR="$HOME/.nvm"
+  zstyle ':omz:plugins:nvm' lazy yes
   plugins=(git 
+    nvm
     zsh-autosuggestions
     extract
     zsh-wakatime

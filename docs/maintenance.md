@@ -18,6 +18,12 @@ Starship 由 [zsh-prompt](../home/dot_profile.d/zsh-prompt) 初始化，oh-my-zs
 
 安装 Starship 后，可运行 `bash scripts/test-starship.sh` 检查非仓库、Git 分支、未提交修改、命令失败和 zsh 初始化。
 
+## Node 版本与延迟加载
+
+oh-my-zsh 的内置 `nvm` 插件启用延迟加载。启动 Shell 时只注册命令入口；首次运行 `node`、`npm`、`npx`、`pnpm`、`yarn`、`corepack` 或 `nvm` 时加载 NVM，并启用已有的默认 Node 版本。NVM 补全也在首次加载时初始化。
+
+`nvm alias default` 查看默认版本；本配置不修改默认别名。项目内运行 `nvm use` 读取 `.nvmrc`，或用 `nvm use <版本>` 显式切换。未启用进入目录时自动切换版本。
+
 ## 终端操作
 
 - `Ctrl+R`：fzf 搜索历史命令；hstr 保留为 `hh`，不再绑定 Ctrl+R。
