@@ -1,4 +1,3 @@
-typeset -U path PATH
 if [[ "$OSTYPE" == linux* ]]; then
     path+=(/usr/local/sbin /usr/sbin /sbin)
 fi
@@ -12,8 +11,7 @@ fi
 # hstr end
 
 # 额外的BIN
-export PATH="$HOME/.bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
+path=("$HOME/.local/bin" "$HOME/.bin" "${path[@]}")
 
 if command -v zoxide > /dev/null; then
     eval "$(zoxide init zsh)"
@@ -24,10 +22,9 @@ export ZSH_WAKATIME_PROJECT_DETECTION=true
 ulimit -n 10240 2>/dev/null || true
 
 # golang start
-export PATH="$HOME/.go/gopath/bin:$PATH"
 export GOPATH="$HOME/.go/gopath/"
 export GOROOT="$HOME/.go/goroot/"
-export PATH="$HOME/.go/goroot/bin:$PATH"
+path=("${GOROOT}bin" "${GOPATH}bin" "${path[@]}")
 export GOROOT_BOOTSTRAP="$HOME/.go/gobootstrap"
 # golang end
 
@@ -102,13 +99,13 @@ if command -v fzf >/dev/null 2>&1; then
 fi
 
 # opencode
-export PATH=$HOME/.opencode/bin:$PATH
+path=("$HOME/.opencode/bin" "${path[@]}")
 
 # pnpm
 export PNPM_HOME="$HOME/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+  *) path=("$PNPM_HOME" "${path[@]}") ;;
 esac
 # pnpm end
 
@@ -117,7 +114,7 @@ esac
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+path=("$BUN_INSTALL/bin" "${path[@]}")
 
 # CodeFlicker CLI
-export PATH="$PATH:$HOME/.codeflicker/cli/bin"
+path+=("$HOME/.codeflicker/cli/bin")

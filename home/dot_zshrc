@@ -29,7 +29,7 @@ fi
 if [[ -d "$HOME/opt" ]]; then
   for dir in "$HOME/opt"/*; do
     if [[ -d "$dir" ]] && [[ -d "$dir/bin" ]]; then
-      export PATH="$dir/bin:$PATH"
+      path=("$dir/bin" "${path[@]}")
     fi
   done
 fi

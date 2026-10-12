@@ -26,6 +26,8 @@ oh-my-zsh 的内置 `nvm` 插件启用延迟加载。启动 Shell 时只注册�
 
 Shell 初始化按职责分配：`.zshenv` 加载 Cargo 环境，`.zprofile` 加载登录环境，`common` 设置通用 PATH 和工具集成，`.zshrc` 统一扫描 `~/opt/*/bin`。补全缓存目录每次初始化只创建一次。
 
+PATH 由 `.zshenv` 统一导出并去重，其他配置使用 zsh 的 `path` 数组添加目录。连续添加的目录按最终查找优先级合并，保留带空格的路径。
+
 ## 终端操作
 
 - `Ctrl+R`：fzf 搜索历史命令；hstr 保留为 `hh`，不再绑定 Ctrl+R。

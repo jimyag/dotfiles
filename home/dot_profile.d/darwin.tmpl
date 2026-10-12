@@ -5,15 +5,18 @@ if [[ "${TERM_PROGRAM:-}" == "iTerm.app" ]]; then
 fi
 
 
-export PATH="/opt/homebrew/opt/gnu-getopt/bin:$PATH"
-export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
-export PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
-export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+path=(
+    "$HOME/opt/jdk/bin"
+    "$HOME/opt/gradle/bin"
+    /opt/homebrew/opt/coreutils/libexec/gnubin
+    /opt/homebrew/opt/gnu-sed/libexec/gnubin
+    /opt/homebrew/opt/postgresql@17/bin
+    /opt/homebrew/opt/gnu-getopt/bin
+    "${path[@]}"
+)
 
 alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 
-export PATH="$HOME/opt/gradle/bin:$PATH"
-export PATH="$HOME/opt/jdk/bin:$PATH"
 export JAVA_HOME="$HOME/opt/jdk"
 
 {{ end -}}
