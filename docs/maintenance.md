@@ -24,6 +24,8 @@ oh-my-zsh 的内置 `nvm` 插件启用延迟加载。启动 Shell 时只注册�
 
 `nvm alias default` 查看默认版本；本配置不修改默认别名。项目内运行 `nvm use` 读取 `.nvmrc`，或用 `nvm use <版本>` 显式切换。未启用进入目录时自动切换版本。
 
+Shell 初始化按职责分配：`.zshenv` 加载 Cargo 环境，`.zprofile` 加载登录环境，`common` 设置通用 PATH 和工具集成，`.zshrc` 统一扫描 `~/opt/*/bin`。补全缓存目录每次初始化只创建一次。
+
 ## 终端操作
 
 - `Ctrl+R`：fzf 搜索历史命令；hstr 保留为 `hh`，不再绑定 Ctrl+R。
