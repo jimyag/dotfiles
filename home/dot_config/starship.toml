@@ -3,7 +3,7 @@
 # Preserve the original alanpeabody layout without a second prompt line.
 add_newline = false
 format = '$username$hostname$directory( \($git_branch$git_status\))$character'
-right_format = '$status$ruby$cmd_duration'
+right_format = '$status$cmd_duration'
 
 [username]
 show_always = true
@@ -29,10 +29,6 @@ format = '[$branch]($style)'
 [git_status]
 style = 'green'
 format = '([ $all_status$ahead_behind]($style))'
-
-[ruby]
-style = 'green'
-format = '[‹$version› ]($style)'
 
 [cmd_duration]
 style = 'yellow'
