@@ -17,7 +17,7 @@ fi
 
 # 如果 .profile.d 目录存在，则 source 所有
 if [[ -d ~/.profile.d ]]; then
-  for file in "$HOME/.profile.d"/*; do
+  for file in "$HOME/.profile.d"/*(N); do
     # 检查文件是否存在且是普通文件（不是目录）
     if [[ -f "$file" ]]; then
       source "$file"
@@ -27,7 +27,7 @@ fi
 
 # 如果 $HOME/opt 目录存在，遍历其子目录并添加 bin 到 PATH
 if [[ -d "$HOME/opt" ]]; then
-  for dir in "$HOME/opt"/*; do
+  for dir in "$HOME/opt"/*(N); do
     if [[ -d "$dir" ]] && [[ -d "$dir/bin" ]]; then
       path=("$dir/bin" "${path[@]}")
     fi

@@ -5,6 +5,29 @@ repo_root="$(cd "$(dirname "$0")/.." && pwd)"
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 
+mkdir -p "$tmpdir/home/.profile.d" "$tmpdir/home/opt" "$tmpdir/home/.oh-my-zsh"
+touch "$tmpdir/home/.oh-my-zsh/oh-my-zsh.sh"
+HOME="$tmpdir/home" PATH=/usr/bin:/bin zsh -f -c '
+    set -e
+    source "$1/home/dot_zshrc"
+    print -r -- "export PROFILE_LOADED=yes" > "$HOME/.profile.d/check"
+    mkdir -p "$HOME/opt/tool/bin"
+    source "$1/home/dot_zshrc"
+    [[ "$PROFILE_LOADED" == yes && "${path[1]}" == "$HOME/opt/tool/bin" ]]
+
+    OSTYPE=linux-gnu
+    unset XDG_DATA_HOME
+    source "$1/home/dot_profile.d/common"
+    [[ "$PNPM_HOME" == "$HOME/.local/share/pnpm" && "${path[(Ie)$PNPM_HOME]}" -gt 0 ]]
+    export XDG_DATA_HOME="$HOME/data"
+    source "$1/home/dot_profile.d/common"
+    [[ "$PNPM_HOME" == "$HOME/data/pnpm" && "${path[(Ie)$PNPM_HOME]}" -gt 0 ]]
+
+    OSTYPE=darwin
+    source "$1/home/dot_profile.d/common"
+    [[ "$PNPM_HOME" == "$HOME/Library/pnpm" && "${path[(Ie)$PNPM_HOME]}" -gt 0 ]]
+' -- "$repo_root"
+
 zsh -f -ic '
     set -e
     autoload -Uz compinit

@@ -102,7 +102,11 @@ fi
 path=("$HOME/.opencode/bin" "${path[@]}")
 
 # pnpm
-export PNPM_HOME="$HOME/Library/pnpm"
+if [[ "$OSTYPE" == linux* ]]; then
+    export PNPM_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/pnpm"
+else
+    export PNPM_HOME="$HOME/Library/pnpm"
+fi
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) path=("$PNPM_HOME" "${path[@]}") ;;
