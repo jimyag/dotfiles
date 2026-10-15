@@ -82,6 +82,16 @@
         "The output asks for a public-boundary behavior assertion",
         "The output does not recommend adding unrelated edge cases"
       ]
+    },
+    {
+      "id": 9,
+      "prompt": "给订单服务写测试计划，我想把 OrderRepository、PriceCalculator 都 mock 掉，测 OrderService 调用它们的次数。",
+      "expected_output": "指出 mock 自己的模块和断言调用次数会耦合实现；建议只在外部边界替换依赖，在确认过的最高接缝上断言可观察行为。",
+      "assertions": [
+        "不建议 mock 自有模块",
+        "不以调用次数作为主要断言",
+        "先确认测试接缝"
+      ]
     }
   ]
 }

@@ -16,7 +16,7 @@ compatibility: 附带的审计脚本需要 Python 3.10+ 和 uv。官方参考校
 2. 客户端专用字段和工具假设即使在本地可用，也属于可移植性例外。
 3. 结构有效不代表触发合理、脚本安全或输出更好。
 
-完整审计时阅读 [官方检查清单](references/official-agent-skills-checklist.md)。技能使用非标准元数据、同级 `_shared` 文件、插件、连接器或客户端专用工具时，阅读 [客户端扩展策略](references/client-extension-policy.md)。主文件较大时使用 [渐进披露指南](references/progressive-disclosure.md)。
+完整审计时阅读 [官方检查清单](references/official-agent-skills-checklist.md)。技能使用非标准元数据、同级 `_shared` 文件、插件、连接器或客户端专用工具时，阅读 [客户端扩展策略](references/client-extension-policy.md)。主文件较大时使用 [渐进披露指南](references/progressive-disclosure.md)。改写技能或 `AGENTS.md`、或检查措辞是否真的改变代理行为时，阅读 [给代理写文档](references/writing-for-agents.md)。
 
 ## 审计流程
 
@@ -41,6 +41,8 @@ compatibility: 附带的审计脚本需要 Python 3.10+ 和 uv。官方参考校
    - 检查应触发的正例和接近触发条件但不应触发的反例。
    - 查找属于客户端或项目指令的重复通用行为。
    - 检查固定阅读清单、重复确认、首次实现后停工和过度验证；保留有实际依据的权限、发布和数据保护边界。
+   - 逐句做无效检查：删除模型默认就会遵守的指令；把靠禁令表达的要求改写为正面目标，只保留无法正面表达的硬性护栏；复述 `package.json`、配置或 `--help` 能直接查到的内容，除非查询代价高，否则删除；同一意思出现在多处时保留一个权威位置。
+   - 检查调用方式是否合适：只靠手动触发的技能可以改为只允许用户调用，省去常驻描述；模型可调用技能的描述是否把关键词放在最前、每个分支只写一个触发。
    - 检查是否要求向用户播报 skill 名称、内部工具或代理编排；只有这些信息影响可信度、复现或授权时才保留。
    - 检查输出模板是否强迫空章节、`none` 占位、正反对照、摘要复述或固定“风险/下一步”；模板应作为内容检查清单，只输出实际信息。
    - 声称重写改善质量或成本前，必须有基线对比。
@@ -88,3 +90,4 @@ uvx --from skills-ref agentskills validate /path/to/skill
 - [客户端扩展策略](references/client-extension-policy.md)
 - [元数据模式](references/frontmatter-patterns.md)
 - [渐进披露](references/progressive-disclosure.md)
+- [给代理写文档](references/writing-for-agents.md)

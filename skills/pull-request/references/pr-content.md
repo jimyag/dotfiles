@@ -26,6 +26,9 @@ Draft from the actual base/head, commits, complete diff, validation results, rep
 - Include real validation commands and results; write `Not verified` when unknown.
 - State breaking changes, migration steps, configuration changes, compatibility limits, and reviewer focus.
 - Reference a related issue, ticket, or design document when one exists.
+- Show the key point with the smallest view that makes it clear: pseudocode for logic, a call tree for control flow, a component tree for UI structure, a shallow file tree for a broad refactor, Mermaid for interactions, or a `diff` sketch when the point is what changes in an existing shape. Place each visual beside the sentence it supports and keep only the calls, files and states the reviewer needs.
+- Prefer before/after evidence: screenshots for visual changes, otherwise the exact failing-then-passing test or command output.
+- State merge danger: whether the change is a one-way door (destructive or hard to reverse) or a two-way door (cheap to roll back), and its blast radius (who or what could break: consumers, layout, mobile, data).
 
 When no repository template exists, use:
 
