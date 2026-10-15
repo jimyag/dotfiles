@@ -83,9 +83,14 @@ SOFTWARE.
 
 ## Waza
 
-- Component: `skills/systematic-debugging/references/failure-patterns.md` and
-  parts of `skills/systematic-debugging` (adapted)
-- Source: <https://github.com/tw93/Waza/tree/main/skills/hunt>
+- Components (adapted): `skills/systematic-debugging/references/failure-patterns.md`,
+  `skills/requesting-code-review/references/review-patterns.md`,
+  `skills/frontend-design-review/references/implementation-craft.md`, and parts
+  of `systematic-debugging`, `requesting-code-review`, `agent-health`,
+  `brainstorming`, `writing-plans`, `style-aware-editor` and `technical-writing`
+- Source: <https://github.com/tw93/Waza>
+- Note: parts of the Waza `ui` rules adapted in `implementation-craft.md` derive
+  from <https://github.com/pbakaus/impeccable> (Apache License 2.0)
 - License: MIT
 
 Copyright (c) 2026 Tw93

@@ -38,6 +38,7 @@
 - POM/Gradle/Cargo/package manifest 是否引入 snapshot、wildcard、`latest` 或未固定 git dependency，破坏生产构建可复现性
 - 版本由 parent、workspace、lockfile 或集中配置管理时，不要误报“缺少版本”
 - lockfile 是否应随 manifest 更新，以及平台可选依赖是否会造成无关的大范围 lockfile churn
+- 依赖升级、自动安全 PR、版本固定和零引用依赖按 [条件审查模式](review-patterns.md) 的“依赖与锁文件”检查
 
 ## YAML/JSON 与通用配置
 
