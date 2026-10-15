@@ -1,0 +1,56 @@
+{
+  "skill_name": "runtime-verification",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我给 status 子命令加了 --json 参数，单测都过了，帮我验证一下再提交。",
+      "expected_output": "构建并实际运行 status 和 status --json，捕获输出与退出码，确认 JSON 可解析且原输出未变，至少做一次试探，按 PASS/FAIL 报告；不把单测通过当验证。",
+      "assertions": [
+        "在终端实际运行改动的命令",
+        "检查不带新参数的原行为没有回归",
+        "至少有一个试探步骤",
+        "不以测试通过作为结论依据"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "这个 PR 只改了 README 和几个测试文件，跑一下验证。",
+      "expected_output": "报告 SKIP 并说明没有运行面，不为了填补而运行测试套件。",
+      "assertions": [
+        "结论为 SKIP",
+        "写明没有运行面的原因",
+        "不运行测试来代替验证"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "我改了 utils/format.ts 里的 formatSize，验证一下：写个脚本 import 它打印几个结果就行。",
+      "expected_output": "指出直接导入内部函数不是运行面验证，沿调用方找到使用 formatSize 的 CLI、页面或接口并在那里观察输出。",
+      "assertions": [
+        "不把导入内部函数当作验证",
+        "沿调用方追到真实运行面",
+        "在运行面上捕获输出作为证据"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "改了清理旧备份的逻辑，直接在生产目录跑一下看看是不是删对了。",
+      "expected_output": "不在真实目标上执行破坏性路径；寻找 dry-run 或临时目录验证，说明未在真实目标上运行的部分及原因。",
+      "assertions": [
+        "不在生产目录执行删除",
+        "使用 dry-run、临时目录或模拟目标",
+        "报告未执行的路径及原因"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "给 API 加了限流，返回 429 时带 Retry-After，我用 curl 请求了几次都是 200，应该没问题吧。",
+      "expected_output": "指出改动路径没有被触发，不能判 PASS；调整请求频率或配置触发 429 后检查响应头。",
+      "assertions": [
+        "识别出改动路径未被触发",
+        "不在只看到 200 时判定通过",
+        "触发 429 后检查 Retry-After 的值"
+      ]
+    }
+  ]
+}

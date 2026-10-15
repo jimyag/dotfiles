@@ -10,6 +10,7 @@
 | [writing-plans](../skills/writing-plans/SKILL.md) | 为有多阶段依赖的实现编写执行计划 |
 | [systematic-debugging](../skills/systematic-debugging/SKILL.md) | 用证据和最小复现定位缺陷、测试或构建失败 |
 | [test-scenarios](../skills/test-scenarios/SKILL.md) | 整理测试计划、验收标准与 E2E 场景 |
+| [runtime-verification](../skills/runtime-verification/SKILL.md) | 在真实运行面驱动改动并留存证据，交付前确认行为 |
 | [requesting-code-review](../skills/requesting-code-review/SKILL.md) | 只读审查代码差异或 PR，检查正确性和复杂度 |
 | [receiving-code-review](../skills/receiving-code-review/SKILL.md) | 核实评审反馈，再处理成立的问题 |
 | [simplify](../skills/simplify/SKILL.md) | 保持行为不变，简化近期改动 |
