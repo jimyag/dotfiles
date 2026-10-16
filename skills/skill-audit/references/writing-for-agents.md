@@ -1,6 +1,6 @@
 # 给代理写文档
 
-审计或改写技能、`AGENTS.md`、`CLAUDE.md` 以及被它们引用的文档时使用。目标是让代理每次走同一套流程，而不是每次产出相同文字。改编自 [mattpocock/skills](https://github.com/mattpocock/skills) 的 `writing-for-agents` 和 `writing-great-skills`（MIT）。
+审计或改写技能、`AGENTS.md`、`CLAUDE.md` 以及被它们引用的文档时使用。目标是让代理每次走同一套流程，而不是每次产出相同文字。
 
 ## 目录
 

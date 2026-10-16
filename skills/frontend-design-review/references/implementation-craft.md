@@ -2,8 +2,6 @@
 
 implement 模式和需要给出具体修改建议的 review 使用。只取与当前页面相关的部分；为了服务已确定的方向可以有意打破某条，但要在交付说明中写明取舍。可访问性基线和 CSS 禁用项不打破。
 
-部分内容改编自 [tw93/Waza](https://github.com/tw93/Waza) 的 `ui` 技能（MIT），其中部分规则源自 [pbakaus/impeccable](https://github.com/pbakaus/impeccable)（Apache 2.0）。
-
 ## 目录
 
 - 先沿用已有界面
