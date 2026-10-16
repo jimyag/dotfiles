@@ -5,16 +5,12 @@ export PATH="$HOME/.local/bin:$PATH"
 {{ if eq .chezmoi.os "darwin" -}}
 for tool in starship fzf eza bat yazi; do
     if ! command -v "$tool" >/dev/null 2>&1; then
-        brew install "$tool"
+        jd "$tool"
     fi
 done
 {{ else if eq .chezmoi.os "linux" -}}
 if command -v starship >/dev/null 2>&1; then
     exit 0
 fi
-tmpdir="$(mktemp -d)"
-trap 'rm -rf "$tmpdir"' EXIT
-curl -fsSL https://starship.rs/install.sh -o "$tmpdir/install.sh"
-mkdir -p "$HOME/.local/bin"
-sh "$tmpdir/install.sh" --yes --bin-dir "$HOME/.local/bin"
+jd starship
 {{ end -}}

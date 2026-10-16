@@ -3,6 +3,7 @@ if [ -f "$ZSH/oh-my-zsh.sh" ]; then
   ZSH_THEME=""
   export NVM_DIR="$HOME/.nvm"
   zstyle ':omz:plugins:nvm' lazy yes
+  zstyle ':omz:plugins:nvm' lazy-cmd jd ng is doctoc oco ts-node tsc tsserver typescript-language-server pencil wecom-cli ctx7 happy codewhale codew
   plugins=(git 
     nvm
     zsh-autosuggestions

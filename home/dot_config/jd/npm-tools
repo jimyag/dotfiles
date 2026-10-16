@@ -1,0 +1,12 @@
+# Node-based tools and their native releases, managed through jd.
+angular-cli
+gemini-cli
+inshellisense
+codex
+codex-code-mode-host
+doctoc
+opencommit
+pnpm
+ts-node
+typescript-language-server
+typescript

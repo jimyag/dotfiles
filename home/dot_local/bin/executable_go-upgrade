@@ -1,0 +1,9 @@
+#!/bin/bash
+set -euo pipefail
+
+if [ "$#" -gt 1 ]; then
+    echo "Usage: go-upgrade [version]" >&2
+    exit 2
+fi
+export PATH="$HOME/.local/bin:$HOME/.go/goroot/bin:$PATH"
+exec jd --upgrade "go${1:+@$1}"

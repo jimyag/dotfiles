@@ -101,6 +101,8 @@ jobs:
     name: Install (macos-26)
     runs-on: macos-26
     timeout-minutes: 30
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v7
       - name: Install

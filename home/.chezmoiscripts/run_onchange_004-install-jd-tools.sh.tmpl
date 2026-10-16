@@ -1,0 +1,21 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+# Tools: {{ include "dot_config/jd/macos-tools" | sha256sum }}
+
+export PATH="$HOME/.local/bin:$HOME/.go/goroot/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+export HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_UPGRADE=1
+export GOPATH="$HOME/.go/gopath"
+unset GOROOT GOROOT_BOOTSTRAP
+jd go
+export GOROOT="$HOME/.go/goroot"
+while read -r tool method; do
+    [ -n "$tool" ] || continue
+    [[ "$tool" == \#* ]] && continue
+    if [ -n "$method" ]; then
+        jd "$tool" --method "$method"
+    else
+        jd "$tool"
+    fi
+done < "$HOME/.config/jd/macos-tools"
+{{ end -}}

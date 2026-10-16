@@ -24,7 +24,7 @@ ulimit -n 10240 2>/dev/null || true
 # golang start
 export GOPATH="$HOME/.go/gopath/"
 export GOROOT="$HOME/.go/goroot/"
-path=("${GOROOT}bin" "${GOPATH}bin" "${path[@]}")
+path=("$HOME/.local/bin" "${GOROOT}bin" "${GOPATH}bin" "${path[@]}")
 export GOROOT_BOOTSTRAP="$HOME/.go/gobootstrap"
 # golang end
 
@@ -99,7 +99,7 @@ if command -v fzf >/dev/null 2>&1; then
 fi
 
 # opencode
-path=("$HOME/.opencode/bin" "${path[@]}")
+path+=("$HOME/.opencode/bin")
 
 # pnpm
 if [[ "$OSTYPE" == linux* ]]; then
@@ -109,7 +109,7 @@ else
 fi
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
-  *) path=("$PNPM_HOME" "${path[@]}") ;;
+  *) path+=("$PNPM_HOME") ;;
 esac
 # pnpm end
 
@@ -118,7 +118,7 @@ esac
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
-path=("$BUN_INSTALL/bin" "${path[@]}")
+path+=("$BUN_INSTALL/bin")
 
 # CodeFlicker CLI
 path+=("$HOME/.codeflicker/cli/bin")

@@ -1,0 +1,27 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+# Tools: {{ include "dot_config/jd/npm-tools" | sha256sum }}
+
+export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+export NVM_DIR="$HOME/.nvm"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+    source "$NVM_DIR/nvm.sh"
+else
+    jd nvm
+    mkdir -p "$NVM_DIR"
+    nvm_prefix="$(brew --prefix nvm)"
+    ln -sfn "$nvm_prefix/nvm.sh" "$NVM_DIR/nvm.sh"
+    ln -sfn "$nvm_prefix/etc/bash_completion.d/nvm" "$NVM_DIR/bash_completion"
+    source "$NVM_DIR/nvm.sh"
+fi
+if [ "$(nvm version default)" = "N/A" ]; then
+    nvm install -b --lts
+fi
+nvm use default
+while IFS= read -r tool; do
+    [ -n "$tool" ] || continue
+    [[ "$tool" == \#* ]] && continue
+    jd "$tool"
+done < "$HOME/.config/jd/npm-tools"
+{{ end -}}

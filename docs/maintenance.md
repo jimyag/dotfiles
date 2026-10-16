@@ -20,7 +20,7 @@ Starship 由 [zsh-prompt](../home/dot_profile.d/zsh-prompt) 初始化，oh-my-zs
 
 ## Node 版本与延迟加载
 
-oh-my-zsh 的内置 `nvm` 插件启用延迟加载。启动 Shell 时只注册命令入口；首次运行 `node`、`npm`、`npx`、`pnpm`、`yarn`、`corepack` 或 `nvm` 时加载 NVM，并启用已有的默认 Node 版本。NVM 补全也在首次加载时初始化。
+oh-my-zsh 的内置 `nvm` 插件启用延迟加载。启动 Shell 时只注册命令入口；首次运行 `node`、`npm`、`npx`、`pnpm`、`yarn`、`corepack`、`nvm`、`jd` 或清单中的 npm 命令时加载 NVM，并启用已有的默认 Node 版本。NVM 补全也在首次加载时初始化。
 
 `nvm alias default` 查看默认版本；本配置不修改默认别名。项目内运行 `nvm use` 读取 `.nvmrc`，或用 `nvm use <版本>` 显式切换。未启用进入目录时自动切换版本。
 
@@ -70,12 +70,14 @@ docker run --rm -v "$PWD:/src:ro" debian:13-slim bash -c 'cp -a /src /tmp/dotfil
 
 容器可验证软件安装和持久配置。服务启动、实时转发和 SSH 登录需在真实主机上验证；macOS 桌面应用的界面行为需人工验证。
 
-## 更新 Homebrew 清单
+## 更新软件清单
 
-在对应 macOS 环境中导出当前安装的软件，更新前后检查差异：
+macOS 命令行工具在 `home/dot_config/jd/macos-tools` 和 `home/dot_config/jd/npm-tools` 中声明，由 jd 安装。Brewfile 保留应用和扩展，不用 `brew bundle dump` 覆盖，避免重新声明 jd 工具。
 
 ```bash
-brew bundle dump --file="$(chezmoi source-path)/Brewfile"
+jd --installed
+jd --upgrade
+go-upgrade
 ```
 
 公开与私有配置的同步方式见[使用私有和公开仓库管理配置](private-public-repo-management.md)。
