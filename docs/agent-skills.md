@@ -28,16 +28,14 @@
 | --- | --- |
 | [technical-writing](../skills/technical-writing/SKILL.md) | 起草或重构中文设计文档、源码分析和工程文章 |
 | [style-aware-editor](../skills/style-aware-editor/SKILL.md) | 清理 AI 套话与防御性表达，保留事实、文风和必要限定 |
-| [eli5](../skills/eli5/SKILL.md) | 用简单语言和图解解释复杂主题 |
-| [show-me](../skills/show-me/SKILL.md) | 可视化调用链、架构、数据流和状态变化 |
+| [show-me](../skills/show-me/SKILL.md) | 可视化调用链、架构、数据流和状态变化，或用极简图解给外行讲原理 |
 | [handoff](../skills/handoff/SKILL.md) | 整理可接手的进展、决策、证据和剩余工作 |
 
 ### 技能与 Agent 配置
 
 | 技能 | 用途 |
 | --- | --- |
-| [find-skills](../skills/find-skills/SKILL.md) | 寻找和比较外部技能，判断是否适配 |
-| [absorb-skill](../skills/absorb-skill/SKILL.md) | 把外部资料中适用的规则合并进已有技能 |
+| [absorb-skill](../skills/absorb-skill/SKILL.md) | 寻找和比较外部技能，把其中适用的规则合并进已有技能 |
 | [skill-audit](../skills/skill-audit/SKILL.md) | 审计技能规范、触发重叠、可移植性和评测 |
 | [agent-health](../skills/agent-health/SKILL.md) | 检查 Agent 指令、MCP、hooks、权限与配置漂移 |
 

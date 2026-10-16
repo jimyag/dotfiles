@@ -14,10 +14,10 @@
     {
       "id": 2,
       "prompt": "有没有现成的 Agent Skill 可以做数据库迁移评审？",
-      "expected_output": "不运行普通文档查询流程，指出这是技能发现请求并交给 find-skills。",
+      "expected_output": "不运行普通文档查询流程，指出这是技能发现请求并交给 absorb-skill。",
       "assertions": [
         "识别为技能发现而不是库文档查询",
-        "路由到 find-skills"
+        "路由到 absorb-skill"
       ]
     },
     {

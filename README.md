@@ -20,7 +20,7 @@ npx skills add jimyag/dotfiles --list
 npx skills add jimyag/dotfiles --skill systematic-debugging
 ```
 
-[技能目录](docs/agent-skills.md)列出全部 31 个技能的用途、安装方式及客户端兼容性说明。
+[技能目录](docs/agent-skills.md)列出全部 29 个技能的用途、安装方式及客户端兼容性说明。
 
 ## 使用文档
 

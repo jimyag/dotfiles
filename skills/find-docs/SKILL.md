@@ -20,7 +20,7 @@ description: 在需要查询第三方库、框架、SDK、CLI 或 API 的最新�
 
 - 问题完全不依赖第三方库
 - 仓库里已经有足够明确的本地实现可参考
-- 用户想寻找或安装 Agent Skill；使用 `find-skills`
+- 用户想寻找或比较 Agent Skill；使用 `absorb-skill`
 - 用户要比较多个云厂商的能力、价格和迁移差异；使用 `cloud-provider-research`
 - 用户询问 OpenAI/Codex/ChatGPT 产品；使用当前客户端提供的 OpenAI 官方文档技能
 
