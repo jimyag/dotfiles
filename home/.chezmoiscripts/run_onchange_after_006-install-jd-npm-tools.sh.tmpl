@@ -19,9 +19,10 @@ if [ "$(nvm version default)" = "N/A" ]; then
     nvm install -b --lts
 fi
 nvm use default
-while IFS= read -r tool; do
+# Installers may read stdin; keep the tool list on a separate descriptor.
+while IFS= read -r tool <&3; do
     [ -n "$tool" ] || continue
     [[ "$tool" == \#* ]] && continue
     jd "$tool"
-done < "$HOME/.config/jd/npm-tools"
+done 3< "$HOME/.config/jd/npm-tools"
 {{ end -}}

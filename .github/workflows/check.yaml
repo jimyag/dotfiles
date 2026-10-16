@@ -114,6 +114,17 @@ jobs:
           set -x
           export PATH="$HOME/.local/bin:$PATH"
           command -v chezmoi zsh starship fzf eza bat yazi
+          python3 - <<'PY'
+          import json
+          import pathlib
+          root = pathlib.Path.home()
+          installed = json.loads((root / ".local/state/jd/installed.json").read_text())
+          for name in ("macos-tools", "npm-tools"):
+              for line in (root / ".config/jd" / name).read_text().splitlines():
+                  if line.strip() and not line.startswith("#"):
+                      assert line.split()[0] in installed, f"Not installed: {line}"
+          print(f"PASS: both jd tool lists installed; {len(installed)} records")
+          PY
           zsh -n "$HOME/.zshrc"
           zsh -ic 'test -z "$ZSH_THEME" && (( $+functions[prompt_starship_precmd] )) && typeset -f gwl >/dev/null'
           bash scripts/test-starship.sh

@@ -9,7 +9,8 @@ export GOPATH="$HOME/.go/gopath"
 unset GOROOT GOROOT_BOOTSTRAP
 jd go
 export GOROOT="$HOME/.go/goroot"
-while read -r tool method; do
+# Installers may read stdin; keep the tool list on a separate descriptor.
+while read -r tool method <&3; do
     [ -n "$tool" ] || continue
     [[ "$tool" == \#* ]] && continue
     if [ -n "$method" ]; then
@@ -17,5 +18,5 @@ while read -r tool method; do
     else
         jd "$tool"
     fi
-done < "$HOME/.config/jd/macos-tools"
+done 3< "$HOME/.config/jd/macos-tools"
 {{ end -}}
