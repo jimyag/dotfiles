@@ -9,8 +9,5 @@ for tool in starship fzf eza bat yazi; do
     fi
 done
 {{ else if eq .chezmoi.os "linux" -}}
-if command -v starship >/dev/null 2>&1; then
-    exit 0
-fi
-jd starship
+jd starship fzf
 {{ end -}}

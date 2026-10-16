@@ -20,8 +20,8 @@ wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | ba
 
 Linux 默认安装以下工具：
 
-- APT：zsh、bash-completion、hstr、coreutils、gawk、ripgrep、fd-find、fzf、tree、bat、unzip、bzip2、vim、neovim、git、git-lfs、tig、htop、dnsutils、net-tools、iperf3、ifstat、mtr-tiny、socat、telnet、curl、wget、httpie、jq、tmux、fail2ban。
-- jd：gh、zoxide、yq（Mike Farah 版本）、zellij、croc、nexttrace、mihomo、uv。
+- APT：zsh、bash-completion、hstr、coreutils、gawk、ripgrep、fd-find、tree、bat、unzip、bzip2、vim、neovim、git、git-lfs、tig、htop、dnsutils、net-tools、iperf3、ifstat、mtr-tiny、socat、telnet、curl、wget、httpie、jq、tmux、fail2ban。
+- jd：gh、zoxide、yq（Mike Farah 版本）、zellij、croc、nexttrace、mihomo、uv、fzf。fzf 使用官方二进制，以支持 Shell 集成所需的 `--zsh`。
 - 官方发布包：eza、Yazi、tldr（tlrc 的 musl 二进制）、yt-dlp。Starship 通过 jd 安装到 `~/.local/bin`。Yazi 和 x86_64 的 eza 使用 musl 构建，ARM64 的 eza 使用 GNU 构建。
 - uv：pre-commit、git-filter-repo，避免 APT 的 nodeenv 依赖拉入编译工具，并支持 Debian 11。
 - Shell：oh-my-zsh、zsh-autosuggestions、fast-syntax-highlighting、zsh-wakatime，以及仓库中的 zsh 配置。提示符使用 Starship，oh-my-zsh 只负责插件与 Shell 配置。
