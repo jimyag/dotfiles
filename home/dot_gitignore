@@ -29,3 +29,8 @@ __pycache__/
 
 # Git worktrees under repository roots
 /.worktrees/
+
+# Local temporary files under repository roots
+/tmp/
+/.tmp/
+/.temp/
