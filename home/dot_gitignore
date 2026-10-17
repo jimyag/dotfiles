@@ -25,6 +25,7 @@ __pycache__/
 .antigravitycli/
 .claude/settings.local.json
 .codex/
+.herdr-web-ui/
 
 # Git worktrees under repository roots
 /.worktrees/
