@@ -38,6 +38,7 @@
 | [absorb-skill](../skills/absorb-skill/SKILL.md) | 寻找和比较外部技能，把其中适用的规则合并进已有技能 |
 | [skill-audit](../skills/skill-audit/SKILL.md) | 审计技能规范、触发重叠、可移植性和评测 |
 | [agent-health](../skills/agent-health/SKILL.md) | 检查 Agent 指令、MCP、hooks、权限与配置漂移 |
+| [shared-memory](../skills/shared-memory/SKILL.md) | 整理并共享 Codex、Claude 的原生记忆，发现新来源并跟踪增量变化 |
 
 ### 专项分析
 
