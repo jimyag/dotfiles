@@ -14,9 +14,9 @@
     {
       "id": 2,
       "prompt": "只审计 ~/.agents/skills 是否符合 Agent Skills 规范。",
-      "expected_output": "路由到 skill-audit，不启动完整代理健康检查。",
+      "expected_output": "只做技能库审计，加载 skill-library-audit 参考，不启动完整代理健康检查。",
       "assertions": [
-        "明确使用 skill-audit",
+        "读取 skill-library-audit 参考",
         "不扩展到无关 MCP、hooks 和项目测试"
       ]
     },
@@ -58,6 +58,40 @@
         "先确认是否真的没执行",
         "检查用户、项目、本地设置层级",
         "不直接改写钩子配置"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Audit a directory containing portable and client-extended Agent Skills, then produce a prioritized migration report.",
+      "expected_output": "A report that separates official specification failures, intentional client-extension exceptions, and best-practice warnings, with file-level evidence and validation commands.",
+      "assertions": [
+        "The report identifies the Agent Skills documentation and retrieval date used as the baseline",
+        "The report separates hard specification failures from recommendations",
+        "The report does not recommend removing a safety extension without an equivalent control",
+        "Every migration phase includes a concrete validation method"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "A 700-line discipline-enforcing SKILL.md has client-only frontmatter and unreliable triggering. Refactor it without weakening its safety behavior.",
+      "expected_output": "A staged refactor that preserves verified safety controls, splits details into directly linked references, optimizes the standard description through train/validation trigger evals, and compares behavior with the old version.",
+      "assertions": [
+        "The plan preserves client safety behavior until an equivalent replacement exists",
+        "SKILL.md is reduced below 500 lines with one-level conditional references",
+        "Description optimization uses positive, near-miss negative, train, validation, repeated runs, and fresh holdout queries",
+        "Output evaluation compares against a snapshot of the previous skill in clean contexts",
+        "The final result distinguishes portable compliance from local-client compatibility"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "帮我看看这个技能为什么代理总是不按它走，顺便精简一下。",
+      "expected_output": "检查指针措辞、完成条件、无效指令、禁令式表达和信息层级，给出有依据的删改建议，不只按行数精简。",
+      "assertions": [
+        "检查描述或指针的触发措辞",
+        "识别模型默认就会做的无效指令",
+        "把禁令改写为正面目标或说明保留理由",
+        "区分应留在正文与应拆出的参考"
       ]
     }
   ]

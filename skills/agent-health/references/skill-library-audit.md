@@ -1,14 +1,8 @@
----
-name: skill-audit
-description: 审计技能库的规范、可移植性、触发重叠、上下文加载、脚本和评测时使用；不用于创建技能。
-compatibility: 附带的审计脚本需要 Python 3.10+ 和 uv。官方参考校验使用 uvx，可能需要网络访问。
----
-
-# 审计 Agent Skills
+# 技能库审计
 
 根据可移植的 Agent Skills 规范审计技能库，区分硬性错误、有意保留的客户端扩展、可维护性问题和尚未验证的行为质量。
 
-创建或大幅重写技能时，若当前客户端提供技能创建指南，则使用该指南。本技能的审计流程和脚本自包含，不依赖任何特定客户端。
+创建或大幅重写技能时，若当前客户端提供技能创建指南，则使用该指南。本流程和脚本自包含，不依赖任何特定客户端；下文命令中的路径相对于 `agent-health` 技能根目录。
 
 ## 标准
 
@@ -16,7 +10,7 @@ compatibility: 附带的审计脚本需要 Python 3.10+ 和 uv。官方参考校
 2. 客户端专用字段和工具假设即使在本地可用，也属于可移植性例外。
 3. 结构有效不代表触发合理、脚本安全或输出更好。
 
-完整审计时阅读 [官方检查清单](references/official-agent-skills-checklist.md)。技能使用非标准元数据、同级 `_shared` 文件、插件、连接器或客户端专用工具时，阅读 [客户端扩展策略](references/client-extension-policy.md)。主文件较大时使用 [渐进披露指南](references/progressive-disclosure.md)。改写技能或 `AGENTS.md`、或检查措辞是否真的改变代理行为时，阅读 [给代理写文档](references/writing-for-agents.md)。
+完整审计时阅读 [官方检查清单](official-agent-skills-checklist.md)。技能使用非标准元数据、同级 `_shared` 文件、插件、连接器或客户端专用工具时，阅读 [客户端扩展策略](client-extension-policy.md)。主文件较大时使用 [渐进披露指南](progressive-disclosure.md)。改写技能或 `AGENTS.md`、或检查措辞是否真的改变代理行为时，阅读 [给代理写文档](writing-for-agents.md)。
 
 ## 审计流程
 
@@ -86,8 +80,8 @@ uvx --from skills-ref agentskills validate /path/to/skill
 
 ## 补充资料
 
-- [官方检查清单](references/official-agent-skills-checklist.md)
-- [客户端扩展策略](references/client-extension-policy.md)
-- [元数据模式](references/frontmatter-patterns.md)
-- [渐进披露](references/progressive-disclosure.md)
-- [给代理写文档](references/writing-for-agents.md)
+- [官方检查清单](official-agent-skills-checklist.md)
+- [客户端扩展策略](client-extension-policy.md)
+- [元数据模式](frontmatter-patterns.md)
+- [渐进披露](progressive-disclosure.md)
+- [给代理写文档](writing-for-agents.md)

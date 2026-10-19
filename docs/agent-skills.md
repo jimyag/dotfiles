@@ -1,6 +1,6 @@
 # Agent Skills
 
-技能按任务使用，点击名称可查看触发条件、流程和依赖。各技能的读写与授权规则见对应 `SKILL.md`；其中 `ai-review-loop` 必须明确点名才会启用。
+技能按任务使用，点击名称可查看触发条件、流程和依赖。各技能的读写与授权规则见对应 `SKILL.md`。
 
 ### 开发与交付
 
@@ -12,44 +12,35 @@
 | [test-scenarios](../skills/test-scenarios/SKILL.md) | 整理测试计划、验收标准与 E2E 场景 |
 | [runtime-verification](../skills/runtime-verification/SKILL.md) | 在真实运行面驱动改动并留存证据，交付前确认行为 |
 | [requesting-code-review](../skills/requesting-code-review/SKILL.md) | 只读审查代码差异或 PR，检查正确性和复杂度 |
-| [receiving-code-review](../skills/receiving-code-review/SKILL.md) | 核实评审反馈，再处理成立的问题 |
 | [simplify](../skills/simplify/SKILL.md) | 保持行为不变，简化近期改动 |
-| [fix-merge-conflicts](../skills/fix-merge-conflicts/SKILL.md) | 解决 merge、rebase 或 cherry-pick 冲突并验证 |
 | [git-commit](../skills/git-commit/SKILL.md) | 精准暂存并生成规范提交，按授权推送 |
 | [pull-request](../skills/pull-request/SKILL.md) | 创建 PR，或整理标题、正文与模板 |
 | [gh-stack](../skills/gh-stack/SKILL.md) | 管理相互依赖的分支和堆叠 PR |
 | [loop-on-ci](../skills/loop-on-ci/SKILL.md) | 跟踪 Actions、修复失败并验证检查结果 |
-| [ai-review-loop](../skills/ai-review-loop/SKILL.md) | 跟踪远程 AI 评审，处理反馈并重新验证 PR |
 | [architecture-decision-record](../skills/architecture-decision-record/SKILL.md) | 判断是否记录 ADR，并创建、更新或替代决策记录 |
 
 ### 写作与解释
 
 | 技能 | 用途 |
 | --- | --- |
-| [technical-writing](../skills/technical-writing/SKILL.md) | 起草或重构中文设计文档、源码分析和工程文章 |
-| [style-aware-editor](../skills/style-aware-editor/SKILL.md) | 清理 AI 套话与防御性表达，保留事实、文风和必要限定 |
+| [technical-writing](../skills/technical-writing/SKILL.md) | 起草或重构中文设计文档、源码分析和工程文章；清理 AI 套话与防御性表达，保留事实、文风和必要限定 |
 | [show-me](../skills/show-me/SKILL.md) | 可视化调用链、架构、数据流和状态变化，或用极简图解给外行讲原理 |
-| [handoff](../skills/handoff/SKILL.md) | 整理可接手的进展、决策、证据和剩余工作 |
 
 ### 技能与 Agent 配置
 
 | 技能 | 用途 |
 | --- | --- |
 | [absorb-skill](../skills/absorb-skill/SKILL.md) | 寻找和比较外部技能，把其中适用的规则合并进已有技能 |
-| [skill-audit](../skills/skill-audit/SKILL.md) | 审计技能规范、触发重叠、可移植性和评测 |
-| [agent-health](../skills/agent-health/SKILL.md) | 检查 Agent 指令、MCP、hooks、权限与配置漂移 |
+| [agent-health](../skills/agent-health/SKILL.md) | 检查 Agent 指令、MCP、hooks、权限与配置漂移；审计技能规范、触发重叠、可移植性和评测 |
 | [shared-memory](../skills/shared-memory/SKILL.md) | 整理并共享 Codex、Claude 的原生记忆，发现新来源并跟踪增量变化 |
 
 ### 专项分析
 
 | 技能 | 用途 |
 | --- | --- |
-| [find-docs](../skills/find-docs/SKILL.md) | 查询第三方库、框架、SDK、CLI 和 API 的官方文档 |
 | [codecov-coverage](../skills/codecov-coverage/SKILL.md) | 查询覆盖率，诊断 Codecov 检查失败 |
 | [frontend-design-review](../skills/frontend-design-review/SKILL.md) | 确定或审查前端视觉方向，并用截图或渲染验证 |
 | [linux-performance-analysis](../skills/linux-performance-analysis/SKILL.md) | 定位 Linux 主机或容器的性能瓶颈 |
-| [supabase-postgres-best-practices](../skills/supabase-postgres-best-practices/SKILL.md) | 根据查询计划和负载检查 Postgres 查询、索引、RLS 与配置 |
-| [project-submission-evaluator](../skills/project-submission-evaluator/SKILL.md) | 基于源码批量评审、评分和排序项目提交 |
 | [x-tweet-fetcher](../skills/x-tweet-fetcher/SKILL.md) | 获取研究所需的 X 推文、回复串、文章和中文社交平台内容 |
 
 ### 独立安装技能

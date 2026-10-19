@@ -1,6 +1,6 @@
 ---
 name: requesting-code-review
-description: 用户要求审查当前代码差异或 PR 时使用，默认只读；处理已收到的评审意见用 receiving-code-review。
+description: 用户要求审查当前代码差异或 PR 时使用，默认只读；不用于处理已收到的评审意见。
 compatibility: 本地差异审查需要 git。读取 GitHub PR 或发布评审需要可用的 GitHub 连接器或已认证的 gh CLI。
 ---
 
@@ -9,7 +9,6 @@ compatibility: 本地差异审查需要 git。读取 GitHub PR 或发布评审�
 ## 边界
 
 - 审查当前本地差异或指定 GitHub PR，默认只分析和报告。
-- `receiving-code-review` 处理别人已经给出的意见。
 - 审查阶段不修改文件、不提交、不推送；用户已明确授权后续工作时，审查完成后继续对应步骤。
 - 发布远端评审仍须用户明确要求；同一范围内已有授权时不重复请求。
 - 不要求特定客户端插件。GitHub 连接器可用时优先使用，否则回退 `gh`；两者都不可用时仍可审查本地差异，远端操作明确报告未执行。

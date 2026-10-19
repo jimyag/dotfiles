@@ -1,9 +1,9 @@
 ---
 name: technical-writing
-description: 在起草或重构中文技术设计文档、架构笔记、源码分析、评审稿或工程分享文章时使用；先用代码、指标和约束建立论证，再按文档类型加载对应规则。只需润色短文本或调整语气时使用 style-aware-editor。
+description: 在起草或重构中文技术设计文档、架构笔记、源码分析、评审稿或工程分享文章，或检查、改写文本的 AI 味、文风、术语和技术文案时使用；先用代码、指标和约束建立论证，再按文档类型或编辑模式加载对应规则。
 ---
 
-# 中文技术写作
+# 技术写作与文体编辑
 
 把背景、观察、判断、影响和验证讲清楚，让技术同伴能复核结论并继续工作。不要用流畅措辞掩盖证据缺口，也不要把技术文档写成营销稿。
 
@@ -17,8 +17,9 @@ description: 在起草或重构中文技术设计文档、架构笔记、源码�
 | 源码深挖、调用链、语言或系统机制文章 | [references/source-analysis.md](references/source-analysis.md) |
 | 操作手册、API 流程、故障处理、安全说明 | [references/controlled-instructions.md](references/controlled-instructions.md) |
 | Hugo 或工程博客文章 | [references/hugo-article.md](references/hugo-article.md) |
+| 降低 AI 味、按文风润色、检测写作模式、改写技术或界面文案 | [references/style-editing.md](references/style-editing.md) |
 
-短技术说明、评审摘要或架构笔记可直接使用下面的共同流程。只需处理 AI 味、术语或语气而不调整论证结构时，交给 `style-aware-editor`。
+短技术说明、评审摘要或架构笔记可直接使用下面的共同流程。只需处理 AI 味、术语或语气而不调整论证结构时，只按 `style-editing` 执行，不启动下面的共同流程。
 
 论文、实验报告或技术文章需要组织实验论证、解释不利结果或处理审稿反馈时，另读 [实验与主张](references/experiments-and-claims.md)。普通操作说明和局部润色不加载此参考。
 

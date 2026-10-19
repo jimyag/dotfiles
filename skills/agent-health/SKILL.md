@@ -1,6 +1,7 @@
 ---
 name: agent-health
-description: 在审计 AGENTS/CLAUDE 指令、MCP、hooks、工具权限、验证入口和跨工作流配置漂移时使用；只审技能规范、打包、触发和评测时使用 skill-audit，不因普通任务涉及配置就触发。
+description: 在审计 AGENTS/CLAUDE 指令、MCP、hooks、工具权限、验证入口、跨工作流配置漂移，或技能库的规范、可移植性、触发重叠、上下文加载、脚本和评测时使用；不用于创建技能，不因普通任务涉及配置就触发。
+compatibility: 技能库审计脚本需要 Python 3.10+ 和 uv；官方参考校验使用 uvx，可能需要网络访问。
 ---
 
 # 代理配置健康检查
@@ -16,7 +17,7 @@ description: 在审计 AGENTS/CLAUDE 指令、MCP、hooks、工具权限、验�
 - 新增或迁移一批技能后，需要确认边界是否清楚
 - 长期项目里验证命令、生成物规则或上下文文档可能已经过期
 
-如果范围只包含一个或多个 Agent Skills 的规范、打包、描述、脚本和评测，使用 `skill-audit`。`agent-health` 只在这些技能需要和更广的指令、工具、权限或运行时配置一起审查时覆盖技能路由。
+如果范围只包含一个或多个 Agent Skills 的规范、打包、描述、脚本和评测，按 [技能库审计](references/skill-library-audit.md) 执行，不展开下面的完整配置审计；技能需要和更广的指令、工具、权限或运行时配置一起审查时，两部分都做。
 
 ## 审计层次
 
