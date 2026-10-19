@@ -22,3 +22,16 @@ hide_empty_periods = true
 
 [aliases]
 "gpt-5.3-codex-spark" = "gpt-5.3-codex"
+"group/auto-deepseek-v4-1-flash" = "deepseek-flash"
+"group/auto-deepseek-v4-pro" = "deepseek-v4-pro"
+"group/auto-gpt-5-6-terra" = "gpt-5.6-terra"
+"group/auto-gpt-5-6-sol" = "gpt-5.6-sol"
+"group/auto-gpt-6-astra" = "gpt-6-astra"
+"group/auto-gpt-6-sol" = "gpt-6-sol"
+"group/auto-gpt-6-1-sol" = "gpt-6.1-sol"
+"group/auto-kimi-k3" = "kimi-k3"
+"deepseek-v4.1-flash" = "deepseek-flash"
+"deepseek/deepseek-flash" = "deepseek-flash"
+"deepseek-v4.1-flash-sg" = "deepseek-flash"
+"kimi-k3-1" = "kimi-k3"
+"kimi-k2.7" = "kimi-k2.7-code"
