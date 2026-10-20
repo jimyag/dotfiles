@@ -13,7 +13,6 @@
 | [runtime-verification](../skills/runtime-verification/SKILL.md) | 在真实运行面驱动改动并留存证据，交付前确认行为 |
 | [requesting-code-review](../skills/requesting-code-review/SKILL.md) | 只读审查代码差异或 PR，检查正确性和复杂度 |
 | [simplify](../skills/simplify/SKILL.md) | 保持行为不变，简化近期改动 |
-| [git-commit](../skills/git-commit/SKILL.md) | 精准暂存并生成规范提交，按授权推送 |
 | [pull-request](../skills/pull-request/SKILL.md) | 创建 PR，或整理标题、正文与模板 |
 | [gh-stack](../skills/gh-stack/SKILL.md) | 管理相互依赖的分支和堆叠 PR |
 | [loop-on-ci](../skills/loop-on-ci/SKILL.md) | 跟踪 Actions、修复失败并验证检查结果 |
