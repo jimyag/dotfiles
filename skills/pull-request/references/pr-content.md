@@ -23,14 +23,14 @@ Draft from the actual base/head, commits, complete diff, validation results, rep
 
 - Explain the problem and resulting behavior rather than copying the commit list.
 - Separate core logic from generated or mechanical changes.
-- Include real validation commands and results; write `Not verified` when unknown.
-- State breaking changes, migration steps, configuration changes, compatibility limits, and reviewer focus.
+- Include relevant validation commands and results, or link an existing verification report or comment. Mention an unverified condition only when it affects confidence in this change; do not list unrelated deployments or checks the task did not require.
+- State breaking changes, migration steps, configuration changes, compatibility limits, and reviewer focus when they apply.
 - Reference a related issue, ticket, or design document when one exists.
-- Show the key point with the smallest view that makes it clear: pseudocode for logic, a call tree for control flow, a component tree for UI structure, a shallow file tree for a broad refactor, Mermaid for interactions, or a `diff` sketch when the point is what changes in an existing shape. Place each visual beside the sentence it supports and keep only the calls, files and states the reviewer needs.
+- When prose cannot explain the key relationship clearly, show the smallest useful view: pseudocode, a call tree, Mermaid, or a `diff` sketch. Keep only the calls, files and states the reviewer needs.
 - Prefer before/after evidence: screenshots for visual changes, otherwise the exact failing-then-passing test or command output.
-- State merge danger: whether the change is a one-way door (destructive or hard to reverse) or a two-way door (cheap to roll back), and its blast radius (who or what could break: consumers, layout, mobile, data).
+- Explain material merge risks, affected consumers, and recovery constraints when they exist.
 
-When no repository template exists, use:
+When no repository template exists, scale the body to the change. A simple change can use one or two paragraphs plus relevant validation; use the following headings only when they improve readability, and omit empty or repetitive sections:
 
 ```markdown
 ## Summary
@@ -62,4 +62,4 @@ Preserve the selected template's headings, comments, and required fields. Do not
 
 ## Review focus
 
-Call out one or two areas whose correctness or design deserves attention. If the diff contains unrelated concerns or is difficult to summarize coherently, say so and recommend a concrete split.
+Call out areas whose correctness or design needs particular attention, if any. If the diff contains unrelated concerns or is difficult to summarize coherently, say so and recommend a concrete split.

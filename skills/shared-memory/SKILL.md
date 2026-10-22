@@ -11,7 +11,7 @@ description: 在新增、更新、更正、删除、同步或检索持久记忆�
 
 ## 检查待同步来源
 
-每个会话首次处理非平凡任务时执行一次 `pending`，在项目中工作时传入 `--project`。它检查已登记来源的变化，同时发现 Codex、Claude 原生目录中尚未登记的来源，不导入内容。
+用户要求整理、导入或同步记忆时执行 `pending`，在项目中工作时传入 `--project`。普通任务依赖历史时直接检索相关记忆，不以 `pending` 或全量来源整理为前置条件。它检查已登记来源的变化，同时发现 Codex、Claude 原生目录中尚未登记的来源，不导入内容。
 
 ```bash
 python3 "$HOME/.agents/skills/shared-memory/scripts/memory.py" pending \
@@ -27,14 +27,14 @@ python3 "$HOME/.agents/skills/shared-memory/scripts/memory.py" ack SOURCE_ID \
 
 来源在审阅期间再次变化时，`ack` 拒绝确认，重新检查并审阅。`missing` 不等于用户要求忘记；来源文件消失可能只是迁移，确认影响后再决定是否删除共享事实。没有可复用变化也可以在审阅后确认；处理失败或尚未完成时不要 `ack`。
 
-首次启用、发现 `untracked` 或遇到客户端提供的原生记忆路径时，用 `track` 登记 Markdown 文件、目录或 Codex SQLite 记忆数据库。登记范围只决定哪些项目的 `pending` 能看到来源，不决定提炼后事实的保存范围；重复登记不会清除上次确认的状态。
+在记忆整理任务中，首次启用、发现 `untracked` 或遇到客户端提供的原生记忆路径时，用 `track` 登记 Markdown 文件、目录或 Codex SQLite 记忆数据库。登记范围只决定哪些项目的 `pending` 能看到来源，不决定提炼后事实的保存范围；重复登记不会清除上次确认的状态。
 
 ```bash
 python3 "$HOME/.agents/skills/shared-memory/scripts/memory.py" track \
     --source /absolute/path/from/claude/memory --project /absolute/path/to/project
 ```
 
-例如 Claude Code 的项目 `memory` 目录登记到对应项目；以客户端显示的实际路径为准，不猜测项目目录编码。Codex 的跨项目 `MEMORY.md` 或 `memory_summary.md` 可全局登记，让各项目会话都检查变化，但保存时逐条选择事实的正确范围。以下使用默认目录示例；客户端提供其他路径时使用实际目录：
+例如 Claude Code 的项目 `memory` 目录登记到对应项目；以客户端显示的实际路径为准，不猜测项目目录编码。Codex 的跨项目 `MEMORY.md` 或 `memory_summary.md` 可全局登记，让各项目的记忆整理任务都能检查变化，但保存时逐条选择事实的正确范围。以下使用默认目录示例；客户端提供其他路径时使用实际目录：
 
 ```bash
 python3 "$HOME/.agents/skills/shared-memory/scripts/memory.py" track \
@@ -152,6 +152,6 @@ python3 "$HOME/.agents/skills/shared-memory/scripts/memory.py" sync \
 
 写操作通过锁、原子替换和 `0600` 文件权限保护共享库；使用脚本修改，不直接编辑派生文件。保存或同步中断后可重试相同命令，脚本会校验并修复派生索引；内容没有变化时保持正文和索引文件不变。
 
-同步只发生在 Agent 实际执行命令时：主动更新原生记忆时同轮同步；后台更新通过后续会话的 `pending` 检查已登记来源并补同步。没有 Agent 会话运行时不会立即同步。本 skill 不安装 MCP、监听服务或 hooks，也不自动提交、发布记忆。
+同步只发生在 Agent 实际执行命令时：获准更新原生记忆时同轮同步；后台更新在后续记忆整理任务中通过 `pending` 检查已登记来源并补同步。普通任务不会自动整理全部来源。本 skill 不安装 MCP、监听服务或 hooks，也不自动提交、发布记忆。
 
 参考：[Codex 两阶段记忆实现](https://github.com/openai/codex/blob/rust-v0.163.0/codex-rs/memories/README.md)、[Claude Code 记忆文档](https://code.claude.com/docs/en/memory)。
