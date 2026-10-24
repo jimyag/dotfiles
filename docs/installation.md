@@ -16,13 +16,24 @@ curl -fsSL https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | b
 wget -qO- https://raw.githubusercontent.com/jimyag/dotfiles/main/install.sh | bash
 ```
 
+通过 CNB 下载 jd 和它管理的发布二进制（包含首次安装的 chezmoi）：
+
+```bash
+curl -fsSL https://dotfiles.jimyag.com | bash -s -- --cnb
+# 本地安装
+./install.sh --cnb
+```
+
+也可以设置 `JD_DOWNLOAD_SOURCE=cnb`，手动运行 `chezmoi apply` 时同样有效。该选择只对本次安装及其子进程有效，后续单独使用 jd 时仍需 `jd --cnb` 或该环境变量。已有 chezmoi 会直接复用。
+
+CNB 仅镜像最新发布二进制，缺少镜像或仅支持包管理器的工具会报错，不回退到上游。macOS 完整工具清单含 Brew、Go、npm 安装项，不能保证在 CNB 模式下全部完成。安装脚本本身、dotfiles 仓库、Shell 插件、APT、uv/PyPI 以及 Docker、Tailscale、ZeroTier 仍使用原有来源。
+
 ## 默认安装清单
 
 Linux 默认安装以下工具：
 
 - APT：zsh、bash-completion、hstr、coreutils、gawk、ripgrep、fd-find、tree、bat、unzip、bzip2、vim、neovim、git、git-lfs、tig、htop、dnsutils、net-tools、iperf3、ifstat、mtr-tiny、socat、telnet、curl、wget、httpie、jq、tmux、fail2ban。
-- jd：gh、zoxide、yq（Mike Farah 版本）、zellij、croc、nexttrace、mihomo、uv、fzf。fzf 使用官方二进制，以支持 Shell 集成所需的 `--zsh`。
-- 官方发布包：eza、Yazi、tldr（tlrc 的 musl 二进制）、yt-dlp。Starship 通过 jd 安装到 `~/.local/bin`。Yazi 和 x86_64 的 eza 使用 musl 构建，ARM64 的 eza 使用 GNU 构建。
+- jd：gh、zoxide、yq（Mike Farah 版本）、zellij、croc、nexttrace、mihomo、uv、fzf、eza、Yazi、tldr、yt-dlp、Starship。fzf 使用官方二进制，以支持 Shell 集成所需的 `--zsh`。Yazi、tldr 和 x86_64 的 eza 使用 musl 构建，ARM64 的 eza 使用 GNU 构建；Yazi 的 Linux 构建选择保留在本地 jd registry 中。
 - uv：pre-commit、git-filter-repo，避免 APT 的 nodeenv 依赖拉入编译工具，并支持 Debian 11。
 - Shell：oh-my-zsh、zsh-autosuggestions、fast-syntax-highlighting、zsh-wakatime，以及仓库中的 zsh 配置。提示符使用 Starship，oh-my-zsh 只负责插件与 Shell 配置。
 - 服务与系统：Docker 官方一键脚本（get.docker.com）、非 root 用户加入 docker 组、Tailscale、ZeroTier、IPv4/IPv6 转发、禁用 SSH 密码和交互式认证，以及 Fail2ban 配置。SSH 配置在重载前校验；Tailscale、ZeroTier 安装后仍需自行登录或加入网络，WSL 会跳过这两个工具；mihomo 只安装命令，不写入代理配置或启动服务。
@@ -51,6 +62,7 @@ Linux 默认安装以下工具：
 | `GITHUB_USER` | 配合 `CREATE_USER`，将该 GitHub 用户的公钥合并到目标用户的 `authorized_keys`；不设置则不拉取 |
 | `SET_HOSTNAME` | Linux 上有 `hostnamectl` 时设置主机名；不设置则保留原值 |
 | `GITHUB_TOKEN` | 为 CLI 安装脚本和 GitHub API 请求提供认证，减少共享出口的限流 |
+| `JD_DOWNLOAD_SOURCE` | `cnb` 等同于 `--cnb`，默认 `github`；传递给创建用户后的安装及所有 jd 子进程 |
 
 创建用户 `jimyag` 并写入其 GitHub 公钥：
 

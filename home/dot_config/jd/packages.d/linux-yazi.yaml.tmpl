@@ -1,0 +1,12 @@
+{{ if eq .chezmoi.os "linux" -}}
+# Use musl to keep Yazi compatible with older Linux distributions.
+packages:
+  - name: yazi
+    version_from: {type: github, repo: sxyazi/yazi, tag_prefix: v}
+    url_template: "https://github.com/sxyazi/yazi/releases/download/v{{`{{.VersionNoV}}`}}/yazi-{{`{{.Arch}}`}}-unknown-linux-musl.zip"
+    inner_path: "yazi-{{`{{.Arch}}`}}-unknown-linux-musl"
+    install_dir: "~/.local/share/jd/installs/yazi/{{`{{.Version}}`}}"
+    binaries: {yazi: yazi, ya: ya}
+    arch_map: {amd64: x86_64, arm64: aarch64}
+    supported_platforms: [linux]
+{{ end -}}

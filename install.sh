@@ -8,20 +8,29 @@ dotfiles installer
 
 Usage:
   curl -fsSL https://dotfiles.jimyag.com | bash
+  curl -fsSL https://dotfiles.jimyag.com | bash -s -- --cnb
 
 Help:
   curl -fsSL https://dotfiles.jimyag.com | bash -s -- --help
 
 Options:
+  --cnb         Download jd and its release binaries (including chezmoi) from CNB.
   SET_HOSTNAME   Linux hostname.
 EOF
 }
 
-case "${1:-}" in
-  -h|--help|help)
-    print_usage
-    exit 0
-    ;;
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --cnb) export JD_DOWNLOAD_SOURCE=cnb ;;
+    -h|--help|help) print_usage; exit 0 ;;
+    *) echo "Unknown option: $1" >&2; print_usage >&2; exit 1 ;;
+  esac
+  shift
+done
+export JD_DOWNLOAD_SOURCE="${JD_DOWNLOAD_SOURCE:-github}"
+case "$JD_DOWNLOAD_SOURCE" in
+  github|cnb) ;;
+  *) echo "Unknown download source: $JD_DOWNLOAD_SOURCE" >&2; exit 1 ;;
 esac
 
 # 必须由具备 sudo 权限的用户执行
@@ -54,19 +63,22 @@ ensure_chezmoi() {
   if command -v chezmoi >/dev/null 2>&1; then return; fi
   local bin_dir="${HOME:?}/.local/bin"
   mkdir -p "$bin_dir"
-  (
-    tmp_script="$(mktemp)"
-    trap 'rm -f "$tmp_script"' EXIT
-    if command -v curl >/dev/null 2>&1; then
-      curl -fsSL https://get.chezmoi.io -o "$tmp_script"
-    elif command -v wget >/dev/null 2>&1; then
-      wget -qO "$tmp_script" https://get.chezmoi.io
-    else
-      echo "To install chezmoi, you need curl or wget." >&2
-      exit 1
-    fi
-    sh "$tmp_script" -b "$bin_dir"
-  )
+  if ! command -v jd >/dev/null 2>&1 || ! jd --help | grep -q -- --cnb; then
+    (
+      tmp_script="$(mktemp)"
+      trap 'rm -f "$tmp_script"' EXIT
+      if command -v curl >/dev/null 2>&1; then
+        curl -fsSL https://jd.jimyag.com -o "$tmp_script"
+      elif command -v wget >/dev/null 2>&1; then
+        wget -qO "$tmp_script" https://jd.jimyag.com
+      else
+        echo "To install jd, you need curl or wget." >&2
+        exit 1
+      fi
+      INSTALL_DIR="$bin_dir" sh "$tmp_script"
+    )
+  fi
+  jd chezmoi --method binary
 }
 
 # 执行 chezmoi init --apply（依赖 CHEZMOI_SOURCE / CHEZMOI_REPO / SCRIPT_DIR）
@@ -161,7 +173,7 @@ if [ -n "${CREATE_USER:-}" ] && [ "$(uname)" = "Linux" ] && is_valid_username "$
   exec sudo -u "$add_user" env \
     HOME="$target_home" USER="$add_user" LOGNAME="$add_user" \
     SET_HOSTNAME="$SET_HOSTNAME" CHEZMOI_SOURCE="${CHEZMOI_SOURCE:-}" CHEZMOI_REPO="${CHEZMOI_REPO:-}" SCRIPT_DIR="$SCRIPT_DIR" \
-    GITHUB_TOKEN="${GITHUB_TOKEN:-}" \
+    GITHUB_TOKEN="${GITHUB_TOKEN:-}" JD_DOWNLOAD_SOURCE="$JD_DOWNLOAD_SOURCE" \
     bash -s << DECLARE_AND_RUN
 set -euo pipefail
 $(declare -f ensure_chezmoi run_chezmoi_apply)

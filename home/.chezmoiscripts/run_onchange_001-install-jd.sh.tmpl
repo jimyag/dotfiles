@@ -1,14 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
-if [ -x "$HOME/.local/bin/jd" ] && "$HOME/.local/bin/jd" --help | grep -q -- --upgrade; then
+if [ -x "$HOME/.local/bin/jd" ] &&
+    "$HOME/.local/bin/jd" --help | grep -q -- --upgrade &&
+    "$HOME/.local/bin/jd" --help | grep -q -- --cnb; then
     exit 0
 fi
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 curl -fsSL https://jd.jimyag.com -o "$tmpdir/install-jd.sh"
 sh "$tmpdir/install-jd.sh"
-if ! "$HOME/.local/bin/jd" --help | grep -q -- --upgrade; then
-    echo "A jd release with --upgrade support is required before installing the tool lists." >&2
+if ! "$HOME/.local/bin/jd" --help | grep -q -- --upgrade ||
+    ! "$HOME/.local/bin/jd" --help | grep -q -- --cnb; then
+    echo "A jd release with --upgrade and --cnb support is required before installing the tool lists." >&2
     exit 1
 fi

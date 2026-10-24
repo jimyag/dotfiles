@@ -1,0 +1,19 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -euo pipefail
+
+export PATH="$HOME/.local/bin:$PATH"
+for tool in gh zoxide yq zellij croc nexttrace mihomo eza yazi tldr yt-dlp uv; do
+    if ! command -v "$tool" >/dev/null 2>&1; then
+        jd "$tool" --method binary
+    fi
+done
+
+if ! command -v pre-commit >/dev/null 2>&1; then
+    uv tool install pre-commit
+fi
+
+if ! command -v git-filter-repo >/dev/null 2>&1; then
+    uv tool install git-filter-repo
+fi
+{{ end -}}
