@@ -10,6 +10,7 @@ theme = Catppuccin Frappe
 # --- Window ---
 window-padding-x = 12
 window-padding-y = 8
+window-padding-balance = equal
 macos-titlebar-style = transparent
 background-opacity = 0.92
 background-blur = 20
@@ -29,6 +30,12 @@ keybind = super+right=next_tab
 
 # Command + R：清屏，相当于终端里执行 clear / Ctrl+L 的效果
 keybind = super+r=clear_screen
+
+
+# --- SSH integration ---
+
+# 自动安装远端 terminfo，并转发 Ghostty 终端环境变量。
+shell-integration-features = ssh-env,ssh-terminfo
 
 
 # --- Working directory inheritance ---
