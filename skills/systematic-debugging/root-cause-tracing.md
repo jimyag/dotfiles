@@ -139,7 +139,7 @@ digraph principle {
 }
 ```
 
-**NEVER fix just where the error appears.** Trace back to find the original trigger.
+Fix at the original trigger, not where the error appears: trace back until you find it.
 
 ## Stack Trace Tips
 
