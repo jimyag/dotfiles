@@ -40,6 +40,7 @@
 | [codecov-coverage](../skills/codecov-coverage/SKILL.md) | 查询覆盖率，诊断 Codecov 检查失败 |
 | [frontend-design-review](../skills/frontend-design-review/SKILL.md) | 确定或审查前端视觉方向，并用截图或渲染验证 |
 | [linux-performance-analysis](../skills/linux-performance-analysis/SKILL.md) | 定位 Linux 主机或容器的性能瓶颈 |
+| [benchmark-checklist](../skills/benchmark-checklist/SKILL.md) | 校验基准、性能比较和收益数字的工作量、正确性、噪声与端到端意义 |
 | [x-tweet-fetcher](../skills/x-tweet-fetcher/SKILL.md) | 获取研究所需的 X 推文、回复串、文章和中文社交平台内容 |
 
 ### 独立安装技能

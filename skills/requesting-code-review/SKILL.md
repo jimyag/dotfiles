@@ -58,7 +58,7 @@ PR 模式通过当前可用的 GitHub 能力读取编号、基准分支和来源
 
 - 通用正确性、边界、错误处理、测试与复杂度：[代码质量](references/code-quality.md)
 - 所有审查都做轻量复杂度检查；标准、深入审查或用户明确关注简化时，读取 [简化审查](references/simplification-review.md)
-- 明确热点、I/O/网络放大、锁或分配风险：[性能](references/performance.md)
+- 性能收益声明、基准差异、明确热点、I/O/网络放大、锁或分配风险：[性能](references/performance.md)，按其中的测量校验区分实测结论和静态风险
 - 信任边界、鉴权、输入或密钥风险：[安全](references/security.md)
 - 行为、API、配置或示例变化：[文档](references/documentation.md)
 - `.go` / `go.mod`：[Go](references/go-specialist.md)
