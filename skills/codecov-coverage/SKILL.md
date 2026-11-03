@@ -35,7 +35,7 @@ allowed-tools: >-
 npm install -g mcporter
 ```
 
-如果缺少 `jq`，提示用户安装 `jq` 后再继续。普通覆盖率查询缺少令牌时立即停止并提示用户配置，不要猜测或降级到网页抓取。诊断 GitHub 上的 Codecov 检查时，可以先读取连接器已提供的检查摘要；只有摘要足以支持结论时才能继续，否则仍需 Codecov API 访问令牌。
+如果缺少 `jq`，提示用户安装 `jq` 后再继续。普通覆盖率查询缺少令牌时立即停止并提示用户配置，不要猜测或降级到网页抓取。诊断 GitHub 上的 Codecov 检查时，可以先用 `gh pr checks` 或 `gh api` 读取检查摘要；只有摘要足以支持结论时才能继续，否则仍需 Codecov API 访问令牌。
 
 ## 安全边界
 
@@ -88,7 +88,7 @@ npx -y mcporter call \
 
 ## Codecov 检查失败诊断
 
-1. 从 PR 或提交上下文确认失败的检查名称、来源分支提交 SHA 和详情 URL。优先使用可用的 GitHub 连接器，不把 `gh` CLI 作为默认入口。
+1. 从 PR 或提交上下文确认失败的检查名称、来源分支提交 SHA 和详情 URL。优先使用已认证的 `gh`，不可用时再用 GitHub 连接器。
 2. 根据检查类型补齐 Codecov 数据：
    - `codecov/project`：查询仓库、提交和 PR 覆盖率，确认整体覆盖率是否低于项目阈值。
    - `codecov/patch`：查询 PR 覆盖率并比较 base/head；需要定位具体缺口时再查询变更文件覆盖率。
@@ -113,7 +113,7 @@ npx -y mcporter call \
 
 ## 故障处理
 
-- `CODECOV_TOKEN 未设置`：普通查询提示用户执行 `export CODECOV_TOKEN="..."`；检查诊断可先使用 GitHub 连接器摘要，但数据不足时必须停止，不要输出令牌
+- `CODECOV_TOKEN 未设置`：普通查询提示用户执行 `export CODECOV_TOKEN="..."`；检查诊断可先使用 `gh` 读取的检查摘要，但数据不足时必须停止，不要输出令牌
 - `401 Unauthorized`：令牌无效或过期，提示重新生成 API 访问令牌
 - `404 Not Found`：检查 owner/repo 是否正确、仓库是否已接入 Codecov、目标 ref 是否有覆盖率数据
 - `commit_sha not found`：使用完整 40 位提交 SHA
@@ -141,3 +141,7 @@ python3 ../_shared/lint-skills.py
 ```
 
 预期：help 命令不需要 `CODECOV_TOKEN`；未设置 `CODECOV_TOKEN` 时执行查询类命令应明确报错且不泄露令牌。
+
+## 统一约束
+
+- 证据与验收：遵循 `../_shared/common-acceptance.md`，本 skill 只补充其中没有的要求。

@@ -1,12 +1,21 @@
 ---
 name: simplify
-description: 用户明确要求简化、清理或重构近期改动且保持行为不变时使用；普通实现、缺陷修复、代码评审或行为变更不触发。
+description: 用户明确要求简化、清理或重构近期改动且保持行为不变时使用；也用于只列不改的过度设计审查、全仓过度设计审计，以及汇总代码中 `simplify:` 简化债务注释。普通实现、缺陷修复、正确性代码评审或行为变更不触发。
 license: Apache-2.0 (see LICENSE)
 ---
 
 # 简化代码
 
 在完全保留功能的前提下简化代码。优先选择易读、行为明确的写法，而非紧凑或巧妙的写法。
+
+## 模式
+
+- 简化（默认）：按下文流程修改近期改动并验证行为不变。
+- 过度设计审查：用户要求“看看哪里过度设计”“能删什么”时，只审查指定差异，不修改文件。
+- 全仓审计：用户要求审计整个仓库的冗余时，扫描整个仓库（跳过依赖、生成物和构建输出），不修改文件。
+- 债务清单：用户要求列出有意留下的简化或“以后再做”的位置时，汇总 `simplify:` 注释，不修改文件。
+
+后三种模式只覆盖复杂度；正确性缺陷、安全问题和性能交给 `requesting-code-review` 或对应 skill。单个冒烟测试或基于断言的自检是最低限度的验证，不当作冗余删除。
 
 ## 边界
 
@@ -34,6 +43,45 @@ license: Apache-2.0 (see LICENSE)
 - 没有执行的运行面及其影响；
 - 没有安全简化机会时，明确说明保持现状。
 
+## 只读模式
+
+过度设计审查与全仓审计只看复杂度，每条候选标一个标签，并给出具体替换：
+
+- `delete`：死代码、没人用的灵活性、推测性功能。替换为“无”。
+- `stdlib`：手写了标准库已有的能力。写出要用的函数名。
+- `native`：代码或依赖在做平台已经提供的事。写出平台特性名，常见对照见 [平台原生能力](references/platform-native.md)。
+- `yagni`：只有一个实现的抽象、没人设置的配置、只有一个调用方的层。写出内联或删除后的形态。
+- `shrink`：同样逻辑可以更短。直接给出更短的写法。
+
+示例：
+
+```text
+L12-38: stdlib: 27 行的邮箱校验类. 用 "@" in email 一行，真正的校验靠确认邮件.
+L4: native: 为一次日期格式化引入 moment.js. Intl.DateTimeFormat，0 依赖.
+repo.py:L88: yagni: AbstractRepository 只有一个实现. 内联，等出现第二个实现再抽.
+L52-71: delete: 对幂等本地调用包了一层重试. 无需替换.
+L30-44: shrink: 手写循环构造 dict. dict(zip(keys, values))，一行.
+```
+
+不写“可以考虑是否需要……”这类泛泛建议，每条都要指出删什么、换成什么。
+
+- 审查模式：默认看当前差异，每条一行 `L<行>: <标签> <问题>. <替换方案>.`，多文件差异写成 `<文件>:L<行>: ...`；最后一行写 `net: -<N> lines possible.`。没有可删内容时只回答“已经足够精简，可以交付”。
+- 全仓审计：扫描整个仓库（跳过依赖、`.git` 和构建产物），重点找标准库或平台已提供能力的依赖、单一实现的接口、只生产一种产品的工厂、只做转发的包装、只导出一个符号的文件、失效的开关和配置、手写的标准库功能。按可删减规模从大到小排序，每条写 `<标签> <删什么>. <替换方案>. [<路径>]`，最后一行写 `net: -<N> lines, -<M> deps possible.`。
+
+两种模式都不修改文件，用户要求落实时转入简化模式逐项处理。
+
+## 债务清单
+
+1. 用 `rg -n '(#|//|--|/\*) ?(simplify|ponytail):'` 搜索整个仓库，跳过依赖、`.git` 与构建产物；项目语言使用其他注释前缀时一并加入。要求注释前缀是为了排除只是提到这个约定的正文。`ponytail:` 是历史写法，一并收集。
+2. 按文件分组，每条一行：`<文件>:<行>, <简化了什么>. ceiling: <上限>. upgrade: <何时升级>.`，上限和触发条件直接取自注释。用户需要负责人时，用 `git blame -L<行>,<行>` 补上。
+3. 注释没写升级方式或触发条件的标为 `no-trigger`，这类最容易被永久遗忘。
+4. 最后一行写 `<N> markers, <M> with no trigger.`；没有找到时回答“没有简化债务”。
+5. 只读不改；用户要求持久化时，把清单写到用户指定的文件。用户要求补齐触发条件或偿还某条债务时，转入简化模式或常规实现。
+
+## 统一约束
+
+- 证据与验收：遵循 `../_shared/common-acceptance.md`，本 skill 只补充其中没有的要求。
+
 ## 来源
 
-改编自 Anthropic 的 [`code-simplifier`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/code-simplifier) 代理，采用 Apache License 2.0 授权，已改编为可移植的 Agent Skills 格式。
+改编自 Anthropic 的 [`code-simplifier`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/code-simplifier) 代理，采用 Apache License 2.0 授权，已改编为可移植的 Agent Skills 格式。只读模式与债务清单改编自 [ponytail](https://github.com/DietrichGebert/ponytail) 的 ponytail-review、ponytail-audit 和 ponytail-debt，采用 MIT License 授权。

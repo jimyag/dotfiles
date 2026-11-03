@@ -1,6 +1,6 @@
 ---
 name: test-scenarios
-description: Use this skill when the user asks for a test plan, acceptance criteria, E2E checklist, or auditable scenario contract for a non-trivial change; do not use it for simple single-point edits or as a replacement for implementing tests.
+description: 用户要求测试计划、验收标准、E2E 清单或可审计的场景契约，或高风险改动在实现前需要固定验收边界时使用；不用于简单单点修改，也不代替编写测试。
 ---
 
 # 测试场景契约
@@ -10,6 +10,8 @@ description: Use this skill when the user asks for a test plan, acceptance crite
 在代码实现前把“什么行为必须成立”写成可追踪的场景清单，供实现、测试、评审和人工验收共同使用。场景契约描述验收边界，不是把所有测试代码提前写完。
 
 ## 何时使用
+
+项目或全局规则定义了交付分档时，按其中要求场景契约的档位使用；没有定义时按下列条件判断。
 
 - 新功能或修复会改变用户、API、配置、数据、任务状态或外部服务行为。
 - 变更跨越多个模块，存在边界、兼容性、权限、恢复或失败路径。
@@ -94,7 +96,7 @@ description: Use this skill when the user asks for a test plan, acceptance crite
 - 关键行为和对外契约测试优先通过用户、公共 API 或稳定包边界调用被测行为，并断言字面结果、最终状态或可观察副作用；纯函数或单元测试可以调用自己拥有的最小函数边界，但仍不能只断言调用次数、非空、未抛异常、fixture 自身或实现常量。
 - 断言必须能区分正确实现和已知错误实现；对汇总、计费、计数、派生状态等需要互相校验的数据，增加不变量/对账场景，而不只断言几个样例值。
 - 期望值应来自需求、已知正确样例或独立计算，不能用与被测代码相同的算法重算预期；否则测试会与实现一起出错。
-- 写测试前先确定在哪些接缝上测试，并与用户确认：优先已有接缝，尽量用最高层的接缝，接缝越少越好；每个候选接缝用一句话说明它能发现什么、发现不了什么。
+- 写测试前先确定在哪些接缝上测试：优先已有接缝，尽量用最高层的接缝，接缝越少越好；每个选定接缝用一句话说明它能发现什么、发现不了什么，写进场景契约或答复后直接继续。只有接缝选择会显著改变成本（需要新建测试基础设施、真实集群或改动生产代码来开接缝）时才先与用户确认。
 - 只在系统边界使用 mock：外部 API、时间与随机数、必要时的数据库和文件系统（能用测试库就不 mock）。不 mock 自己的类、模块和内部协作者。为便于在边界替换，依赖从参数传入而不是在函数内部创建；外部服务按操作提供具体函数（`getUser`、`createOrder`），不用一个通用的 `fetch(endpoint, options)` 让 mock 内部写条件分支。
 - 测试名描述行为（“购物车有效时用户可以结账”），不描述实现（“结账调用了 paymentService.process”）。断言调用次数或顺序、绕过接口直接查数据库验证、只在重构时失败的测试，都是耦合实现的信号。
 - 不为不可达条件、框架内部或生成代码强行增加测试；测试由自己拥有的公共边界和可观察行为负责。

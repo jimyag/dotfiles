@@ -1,7 +1,7 @@
 ---
 name: pull-request
 description: 创建 GitHub PR、更新标题或正文、填写 PR 模板，或准备人工发布内容时使用；不用于代码审查和 CI 修复。
-compatibility: 需要 git。远程创建或更新需要网络访问，以及可用的 GitHub 连接器或已认证的 gh CLI。
+compatibility: 需要 git。远程创建或更新需要网络访问，以及已认证的 gh CLI；不可用时可用 GitHub 连接器。
 ---
 
 # 创建或更新拉取请求
@@ -12,8 +12,8 @@ compatibility: 需要 git。远程创建或更新需要网络访问，以及可�
 
 检查当前客户端实际可用的工具，不预设后端：
 
-1. 可用的 GitHub 连接器支持所需读写操作时，使用连接器。
-2. 否则使用已认证的 `gh` CLI。
+1. 默认使用已认证的 `gh` CLI（`gh pr create`、`gh pr edit`、`gh pr view`）。
+2. `gh` 未安装或未认证时，使用支持所需读写操作的 GitHub 连接器。
 3. 两者均无法执行远程写入时，生成完整标题、正文、基准分支和来源分支信息，以及准确的人工后续步骤。不要声称 PR 已修改。
 
 回退取决于工具能力，不意味着降低内容检查要求。不要仅为了使用本技能就要求用户安装特定插件。
@@ -107,7 +107,11 @@ git diff <base-remote>/<base-branch>...HEAD
 PR：#<number> <url> / 未创建
 基准分支：<base>
 来源分支：<来源分支版本>
-后端：连接器 / gh / 无
+后端：gh / 连接器 / 无
 模板：已使用 / 未找到
 验证：<重新读取的结果或限制>
 ```
+
+## 统一约束
+
+- 证据与验收：遵循 `../_shared/common-acceptance.md`，本 skill 只补充其中没有的要求。

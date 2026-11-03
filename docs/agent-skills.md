@@ -7,12 +7,12 @@
 | 技能 | 用途 |
 | --- | --- |
 | [brainstorming](../skills/brainstorming/SKILL.md) | 澄清目标、范围和关键假设，收敛实现方案 |
-| [writing-plans](../skills/writing-plans/SKILL.md) | 为有多阶段依赖的实现编写执行计划 |
+| [writing-plans](../skills/writing-plans/SKILL.md) | 为有多阶段依赖的实现编写执行计划；逐阶段引导开发新功能 |
 | [systematic-debugging](../skills/systematic-debugging/SKILL.md) | 用证据和最小复现定位缺陷、测试或构建失败 |
 | [test-scenarios](../skills/test-scenarios/SKILL.md) | 整理测试计划、验收标准与 E2E 场景 |
 | [runtime-verification](../skills/runtime-verification/SKILL.md) | 在真实运行面驱动改动并留存证据，交付前确认行为 |
 | [requesting-code-review](../skills/requesting-code-review/SKILL.md) | 只读审查代码差异或 PR，检查正确性和复杂度 |
-| [simplify](../skills/simplify/SKILL.md) | 保持行为不变，简化近期改动 |
+| [simplify](../skills/simplify/SKILL.md) | 保持行为不变，简化近期改动；只读的过度设计审查、全仓审计与 `simplify:` 债务清单 |
 | [pull-request](../skills/pull-request/SKILL.md) | 创建 PR，或整理标题、正文与模板 |
 | [gh-stack](../skills/gh-stack/SKILL.md) | 管理相互依赖的分支和堆叠 PR |
 | [loop-on-ci](../skills/loop-on-ci/SKILL.md) | 跟踪 Actions、修复失败并验证检查结果 |
