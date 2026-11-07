@@ -14,12 +14,9 @@ PATTERNS: list[tuple[str, str]] = [
     ("placeholder leakage", r"\[(INSERT NAME|YEAR|COMPANY|INDUSTRY|TODO|TBD)\]|20\d\d-xx-xx"),
     ("cutoff disclaimer", r"\b(as of my last update|i don'?t have access to real-time|specific details are limited|based on available information)\b"),
     ("speculative gap filling", r"\b(believed to have|likely began|appears to have|maintains a relatively low public profile)\b"),
-    ("stock transition", r"值得注意的是|总的来说|换句话说|不难看出|可以发现|\b(in conclusion|it is important to note|at its core|key takeaway)\b"),
-    ("prompting colon", r"(?:一句话(?:总结|说|概括)|核心(?:是|在于)?|关键(?:是|在于)?|原因如下|结论|换句话说|也就是说)[：:]"),
-    ("possible missing anaphora", r"^\s*(?:听起来|看起来|值得注意的是|更重要的是|关键在于|问题在于|不难看出)[，,]?"),
+    ("stock transition", r"值得注意的是|总的来说|不难看出|可以发现|\b(in conclusion|it is important to note|at its core|key takeaway)\b"),
+    ("prompting colon", r"(?:一句话(?:总结|说|概括)|核心(?:是|在于)|关键(?:是|在于)|结论)[：:]"),
     ("possible topic shell", r"^\s*(?:对于[^，。]{2,20}来说|对[^，。]{2,20}而言|就[^，。]{2,20}而言|在[^，。]{2,15}方面)[，,]"),
-    ("possible recap shell", r"(?:^|[。！？]\s*)(?:这意味着|这表明|这说明|换句话说)"),
-    ("numbered heading shell", r"^\s*#{1,6}\s*(?:(?:一|二|三|四|五|六|七|八|九|十)[、.]|第[一二三四五六七八九十]+[、，.])"),
     ("dense enumeration", r"[^，。！？；：、\n]{1,16}、[^，。！？；：、\n]{1,16}、[^，。！？；：、\n]{1,16}"),
     ("idealized role metaphor", r"(?:像|如同|相当于)(?:一位|一个)?[^，。]{0,12}(?:智慧的|全能的|永不疲倦的|贴身的)?(?:导师|助手|秘书|顾问|管家|审查员)"),
     ("collaborative lecturer voice", r"接下来我们|我们先来看|下面我们|希望这能帮助你|\b(here'?s what i mean|think about it|this is why|what makes this hard is)\b"),
@@ -61,7 +58,19 @@ def main() -> int:
     lines = text.splitlines()
 
     findings: list[tuple[int, str, str]] = []
+    fence = ""
     for lineno, line in enumerate(lines, 1):
+        # shortcut: top-level Markdown fences and explicit quote lines only; use a parser if nested blocks need filtering.
+        delimiter = re.match(r" {0,3}(`{3,}|~{3,})(.*)", line)
+        if fence:
+            if delimiter and delimiter[1].startswith(fence) and not delimiter[2].strip():
+                fence = ""
+            continue
+        if delimiter and (delimiter[1][0] == "~" or "`" not in delimiter[2]):
+            fence = delimiter[1]
+            continue
+        if line.lstrip().startswith(">"):
+            continue
         for label, pattern in PATTERNS:
             if re.search(pattern, line, flags=re.IGNORECASE):
                 findings.append((lineno, label, line.strip()))

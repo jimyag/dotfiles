@@ -79,13 +79,13 @@
     {
       "id": 8,
       "prompt": "请降低这段中文技术说明的 AI 味，保留标题、段落、命令、数字和判断强度：\n\n## 一、部署结果\n\n一句话总结：新版本可能显著提升部署效率。实际测试中，部署时间从 20 分钟降到 12 分钟。\n\n```bash\nkubectl rollout status deployment/api\n```",
-      "expected_output": "A conservative rewrite that removes the prompting colon and unnecessary numbered-heading shell, uses the existing 20-to-12-minute result instead of vague improvement language, and preserves the command, paragraph structure, and uncertainty marker.",
+      "expected_output": "A conservative rewrite that removes the prompting colon, uses the existing 20-to-12-minute result instead of vague improvement language, and preserves the numbered heading, command, paragraph structure, and uncertainty marker.",
       "assertions": [
         "The output preserves the kubectl command exactly",
         "The output preserves both 20 minutes and 12 minutes",
         "The output does not invent a cause, benchmark, environment, or additional result",
         "The output does not turn 可能 into an unconditional claim",
-        "The heading text and paragraph order remain intact apart from removing the unnecessary ordinal shell"
+        "The heading including its ordinal and the paragraph order remain intact"
       ]
     },
     {
@@ -101,11 +101,12 @@
     },
     {
       "id": 10,
-      "prompt": "只检测，不要改写：\n\n核心是：先完成迁移。这意味着我们先完成迁移。值得注意的是，回滚窗口只有 30 分钟。",
-      "expected_output": "A detect-only report that identifies the prompting colon, possible recap repetition, and possible missing paragraph referent while quoting the relevant spans and returning no rewritten paragraph.",
+      "prompt": "只检测正文的 AI 味，不要改写：\n\n核心是：先完成迁移。这意味着我们先完成迁移。值得注意的是，回滚窗口只有 30 分钟。\n\n> 访谈原话：一句话总结：先从备份开始。\n\n```text\n一句话总结：测试数据\n```",
+      "expected_output": "A detect-only report that locates the conclusion preamble and the actual repetition of the migration instruction. It does not infer a missing referent from 值得注意的是 or treat 这意味着 as a problem on its own.",
       "assertions": [
-        "The response clearly separates high-confidence findings from context-dependent findings",
-        "The response quotes or locates the triggering phrases",
+        "The response locates the conclusion preamble and identifies the repeated migration instruction by comparing the two sentences",
+        "The response does not diagnose a missing referent based on 值得注意的是",
+        "The quoted interview and fenced test data are not reported as problems in the prose",
         "The response does not include a rewritten version of the paragraph",
         "The response does not claim the author is AI"
       ]
