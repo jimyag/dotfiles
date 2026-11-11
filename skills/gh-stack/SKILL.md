@@ -1,6 +1,6 @@
 ---
 name: gh-stack
-description: 使用 gh-stack GitHub CLI 扩展管理堆叠分支和拉取请求。适用于创建、推送、变基、同步、切换、查看、重组或合并相互依赖的 PR 链及堆叠差异。
+description: 使用 gh-stack GitHub CLI 扩展管理堆叠分支和拉取请求。适用于创建、同步、重组和合并相互依赖的 PR 链及堆叠差异。
 compatibility: 需要 git、已认证的 GitHub CLI、网络访问和 github/gh-stack 扩展。
 metadata:
   author: github

@@ -2,7 +2,6 @@
 name: loop-on-ci
 description: 在已有 GitHub PR 需要持续观察 Actions 检查、读取失败作业日志、修复问题、重新运行并跟到全部检查变绿时使用。适用于围绕同一个 PR 反复验证，而不是一次性状态查询。
 compatibility: 需要 git、网络访问和已认证的 gh CLI；gh 不可用时可用 GitHub 连接器只读查询。提交、推送和重跑仍受当前任务的授权范围约束。
-when_to_use: 已经有 GitHub PR，需要围绕同一个来源分支版本反复读取 Actions 状态和日志、修复失败项、推送、重跑并验证，直到全绿或明确发现阻塞。
 ---
 
 # 持续跟进 GitHub Actions

@@ -1,6 +1,6 @@
 ---
 name: runtime-verification
-description: 在交付非平凡代码改动前验证真实运行行为，或建立、维护项目专用运行验证入口时使用；通过 CLI、接口、界面、公开包入口或代理行为留存证据。普通文档与测试改动不触发；缺陷定位使用 systematic-debugging，代码审查使用 requesting-code-review。
+description: 在交付非平凡代码改动前验证真实运行行为，或建立、维护项目专用运行验证入口时使用。普通文档与测试改动不触发；缺陷定位使用 systematic-debugging，代码审查使用 requesting-code-review。
 ---
 
 # 运行面验证

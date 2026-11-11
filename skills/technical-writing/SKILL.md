@@ -1,6 +1,6 @@
 ---
 name: technical-writing
-description: 在起草或重构中文技术设计文档、架构笔记、源码分析、评审稿或工程分享文章，或检查、改写文本的 AI 味、文风、术语和技术文案时使用；先用代码、指标和约束建立论证，再按文档类型或编辑模式加载对应规则。
+description: 在起草或重构中文技术设计文档、架构笔记、源码分析、评审稿或工程分享文章，或检查、改写文本的 AI 味、文风、术语和技术文案时使用。
 ---
 
 # 技术写作与文体编辑
@@ -15,7 +15,7 @@ description: 在起草或重构中文技术设计文档、架构笔记、源码�
 | --- | --- |
 | 设计文档、架构评审、技术决策说明 | [references/design-document.md](references/design-document.md) |
 | 源码深挖、调用链、语言或系统机制文章 | [references/source-analysis.md](references/source-analysis.md) |
-| 操作手册、API 流程、故障处理、安全说明 | [references/controlled-instructions.md](references/controlled-instructions.md) |
+| 操作手册、API 流程、故障处理、安全说明，转述或压缩规则 | [references/controlled-instructions.md](references/controlled-instructions.md) |
 | Hugo 或工程博客文章 | [references/hugo-article.md](references/hugo-article.md) |
 | 降低 AI 味、按文风润色、检测写作模式、改写技术或界面文案 | [references/style-editing.md](references/style-editing.md) |
 
