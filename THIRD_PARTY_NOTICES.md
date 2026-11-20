@@ -128,6 +128,12 @@ SOFTWARE.
 
 Copyright Anthropic, PBC
 
+## SGLang Omni
+
+- Component: review criteria adapted into `skills/requesting-code-review`
+- Source: [Coding style](https://github.com/sgl-project/sglang-omni/blob/f69784c346262df4520c66efa4b8b2535bd9d457/.claude/skills/code-review/coding-style.md)
+- License: [Apache License 2.0](https://github.com/sgl-project/sglang-omni/blob/f69784c346262df4520c66efa4b8b2535bd9d457/LICENSE)
+
 ## ponytail
 
 - Components: adapted portions of `simplify` (review, audit and debt-ledger
