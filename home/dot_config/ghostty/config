@@ -1,19 +1,19 @@
 # --- Font ---
 
-# 使用 0xProto 作为主字体，Maple Mono 补充中文和 Nerd Font 图标。
+# 使用 JetBrains Mono 作为主字体，Maple Mono 补充中文和 Nerd Font 图标。
+font-family = "JetBrains Mono"
 font-family = "0xProto"
 font-family = "Maple Mono NL NF CN"
+font-style = Medium
+font-size = 15.5
 
-# 使用 Catppuccin Frappe 主题，和当前 Ghostty 本机配置保持一致。
-theme = Catppuccin Frappe
+theme = Aizen Light
 
 # --- Window ---
 window-padding-x = 12
 window-padding-y = 8
 window-padding-balance = equal
 macos-titlebar-style = transparent
-background-opacity = 0.92
-background-blur = 20
 window-save-state = always
 mouse-hide-while-typing = true
 
