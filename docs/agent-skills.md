@@ -7,6 +7,7 @@
 | 技能 | 用途 |
 | --- | --- |
 | [brainstorming](../skills/brainstorming/SKILL.md) | 澄清目标、范围和关键假设，收敛实现方案 |
+| [reframe](../skills/reframe/SKILL.md) | 已知道想要的结果，但难以说清工程术语或需求时，改写成可直接转交的请求 |
 | [writing-plans](../skills/writing-plans/SKILL.md) | 为有多阶段依赖的实现编写执行计划；逐阶段引导开发新功能 |
 | [systematic-debugging](../skills/systematic-debugging/SKILL.md) | 用证据和最小复现定位缺陷、测试或构建失败 |
 | [test-scenarios](../skills/test-scenarios/SKILL.md) | 整理测试计划、验收标准与 E2E 场景 |

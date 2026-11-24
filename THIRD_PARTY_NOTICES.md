@@ -3,6 +3,12 @@
 The repository includes adapted or vendored Agent Skills from the projects
 below. Their original copyright and license terms remain in effect.
 
+## pstack
+
+- Components: workflow ideas adapted in `skills/reframe` and `skills/brainstorming`
+- Source: <https://github.com/cursor/plugins/tree/005d8f6e8ec057b738adcd08a08b30db0478402d/pstack>
+- Upstream license: [MIT](https://github.com/cursor/plugins/blob/005d8f6e8ec057b738adcd08a08b30db0478402d/pstack/LICENSE)
+
 ## GitHub gh-stack
 
 - Component: `skills/gh-stack`
